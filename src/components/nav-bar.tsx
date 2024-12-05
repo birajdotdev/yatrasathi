@@ -1,6 +1,7 @@
 import { Compass } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { ModeToggle } from "./mode-toggle";
 
 type MenuItem = {
   label: string;
@@ -39,6 +40,7 @@ export default function NavBar() {
           </nav>
         </div>
         <div className="space-x-4">
+          <ModeToggle />
           <Button
             variant="ghost"
             className="rounded-full border-primary text-primary hover:text-primary md:inline-flex"
