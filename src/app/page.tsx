@@ -1,4 +1,4 @@
-import NavBar from "@/components/nav-bar";
+import NavBar from "@/components/nav/nav-bar";
 import { Hero, Features, Testimonials } from "@/components/landing-page";
 import Footer from "@/components/footer";
 

@@ -4,7 +4,7 @@ import { Card, CardContent } from "../ui/card";
 
 export default function Features() {
   return (
-    <section className="bg-white py-16">
+    <section id="features" className="bg-white py-16">
       <div className="container mx-auto px-4">
         <h2 className="mb-12 text-center text-3xl font-bold text-sky-800">
           Our Features

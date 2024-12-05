@@ -3,7 +3,10 @@ import Image from "next/image";
 
 export default function Testimonials() {
   return (
-    <section className="bg-gradient-to-b from-sky-100 to-emerald-100 py-16">
+    <section
+      id="testimonials"
+      className="bg-gradient-to-b from-sky-100 to-emerald-100 py-16"
+    >
       <div className="container mx-auto px-4">
         <h2 className="mb-12 text-center text-3xl font-bold text-sky-800">
           What Our Travelers Say
