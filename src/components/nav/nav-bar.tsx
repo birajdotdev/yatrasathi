@@ -15,6 +15,7 @@ import MenuItems, { type MenuItem } from "./menu-items";
 
 const menuItems: MenuItem[] = [
   { label: "Home", href: "/" },
+  { label: "Benefits", href: "#benefits" },
   { label: "Features", href: "#features" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Blog", href: "#blog" },
