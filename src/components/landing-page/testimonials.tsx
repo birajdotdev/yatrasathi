@@ -1,61 +1,138 @@
-import { Card, CardContent } from "../ui/card";
-import Image from "next/image";
+"use client";
+
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { QuoteIcon } from "lucide-react";
 
 export default function Testimonials() {
+  const testimonials = [
+    {
+      name: "Sarah L.",
+      role: "Solo Traveler",
+      content:
+        "YatraSathi made planning my solo trip to Nepal a breeze. The AI-generated itinerary was spot-on!",
+      avatar:
+        "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=100",
+    },
+    {
+      name: "Michael R.",
+      role: "Business Traveler",
+      content:
+        "As a frequent business traveler, YatraSathi has saved me countless hours in trip planning. Highly recommended!",
+      avatar:
+        "https://images.pexels.com/photos/323503/pexels-photo-323503.jpeg?auto=compress&cs=tinysrgb&w=1260&h=100",
+    },
+    {
+      name: "Emma and Tom",
+      role: "Adventure Couple",
+      content:
+        "We discovered amazing off-the-beaten-path locations thanks to YatraSathi's community recommendations.",
+      avatar:
+        "https://images.pexels.com/photos/1417255/pexels-photo-1417255.jpeg?auto=compress&cs=tinysrgb&w=100",
+    },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+        duration: 0.5,
+      },
+    },
+  };
+
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+
   return (
     <section
       id="testimonials"
-      className="bg-gradient-to-b from-sky-100 to-emerald-100 py-16"
+      className="relative overflow-hidden bg-gradient-to-br from-background to-background/80 py-24"
+      ref={ref}
     >
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold text-sky-800">
-          What Our Travelers Say
-        </h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card
-              key={i}
-              className="border-sky-200 bg-white transition-all hover:shadow-lg"
-            >
-              <CardContent className="p-6">
-                <div className="mb-4 flex items-center">
-                  <Image
-                    src={`/placeholder.svg?text=User${i}`}
-                    alt={`User ${i}`}
-                    width={50}
-                    height={50}
-                    className="mr-4 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-sky-700">
-                      Happy Traveler {i}
-                    </h3>
-                    <div className="flex text-yellow-400">
-                      {[...Array<unknown>(5)].map((_, index) => (
-                        <svg
-                          key={index}
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="h-4 w-4"
-                        >
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                      ))}
+        <motion.div
+          className="space-y-16"
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          <motion.div className="text-center" variants={itemVariants}>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                What Our
+              </span>{" "}
+              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Users Say
+              </span>
+            </h2>
+            <p className="mx-auto mt-6 max-w-3xl text-xl text-muted-foreground">
+              Hear from our satisfied travelers who have experienced the magic
+              of YatraSathi
+            </p>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            variants={containerVariants}
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="group relative"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-primary to-primary/50 opacity-30 blur transition duration-1000 group-hover:opacity-100" />
+                <Card className="relative flex h-full flex-col items-center space-y-8 rounded-xl bg-card p-6 shadow-lg transition duration-300 md:p-8">
+                  <div className="flex w-full justify-between">
+                    <div className="flex items-center space-x-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage
+                          src={testimonial.avatar}
+                          alt={testimonial.name}
+                        />
+                        <AvatarFallback>{testimonial.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-xl font-semibold">
+                          {testimonial.name}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {testimonial.role}
+                        </p>
+                      </div>
                     </div>
+                    <QuoteIcon className="h-8 w-8 text-primary/20 transition duration-300 group-hover:text-primary/80" />
                   </div>
-                </div>
-                <p className="text-sky-600">
-                  &quot;YatraSathi made planning my trip so easy! The
-                  AI-generated itinerary was spot-on, and I discovered amazing
-                  places I wouldn&apos;t have found otherwise.&quot;
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="flex-grow">
+                    <p className="text-pretty text-muted-foreground">
+                      &quot;{testimonial.content}&quot;
+                    </p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
