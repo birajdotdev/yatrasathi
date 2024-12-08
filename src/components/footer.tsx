@@ -1,7 +1,26 @@
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Mail,
+  Phone,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "./nav/logo";
+import { navItems } from "./nav/nav-bar";
+
+type SocialItem = {
+  icon: LucideIcon;
+  href: string;
+};
+
+const socialItems: SocialItem[] = [
+  { icon: Facebook, href: "https://facebook.com/" },
+  { icon: Twitter, href: "https://twitter.com/" },
+  { icon: Instagram, href: "https://instagram.com/" },
+];
 
 export default function Footer() {
   return (
@@ -12,13 +31,13 @@ export default function Footer() {
             <Logo />
             <p className="text-muted-foreground">Your Journey, Simplified</p>
             <div className="flex space-x-4">
-              {[Facebook, Twitter, Instagram].map((Icon, index) => (
+              {socialItems.map((item, index) => (
                 <Link
                   key={index}
-                  href="#"
+                  href={item.href}
                   className="text-muted-foreground transition-colors hover:text-primary"
                 >
-                  <Icon className="h-5 w-5" />
+                  <item.icon className="h-5 w-5" />
                 </Link>
               ))}
             </div>
@@ -27,13 +46,13 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-lg font-semibold">Quick Links</h4>
             <ul className="space-y-2">
-              {["About Us", "Features", "Pricing", "Blog"].map((item) => (
-                <li key={item}>
+              {navItems.map((item) => (
+                <li key={item.label}>
                   <Link
-                    href="#"
+                    href={item.href}
                     className="text-muted-foreground transition-colors hover:text-primary"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -74,7 +93,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t pt-8 text-center dark:border-secondary-foreground">
+        <div className="mt-12 border-t pt-8 text-center dark:border-secondary-foreground/20">
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} YatraSathi. All rights reserved.
           </p>

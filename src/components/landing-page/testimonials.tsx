@@ -68,7 +68,7 @@ export default function Testimonials() {
       className="relative overflow-hidden bg-gradient-to-br from-background to-background/80 py-24"
       ref={ref}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="space-y-16"
           variants={containerVariants}

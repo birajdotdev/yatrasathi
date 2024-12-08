@@ -1,16 +1,16 @@
 import Link from "next/link";
 
-export type MenuItem = {
+export type NavItem = {
   label: string;
   href: string;
 };
 
-interface MenuItemsProps {
-  items: MenuItem[];
+interface NavItemsProps {
+  items: NavItem[];
   mobile?: boolean;
 }
 
-export default function MenuItems({ items, mobile = false }: MenuItemsProps) {
+export default function MenuItems({ items, mobile = false }: NavItemsProps) {
   const baseClasses = "transition-colors hover:text-primary ";
   const mobileClasses = "block py-2 text-lg font-medium text-muted-foreground";
   const desktopClasses = "text-sm font-medium text-muted-foreground";

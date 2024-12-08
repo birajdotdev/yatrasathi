@@ -11,24 +11,24 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Logo from "./logo";
-import MenuItems, { type MenuItem } from "./menu-items";
+import NavItems, { type NavItem } from "./nav-items";
 
-const menuItems: MenuItem[] = [
+export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Benefits", href: "#benefits" },
   { label: "Features", href: "#features" },
   { label: "Testimonials", href: "#testimonials" },
-  { label: "Blog", href: "#blog" },
+  { label: "Blogs", href: "/blogs" },
 ];
 
 export default function NavBar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
         <div className="hidden items-center space-x-8 md:flex">
           <div className="flex items-center space-x-6">
-            <MenuItems items={menuItems} />
+            <NavItems items={navItems} />
           </div>
           <div className="flex items-center space-x-4">
             <ModeToggle />
@@ -63,8 +63,14 @@ export default function NavBar() {
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-8 flex flex-col space-y-4">
-                <MenuItems items={menuItems} mobile />
+                <NavItems items={navItems} mobile />
               </nav>
+              <div className="mt-4 flex items-center justify-between">
+                <span className="font-medium text-muted-foreground">
+                  Toggle Mode
+                </span>
+                <ModeToggle />
+              </div>
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
                   <Button variant="outline" className="w-full sm:w-auto">

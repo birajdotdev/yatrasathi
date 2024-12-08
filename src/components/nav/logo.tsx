@@ -5,7 +5,7 @@ export default function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center space-x-1 transition-colors hover:text-primary"
+      className="flex items-center space-x-1"
       aria-label="YatraSathi Home"
     >
       <Compass className="size-7 text-primary" aria-hidden="true" />
