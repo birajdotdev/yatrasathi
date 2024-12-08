@@ -1,135 +1,83 @@
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Logo from "./nav/logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-sky-900 py-12 text-white">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="md:col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-emerald-400">
-              YatraSathi
-            </h3>
-            <p className="text-sm text-sky-300">Your Journey, Simplified</p>
-          </div>
-          <div className="md:col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-emerald-400">
-              Quick Links
-            </h3>
-            <ul className="space-y-2">
-              {["About Us", "Privacy Policy", "Terms of Service"].map(
-                (link, index) => (
-                  <li key={index}>
-                    <Link
-                      href="#"
-                      className="text-sm text-sky-300 hover:text-white"
-                    >
-                      {link}
-                    </Link>
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-          <div className="md:col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-emerald-400">
-              Follow Us
-            </h3>
+    <footer className="bg-secondary text-foreground">
+      <div className="container mx-auto px-4 pb-8 pt-16 sm:px-6 lg:px-8">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-4">
+            <Logo />
+            <p className="text-muted-foreground">Your Journey, Simplified</p>
             <div className="flex space-x-4">
-              {[
-                {
-                  icon: (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-6 w-6"
-                    >
-                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                    </svg>
-                  ),
-                  name: "Facebook",
-                },
-                {
-                  icon: (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-6 w-6"
-                    >
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                    </svg>
-                  ),
-                  name: "Instagram",
-                },
-                {
-                  icon: (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-6 w-6"
-                    >
-                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                    </svg>
-                  ),
-                  name: "Twitter",
-                },
-              ].map((social, index) => (
+              {[Facebook, Twitter, Instagram].map((Icon, index) => (
                 <Link
                   key={index}
                   href="#"
-                  className="text-sky-300 hover:text-white"
+                  className="text-muted-foreground transition-colors hover:text-primary"
                 >
-                  {social.icon}
-                  <span className="sr-only">{social.name}</span>
+                  <Icon className="h-5 w-5" />
                 </Link>
               ))}
             </div>
           </div>
-          <div className="md:col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-emerald-400">
-              Newsletter
-            </h3>
-            <form className="flex">
-              <Input
+
+          <div>
+            <h4 className="mb-4 text-lg font-semibold">Quick Links</h4>
+            <ul className="space-y-2">
+              {["About Us", "Features", "Pricing", "Blog"].map((item) => (
+                <li key={item}>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-4 text-lg font-semibold">Contact Us</h4>
+            <ul className="space-y-2">
+              <li className="flex items-center space-x-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <span className="text-muted-foreground">
+                  info@yatrasathi.com
+                </span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Phone className="h-5 w-5 text-primary" />
+                <span className="text-muted-foreground">+977 1234567890</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-4 text-lg font-semibold">Newsletter</h4>
+            <p className="mb-4 text-muted-foreground">
+              Stay updated with our latest offers and travel tips.
+            </p>
+            <form className="flex items-center space-x-2">
+              <input
                 type="email"
                 placeholder="Enter your email"
-                className="rounded-l-md border-sky-700 bg-sky-800 text-white placeholder-sky-400"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <Button
-                type="submit"
-                className="rounded-l-none bg-emerald-600 text-white hover:bg-emerald-700"
-              >
+              <Button type="submit" className="w-fit">
                 Subscribe
               </Button>
             </form>
           </div>
         </div>
-        <div className="mt-8 border-t border-sky-800 pt-8 text-center text-sm text-sky-400">
-          © {new Date().getFullYear()} YatraSathi. All rights reserved.
+
+        <div className="mt-12 border-t pt-8 text-center dark:border-secondary-foreground">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} YatraSathi. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
