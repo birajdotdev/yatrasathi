@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import Logo from "./logo";
 import NavItems, { type NavItem } from "./nav-items";
+import Link from "next/link";
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
@@ -35,8 +36,9 @@ export default function NavBar() {
             <Button
               variant="ghost"
               className="text-muted-foreground hover:text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              asChild
             >
-              Log in
+              <Link href="/login">Log in</Link>
             </Button>
             <Button className="focus:ring-2 focus:ring-primary focus:ring-offset-2">
               Sign up
