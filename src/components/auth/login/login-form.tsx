@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "@/actions/auth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Github, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -184,11 +184,11 @@ export function LoginForm() {
             type="button"
             variant="outline"
             className="w-full text-sm"
-            onClick={() => signIn("github")}
-            disabled={isLoading}
+            onClick={() => signIn("google", { callbackUrl: "/home" })}
           >
-            <Github className="mr-2 h-4 w-4" />
-            Sign in with GitHub
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/google-icon.svg" alt="Google icon" className="h-4 w-4" />
+            Sign in with Google
           </Button>
         </div>
       </form>
