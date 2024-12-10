@@ -78,7 +78,7 @@ export default function Benefits() {
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
               <span className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Why Choose
-              </span>
+              </span>{" "}
               <span className="mt-2 bg-gradient-to-br from-primary to-primary/70 bg-clip-text text-transparent">
                 YatraSathi?
               </span>
