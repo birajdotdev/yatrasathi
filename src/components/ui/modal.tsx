@@ -19,7 +19,7 @@ export default function Modal({
         router.back();
       }}
     >
-      <DialogContent className="border-none bg-transparent">
+      <DialogContent className="gap-0 border-none bg-transparent p-0 sm:max-w-[425px]">
         <DialogHeader hidden>
           <DialogTitle />
         </DialogHeader>

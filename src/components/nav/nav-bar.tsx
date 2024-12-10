@@ -76,7 +76,7 @@ export default function NavBar() {
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
                   <Button variant="outline" className="w-full sm:w-auto">
-                    Log in
+                    <Link href="/login">Log in</Link>
                   </Button>
                 </SheetClose>
                 <SheetClose asChild>
