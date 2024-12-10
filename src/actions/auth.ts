@@ -23,3 +23,15 @@ export async function login(formData: FormData) {
     throw error;
   }
 }
+
+export async function signup(formData: FormData) {
+  try {
+    console.log(formData);
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, error: "An unexpected error occurred." };
+    }
+    throw error;
+  }
+}

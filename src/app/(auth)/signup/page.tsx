@@ -1,9 +1,9 @@
-import Login from "@/components/auth/login";
+import { Signup } from "@/components/auth";
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className="bg-co flex min-h-screen items-center justify-center bg-muted bg-[url(/auth-bg.svg)] bg-cover bg-center dark:bg-background">
-      <Login />
+      <Signup />
     </div>
   );
 }

@@ -40,8 +40,11 @@ export default function NavBar() {
             >
               <Link href="/login">Log in</Link>
             </Button>
-            <Button className="focus:ring-2 focus:ring-primary focus:ring-offset-2">
-              Sign up
+            <Button
+              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              asChild
+            >
+              <Link href="/signup">Sign up</Link>
             </Button>
           </div>
         </div>
@@ -75,12 +78,18 @@ export default function NavBar() {
               </div>
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
-                  <Button variant="outline" className="w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    asChild
+                  >
                     <Link href="/login">Log in</Link>
                   </Button>
                 </SheetClose>
                 <SheetClose asChild>
-                  <Button className="w-full sm:w-auto">Sign up</Button>
+                  <Button className="w-full sm:w-auto" asChild>
+                    <Link href="/signup">Sign up</Link>
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>

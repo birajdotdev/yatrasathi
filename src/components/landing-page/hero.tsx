@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 type GridImage = {
   src: string;
@@ -92,9 +93,11 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button size="lg" className="group">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button size="lg" className="group" asChild>
+                <Link href="/signup">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline">
                 Learn More
