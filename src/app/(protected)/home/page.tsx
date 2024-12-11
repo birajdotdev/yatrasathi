@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/server/auth";
+import { auth, signOut } from "@/server/auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
+  if (!session?.user) redirect("/");
+
   return (
     <form
       action={async () => {
