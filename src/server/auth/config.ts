@@ -1,6 +1,7 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 
 import { db } from "@/server/db";
 import {
@@ -9,6 +10,7 @@ import {
   users,
   verificationTokens,
 } from "@/server/db/schema";
+import { api } from "@/trpc/server";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -39,6 +41,17 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     GoogleProvider,
+    Credentials({
+      credentials: {
+        email: {},
+        password: {},
+      },
+      authorize: async (credentials) => {
+        const email = credentials.email as string;
+        const password = credentials.password as string;
+        return await api.auth.login({ email, password });
+      },
+    }),
     /**
      * ...add more providers here.
      *
@@ -64,6 +77,8 @@ export const authConfig = {
       },
     }),
   },
-
+  pages: {
+    signIn: "/login",
+  },
   trustHost: true,
 } satisfies NextAuthConfig;
