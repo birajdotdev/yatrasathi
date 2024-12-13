@@ -1,32 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function AuthModalLayout({
   children,
 }: {
   children: Readonly<React.ReactNode>;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
+  const isAuthRoute = pathname === "/login" || pathname === "/signup";
+
+  const onDismiss = () => {
+    router.push("/");
+  };
+
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={() => {
-        setIsOpen(false);
-        router.back();
-      }}
-    >
+    <Dialog open={isAuthRoute} onOpenChange={() => onDismiss()}>
       <DialogContent className="gap-0 border-none bg-transparent p-0 sm:max-w-sm">
         <DialogHeader hidden>
           <DialogTitle />
+          <DialogDescription />
         </DialogHeader>
         {children}
       </DialogContent>
