@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 
-interface CustomInputProps extends React.ComponentProps<typeof Input> {
+interface AuthInputProps extends React.ComponentProps<typeof Input> {
   icon?: LucideIcon;
 }
 
-export default function CustomInput({
+export default function AuthInput({
   className,
   type,
   icon: Icon,
   ...props
-}: CustomInputProps) {
+}: AuthInputProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => {

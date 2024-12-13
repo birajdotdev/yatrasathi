@@ -11,12 +11,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2, Mail, Lock, User, type LucideIcon } from "lucide-react";
+import { Mail, Lock, User, type LucideIcon } from "lucide-react";
 import { signupSchema, type SignupFormValues } from "@/zod/auth-schema";
-import CustomInput from "../custom-input";
+import AuthInput from "../auth-input";
 import { type HTMLInputTypeAttribute } from "react";
 
-export interface FormFieldConfig {
+interface FormFieldConfig {
   name: "name" | "email" | "password";
   label: string;
   placeholder: string;
@@ -77,7 +77,7 @@ export function SignupForm() {
                 <FormLabel className="text-sm">{formField.label}</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <CustomInput
+                    <AuthInput
                       placeholder={formField.placeholder}
                       {...field}
                       type={formField.type}
@@ -92,12 +92,12 @@ export function SignupForm() {
           />
         ))}
         <div className="space-y-3">
-          <Button type="submit" className="w-full text-sm" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Sign up"
-            )}
+          <Button
+            type="submit"
+            className="w-full text-sm"
+            isLoading={isLoading}
+          >
+            Sign up
           </Button>
         </div>
       </form>
