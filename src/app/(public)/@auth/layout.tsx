@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 
-export default function Modal({
+export default function AuthModalLayout({
   children,
 }: {
   children: Readonly<React.ReactNode>;
@@ -19,7 +24,7 @@ export default function Modal({
         router.back();
       }}
     >
-      <DialogContent className="gap-0 border-none bg-transparent p-0 sm:max-w-[425px]">
+      <DialogContent className="gap-0 border-none bg-transparent p-0 sm:max-w-sm">
         <DialogHeader hidden>
           <DialogTitle />
         </DialogHeader>
