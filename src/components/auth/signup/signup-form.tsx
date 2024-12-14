@@ -15,6 +15,9 @@ import { Mail, Lock, User, type LucideIcon } from "lucide-react";
 import { signupSchema, type SignupFormValues } from "@/zod/auth-schema";
 import AuthInput from "../auth-input";
 import { type HTMLInputTypeAttribute } from "react";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface FormFieldConfig {
   name: "name" | "email" | "password";
@@ -49,7 +52,7 @@ const formFields: FormFieldConfig[] = [
 ];
 
 export function SignupForm() {
-  const isLoading = false;
+  const router = useRouter();
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -60,8 +63,22 @@ export function SignupForm() {
     },
   });
 
+  const signup = api.auth.signup.useMutation({
+    onSuccess() {
+      toast.success("Account created successfully", {
+        richColors: true,
+      });
+      router.push("/login");
+    },
+    onError(error) {
+      toast.error(error.message, {
+        richColors: true,
+      });
+    },
+  });
+
   async function onSubmit(values: SignupFormValues) {
-    console.log("values:", values);
+    await signup.mutateAsync(values);
   }
 
   return (
@@ -95,7 +112,7 @@ export function SignupForm() {
           <Button
             type="submit"
             className="w-full text-sm"
-            isLoading={isLoading}
+            isLoading={signup.isPending}
           >
             Sign up
           </Button>
