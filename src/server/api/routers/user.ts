@@ -4,8 +4,8 @@ import { signupSchema } from "@/zod/auth-schema";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 
-export const authRouter = createTRPCRouter({
-  signup: publicProcedure
+export const userRouter = createTRPCRouter({
+  create: publicProcedure
     .input(signupSchema)
     .mutation(async ({ ctx, input }) => {
       const existingUser = await ctx.db.query.users.findFirst({

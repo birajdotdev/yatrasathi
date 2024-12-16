@@ -63,7 +63,7 @@ export function SignupForm() {
     },
   });
 
-  const signup = api.auth.signup.useMutation({
+  const signup = api.user.create.useMutation({
     onSuccess() {
       toast.success("Account created successfully", {
         richColors: true,
