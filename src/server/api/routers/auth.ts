@@ -2,7 +2,7 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { users } from "@/server/db/schema";
 import { signupSchema } from "@/zod/auth-schema";
 import { TRPCError } from "@trpc/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export const authRouter = createTRPCRouter({
   signup: publicProcedure
