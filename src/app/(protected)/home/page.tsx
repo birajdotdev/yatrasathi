@@ -1,6 +1,7 @@
+import Form from "next/form";
+
 import { Button } from "@/components/ui/button";
 import { auth, signOut } from "@/server/auth";
-import Form from "next/form";
 
 export default async function HomePage() {
   const session = await auth();

@@ -1,6 +1,7 @@
+import React from "react";
+
 import Footer from "@/components/footer";
 import NavBar from "@/components/nav/nav-bar";
-import React from "react";
 
 export default function UserLayout({
   auth,

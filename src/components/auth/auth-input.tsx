@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+
+import { Eye, EyeOff, type LucideIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, type LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AuthInputProps extends React.ComponentProps<typeof Input> {
   icon?: LucideIcon;

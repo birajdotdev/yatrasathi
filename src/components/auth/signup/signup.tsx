@@ -1,5 +1,5 @@
-import { SignupForm } from "./signup-form";
 import AuthCard from "../auth-card";
+import { SignupForm } from "./signup-form";
 
 export default function Signup() {
   return (

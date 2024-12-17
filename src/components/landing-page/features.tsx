@@ -1,9 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+
+import { motion, useInView } from "framer-motion";
+import { Bell, Compass, MapPin, PenTool } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
-import { MapPin, Compass, PenTool, Bell } from "lucide-react";
 
 const features = [
   {

@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 import { Menu } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import ModeToggle from "./mode-toggle";
 import {
   Sheet,
   SheetClose,
@@ -10,9 +12,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
 import Logo from "./logo";
+import ModeToggle from "./mode-toggle";
 import NavItems, { type NavItem } from "./nav-items";
-import Link from "next/link";
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },

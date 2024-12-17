@@ -1,5 +1,6 @@
-import { Compass } from "lucide-react";
 import Link from "next/link";
+
+import { Compass } from "lucide-react";
 
 export default function Logo() {
   return (

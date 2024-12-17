@@ -1,7 +1,11 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { type HTMLInputTypeAttribute } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock, type LucideIcon, Mail } from "lucide-react";
+import { useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,9 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Mail, Lock, type LucideIcon } from "lucide-react";
-import { loginSchema, type LoginFormValues } from "@/zod/auth-schema";
-import { type HTMLInputTypeAttribute } from "react";
+import { type LoginFormValues, loginSchema } from "@/zod/auth-schema";
+
 import AuthInput from "../auth-input";
 
 interface FormFieldConfig {

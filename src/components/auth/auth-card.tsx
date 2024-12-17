@@ -1,3 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { desc } from "drizzle-orm";
+
 import Logo from "@/components/nav/logo";
 import {
   Card,
@@ -7,10 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import SocialButtons from "./social-buttons";
-import Link from "next/link";
-import Image from "next/image";
-import { desc } from "drizzle-orm";
 
 interface AuthCardProps {
   children: React.ReactNode;

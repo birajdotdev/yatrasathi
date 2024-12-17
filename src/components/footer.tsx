@@ -1,13 +1,16 @@
 import Link from "next/link";
+
 import {
   Facebook,
-  Twitter,
   Instagram,
+  type LucideIcon,
   Mail,
   Phone,
-  type LucideIcon,
+  Twitter,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+
 import Logo from "./nav/logo";
 import { navItems } from "./nav/nav-bar";
 

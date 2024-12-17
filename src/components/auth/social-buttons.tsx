@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "../ui/button";
-import GoogleIcon from "../icons/google-icon";
-import GithubIcon from "../icons/github-icon";
 import { signIn } from "next-auth/react";
+
+import GithubIcon from "../icons/github-icon";
+import GoogleIcon from "../icons/google-icon";
+import { Button } from "../ui/button";
 
 export default function SocialButtons() {
   return (

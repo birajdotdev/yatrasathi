@@ -1,7 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { type HTMLInputTypeAttribute } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock, type LucideIcon, Mail, User } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,13 +17,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Mail, Lock, User, type LucideIcon } from "lucide-react";
-import { signupSchema, type SignupFormValues } from "@/zod/auth-schema";
-import AuthInput from "../auth-input";
-import { type HTMLInputTypeAttribute } from "react";
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { type SignupFormValues, signupSchema } from "@/zod/auth-schema";
+
+import AuthInput from "../auth-input";
 
 interface FormFieldConfig {
   name: "name" | "email" | "password";

@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Link from "next/link";
+
+import { motion } from "framer-motion";
+import { ArrowRight, Sparkles } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 type GridImage = {
   src: string;
