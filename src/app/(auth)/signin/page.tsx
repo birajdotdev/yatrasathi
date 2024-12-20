@@ -1,8 +1,6 @@
-"use client";
-
 import Signin from "@/components/auth/signin";
 
-export default function AuthPage() {
+export default function SigninPage() {
   return (
     <>
       <Signin />

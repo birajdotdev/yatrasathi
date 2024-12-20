@@ -18,7 +18,7 @@ export default function AuthModalLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthRoute = pathname === "/login" || pathname === "/signup";
+  const isAuthRoute = pathname === "/signin";
 
   const onDismiss = () => {
     router.push("/");
