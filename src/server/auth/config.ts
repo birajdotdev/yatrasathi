@@ -2,6 +2,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import ResendProvider from "next-auth/providers/resend";
 
 import { db } from "@/server/db";
 import {
@@ -41,7 +42,9 @@ export const authConfig = {
   providers: [
     GoogleProvider,
     GithubProvider,
-    // ...other providers
+    ResendProvider({
+      from: "noreply@yatrasathi.tech",
+    }),
   ],
   adapter: DrizzleAdapter(db, {
     usersTable: users,
