@@ -1,10 +1,15 @@
+import { ThemeToggle } from "@/components/theme-toggle";
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-co flex min-h-screen items-center justify-center bg-muted bg-[url(/auth-bg.svg)] bg-cover bg-center dark:bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-modern-gradient p-4">
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {children}
     </div>
   );

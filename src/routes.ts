@@ -13,7 +13,7 @@ export const publicRoutes: string[] = ["/", "/demo"];
  * @constant
  * @type {string[]}
  */
-export const authRoutes: string[] = ["/login", "/signup"];
+export const authRoutes: string[] = ["/signin"];
 
 /**
  * The prefix for authentication-related API routes.

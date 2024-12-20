@@ -1,27 +1,25 @@
-"use client";
-
-import { signIn } from "next-auth/react";
-
-import GithubIcon from "../icons/github-icon";
-import GoogleIcon from "../icons/google-icon";
-import { Button } from "../ui/button";
+import { GithubIcon, GoogleIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 export default function SocialButtons() {
   return (
-    <div className="flex w-full items-center space-x-3">
+    <div className="space-y-3">
       <Button
         variant="outline"
-        className="w-full text-sm"
-        onClick={() => signIn("google", { callbackUrl: "/home" })}
+        className="w-full text-sm sm:text-base font-semibold"
+        size="lg"
       >
-        <GoogleIcon width={16} height={16} />
+        <GoogleIcon className="mr-2 h-5 w-5" />
+        Continue with Google
       </Button>
+
       <Button
         variant="outline"
-        className="w-full text-sm"
-        onClick={() => signIn("github", { callbackUrl: "/home" })}
+        className="w-full text-sm sm:text-base font-semibold"
+        size="lg"
       >
-        <GithubIcon width={16} height={16} />
+        <GithubIcon className="mr-2 h-5 w-5" />
+        Continue with GitHub
       </Button>
     </div>
   );

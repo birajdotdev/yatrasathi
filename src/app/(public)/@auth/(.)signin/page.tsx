@@ -1,9 +1,9 @@
-import { Login } from "@/components/auth";
+import Signin from "@/components/auth/signin";
 
 export default function LoginPage() {
   return (
     <>
-      <Login />
+      <Signin />
     </>
   );
 }

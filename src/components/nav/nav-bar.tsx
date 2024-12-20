@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import Logo from "./logo";
+import Logo from "../ui/logo";
 import ModeToggle from "./mode-toggle";
 import NavItems, { type NavItem } from "./nav-items";
 
@@ -29,7 +29,9 @@ export default function NavBar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
         <div className="hidden items-center space-x-8 md:flex">
           <div className="flex items-center space-x-6">
             <NavItems items={navItems} />
@@ -37,17 +39,10 @@ export default function NavBar() {
           <div className="flex items-center space-x-4">
             <ModeToggle />
             <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              asChild
-            >
-              <Link href="/login">Log in</Link>
-            </Button>
-            <Button
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
               asChild
             >
-              <Link href="/signup">Sign up</Link>
+              <Link href="/signin">Sign in</Link>
             </Button>
           </div>
         </div>
@@ -81,17 +76,8 @@ export default function NavBar() {
               </div>
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full sm:w-auto"
-                    asChild
-                  >
-                    <Link href="/login">Log in</Link>
-                  </Button>
-                </SheetClose>
-                <SheetClose asChild>
                   <Button className="w-full sm:w-auto" asChild>
-                    <Link href="/signup">Sign up</Link>
+                    <Link href="/signin">Sign in</Link>
                   </Button>
                 </SheetClose>
               </SheetFooter>
