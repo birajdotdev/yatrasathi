@@ -59,7 +59,7 @@ export const authConfig = {
     }),
   },
   pages: {
-    signIn: "/login",
+    signIn: "/signin",
   },
   trustHost: true,
 } satisfies NextAuthConfig;
