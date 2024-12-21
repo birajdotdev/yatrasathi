@@ -1,6 +1,5 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 interface AuthMessageProps {
@@ -10,23 +9,25 @@ interface AuthMessageProps {
 
 export default function AuthMessage({ success, message }: AuthMessageProps) {
   return (
-    <Alert
-      variant={success ? "default" : "destructive"}
+    <div
       className={cn(
-        "border",
+        "flex items-center gap-2 text-sm px-3 h-10 py-2 rounded-md border",
         success
-          ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-          : "bg-destructive/10 border-destructive/50 text-destructive"
+          ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400"
+          : "bg-destructive/10 border-destructive/30 text-destructive dark:bg-destructive/20 dark:border-destructive/30 dark:text-destructive-foreground"
       )}
     >
-      <AlertDescription className="flex items-center gap-2">
-        {success ? (
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-        ) : (
-          <AlertCircle className="h-4 w-4" />
-        )}
-        {message}
-      </AlertDescription>
-    </Alert>
+      {success ? (
+        <CheckCircle2
+          className={cn(
+            "h-4 w-4 shrink-0",
+            success ? "text-emerald-600 dark:text-emerald-400" : ""
+          )}
+        />
+      ) : (
+        <AlertCircle className="h-4 w-4 shrink-0" />
+      )}
+      <span>{message}</span>
+    </div>
   );
 }
