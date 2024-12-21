@@ -26,7 +26,7 @@ export default function AuthModalLayout({
 
   return (
     <Dialog open={isAuthRoute} onOpenChange={() => onDismiss()}>
-      <DialogContent className="gap-0 border-none bg-transparent p-0 w-fit z-50">
+      <DialogContent className="gap-0 border-none bg-transparent p-0 w-full max-w-[420px] z-50">
         <DialogHeader className="hidden">
           <DialogTitle />
           <DialogDescription />
