@@ -17,12 +17,11 @@ export const signinWithResend = async (
   const formValue = Object.fromEntries(formData.entries());
   const validateForm = signinSchema.safeParse(formValue);
 
-  console.log("Email:", validateForm.data?.email);
-
   if (!validateForm.success) {
     return {
       success: false,
-      message: validateForm.error.errors[0]?.message ?? "Invalid form data",
+      message:
+        validateForm.error.errors[0]?.message ?? "Please enter a valid email",
     };
   }
 
@@ -33,18 +32,31 @@ export const signinWithResend = async (
     });
     return {
       success: true,
-      message: "Email sent successfully. Please check your inbox.",
+      message: "Magic link sent! Check your inbox & spam folder.",
     };
   } catch (error) {
     if (error instanceof AuthError) {
-      return {
-        success: false,
-        message: error.message,
-      };
+      switch (error.type) {
+        case "EmailSignInError":
+          return {
+            success: false,
+            message: "Failed to send email. Try again.",
+          };
+        case "CallbackRouteError":
+          return {
+            success: false,
+            message: "Invalid request. Please try again.",
+          };
+        default:
+          return {
+            success: false,
+            message: "Authentication failed. Try again.",
+          };
+      }
     }
     return {
       success: false,
-      message: "An unexpected error occurred",
+      message: "Something went wrong. Please try again.",
     };
   }
 };
