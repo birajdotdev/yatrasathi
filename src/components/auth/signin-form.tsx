@@ -7,10 +7,9 @@ import { useActionState } from "react";
 import { Mail } from "lucide-react";
 
 import { signinWithResend } from "@/actions/auth-action";
+import AuthMessage from "@/components/auth/auth-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-import AuthMessage from "./auth-message";
 
 const getOAuthErrorMessage = (error: string | null) => {
   switch (error) {
