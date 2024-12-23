@@ -1,7 +1,11 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import FacebookProvider from "next-auth/providers/facebook";
+import GoogleProvider from "next-auth/providers/google";
+import ResendProvider from "next-auth/providers/resend";
 
+import { env } from "@/env";
+import { sendVerificationRequest } from "@/lib/auth-send-request";
 import { db } from "@/server/db";
 import {
   accounts,
@@ -38,16 +42,13 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    GithubProvider,
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    GoogleProvider,
+    FacebookProvider,
+    ResendProvider({
+      apiKey: env.RESEND_KEY,
+      from: env.MAIL_FROM_ADDRESS,
+      sendVerificationRequest,
+    }),
   ],
   adapter: DrizzleAdapter(db, {
     usersTable: users,
@@ -63,6 +64,9 @@ export const authConfig = {
         id: user.id,
       },
     }),
+  },
+  pages: {
+    signIn: "/signin",
   },
   trustHost: true,
 } satisfies NextAuthConfig;

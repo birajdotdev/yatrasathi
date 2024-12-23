@@ -1,8 +1,8 @@
 import {
-  Hero,
   Benefits,
-  Testimonials,
   Features,
+  Hero,
+  Testimonials,
 } from "@/components/landing-page";
 
 export default function LandingPage() {

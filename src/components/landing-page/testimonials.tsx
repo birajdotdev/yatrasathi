@@ -1,10 +1,12 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+
+import { motion, useInView } from "framer-motion";
 import { QuoteIcon } from "lucide-react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 
 export default function Testimonials() {
   const testimonials = [

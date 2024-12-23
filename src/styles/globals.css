@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -57,6 +58,7 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
@@ -64,4 +66,17 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Add these classes for the background patterns */
+.bg-light-pattern {
+  background-image: url(/bg-light.svg);
+  background-size: 800px;
+  background-position: center;
+}
+
+.bg-dark-pattern {
+  background-image: url(/bg-dark.svg);
+  background-size: 800px;
+  background-position: center;
 }

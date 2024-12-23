@@ -1,8 +1,12 @@
-import { TRPCReactProvider } from "@/trpc/react";
+import React from "react";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "next-themes";
-import React from "react";
+
+import { TRPCReactProvider } from "@/trpc/react";
+
+import { Toaster } from "../ui/sonner";
 
 export default function Providers({
   children,
@@ -17,6 +21,7 @@ export default function Providers({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </TRPCReactProvider>
       <SpeedInsights />

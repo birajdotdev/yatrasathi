@@ -1,8 +1,10 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Lightbulb, Clock, ThumbsUp, Globe } from "lucide-react";
+
+import { motion, useInView } from "framer-motion";
+import { Clock, Globe, Lightbulb, ThumbsUp } from "lucide-react";
+
 import { Card } from "../ui/card";
 
 const benefits = [
