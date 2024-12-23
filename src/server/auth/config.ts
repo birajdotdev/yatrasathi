@@ -1,6 +1,6 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 import ResendProvider from "next-auth/providers/resend";
 
@@ -43,7 +43,7 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     GoogleProvider,
-    GithubProvider,
+    FacebookProvider,
     ResendProvider({
       apiKey: env.RESEND_KEY,
       from: env.MAIL_FROM_ADDRESS,

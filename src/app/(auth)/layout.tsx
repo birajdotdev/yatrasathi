@@ -1,11 +1,5 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
-import { ChevronLeft } from "lucide-react";
-
+import BackButton from "@/components/auth/back-button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -26,22 +20,6 @@ function GlowEffects() {
       <div className="absolute -right-1/4 top-0 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[120px] dark:bg-primary/5" />
       <div className="absolute -left-1/4 bottom-0 h-[600px] w-[600px] rounded-full bg-primary/[0.07] blur-[120px] dark:bg-primary/[0.03]" />
     </>
-  );
-}
-
-function BackButton() {
-  const router = useRouter();
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => router.back()}
-      className="absolute left-4 top-4 z-50"
-    >
-      <ChevronLeft className="h-5 w-5" />
-      <span className="sr-only">Back</span>
-    </Button>
   );
 }
 

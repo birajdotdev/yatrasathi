@@ -1,14 +1,14 @@
 import Form from "next/form";
 import { type ComponentType } from "react";
 
-import { GithubIcon, GoogleIcon } from "@/components/icons";
+import { FacebookIcon, GoogleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/server/auth";
 
 interface SocialButton {
   icon: ComponentType<{ className?: string }>;
   name: string;
-  provider: "google" | "github";
+  provider: "google" | "facebook";
 }
 
 const socialButtons: SocialButton[] = [
@@ -18,9 +18,9 @@ const socialButtons: SocialButton[] = [
     provider: "google",
   },
   {
-    icon: GithubIcon,
-    name: "GitHub",
-    provider: "github",
+    icon: FacebookIcon,
+    name: "Facebook",
+    provider: "facebook",
   },
 ];
 
