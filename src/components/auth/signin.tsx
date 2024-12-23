@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { SigninForm } from "@/components/auth/signin-form";
 import SocialButtons from "@/components/auth/social-buttons";
@@ -27,7 +28,9 @@ export default function Signin() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <SigninForm />
+        <Suspense>
+          <SigninForm />
+        </Suspense>
         <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
           <Separator className="flex-1" />
           <span>OR</span>
