@@ -4,6 +4,8 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import ResendProvider from "next-auth/providers/resend";
 
+import { env } from "@/env";
+import { sendVerificationRequest } from "@/lib/auth-send-request";
 import { db } from "@/server/db";
 import {
   accounts,
@@ -43,7 +45,9 @@ export const authConfig = {
     GoogleProvider,
     GithubProvider,
     ResendProvider({
-      from: "noreply@yatrasathi.tech",
+      apiKey: env.RESEND_KEY,
+      from: env.MAIL_FROM_ADDRESS,
+      sendVerificationRequest,
     }),
   ],
   adapter: DrizzleAdapter(db, {

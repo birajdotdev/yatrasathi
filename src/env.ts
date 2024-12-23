@@ -12,12 +12,14 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
     DATABASE_URL: z.string().url(),
+    RESEND_KEY: z.string(),
+    MAIL_FROM_ADDRESS: z.string().email(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
   },
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_APP_URL: z.string().url(),
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -26,7 +28,10 @@ export const env = createEnv({
     AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
+    RESEND_KEY: process.env.RESEND_KEY,
+    MAIL_FROM_ADDRESS: process.env.MAIL_FROM_ADDRESS,
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
