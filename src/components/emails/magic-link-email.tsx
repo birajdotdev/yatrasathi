@@ -14,35 +14,31 @@ import { Tailwind } from "@react-email/tailwind";
 
 interface MagicLinkEmailProps {
   url: string;
-  host: string;
   userEmail: string;
 }
 
 export default function MagicLinkEmail({
   url,
-  host,
   userEmail,
 }: MagicLinkEmailProps) {
-  const escapedHost = host.replace(/\./g, "&#8203;.");
-
   return (
     <Html>
       <Head />
-      <Preview>Sign in to {escapedHost}</Preview>
+      <Preview>Sign in to YatraSathi</Preview>
       <Tailwind>
         <Body className="bg-[#fafafa] my-auto mx-auto font-sans">
           <Container className="bg-white border border-solid border-gray-200 rounded-xl shadow-sm my-[20px] mx-auto p-[24px] max-w-[400px]">
             <Section className="mt-[12px] mb-[20px]">
               <Img
                 src={`${process.env.NEXT_PUBLIC_APP_URL}/logo.png`}
-                width="32"
-                height="32"
-                alt={`${host} logo`}
+                alt="YatraSathi logo"
+                width={200}
+                height={40}
                 className="my-0 mx-auto"
               />
             </Section>
             <Heading className="text-gray-900 text-[20px] font-semibold text-center p-0 my-[16px] mx-0">
-              Sign in to {escapedHost}
+              Sign in to YatraSathi
             </Heading>
             <Text className="text-gray-600 text-[14px] leading-[24px] mb-[20px] text-center">
               Click the button below to securely sign in to your account.
