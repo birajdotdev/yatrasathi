@@ -1,12 +1,11 @@
-import { auth } from "@/server/auth";
-
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   apiTrpcPrefix,
   authRoutes,
   publicRoutes,
-} from "./routes";
+} from "@/routes";
+import { auth } from "@/server/auth";
 
 export default auth((req) => {
   const { nextUrl } = req;

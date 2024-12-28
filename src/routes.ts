@@ -4,7 +4,7 @@
  * @constant
  * @type {string[]}
  */
-export const publicRoutes: string[] = ["/", "/demo"];
+export const publicRoutes: string[] = ["/", "/demo", "/terms-of-service"];
 
 /**
  * Array of authentication-related route paths.

@@ -40,7 +40,7 @@ export default function Signin() {
         <div className="text-center text-xs sm:text-sm text-muted-foreground">
           By continuing, you agree to our{" "}
           <Link
-            href="#"
+            href="/terms-of-service"
             className="text-primary hover:underline underline-offset-2"
           >
             Terms of Service
