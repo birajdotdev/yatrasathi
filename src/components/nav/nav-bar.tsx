@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { Menu } from "lucide-react";
 
+import AvatarDropdownMenu from "@/components/nav/avatar-dropdown-menu";
 import ModeToggle from "@/components/nav/mode-toggle";
 import NavItems from "@/components/nav/nav-items";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 import {
@@ -17,7 +17,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { getNavItems } from "@/lib/nav-items";
-import { getInitials } from "@/lib/utils";
 import { auth } from "@/server/auth";
 
 export default async function NavBar() {
@@ -44,12 +43,7 @@ export default async function NavBar() {
                 <Link href="/signin">Sign in</Link>
               </Button>
             ) : (
-              <Avatar>
-                <AvatarImage src={session.user.image ?? ""} />
-                <AvatarFallback>
-                  {getInitials(session.user.name ?? "")}
-                </AvatarFallback>
-              </Avatar>
+              <AvatarDropdownMenu />
             )}
           </div>
         </div>
