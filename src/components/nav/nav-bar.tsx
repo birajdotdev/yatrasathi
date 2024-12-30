@@ -2,7 +2,11 @@ import Link from "next/link";
 
 import { Menu } from "lucide-react";
 
+import ModeToggle from "@/components/nav/mode-toggle";
+import NavItems from "@/components/nav/nav-items";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/ui/logo";
 import {
   Sheet,
   SheetClose,
@@ -12,20 +16,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { getNavItems } from "@/lib/nav-items";
+import { getInitials } from "@/lib/utils";
+import { auth } from "@/server/auth";
 
-import Logo from "../ui/logo";
-import ModeToggle from "./mode-toggle";
-import NavItems, { type NavItem } from "./nav-items";
+export default async function NavBar() {
+  const session = await auth();
+  const navItems = await getNavItems();
 
-export const navItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Benefits", href: "#benefits" },
-  { label: "Features", href: "#features" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Blogs", href: "/blogs" },
-];
-
-export default function NavBar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -38,12 +36,21 @@ export default function NavBar() {
           </div>
           <div className="flex items-center space-x-4">
             <ModeToggle />
-            <Button
-              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              asChild
-            >
-              <Link href="/signin">Sign in</Link>
-            </Button>
+            {!session?.user ? (
+              <Button
+                className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                asChild
+              >
+                <Link href="/signin">Sign in</Link>
+              </Button>
+            ) : (
+              <Avatar>
+                <AvatarImage src={session.user.image ?? ""} />
+                <AvatarFallback>
+                  {getInitials(session.user.name ?? "")}
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
         </div>
         <div className="flex items-center md:hidden">
