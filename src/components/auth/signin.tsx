@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Signin() {
   return (
-    <Card className="w-full max-w-[420px] bg-card/80 backdrop-blur-md shadow-2xl relative z-10">
+    <Card className="w-full max-w-[420px] backdrop-blur-md shadow-2xl relative z-10">
       <CardHeader className="space-y-6 pb-8 pt-6">
         <div className="flex justify-center">
           <Logo className="h-12 w-auto" />

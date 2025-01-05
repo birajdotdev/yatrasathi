@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import { Menu } from "lucide-react";
 
+import ModeToggle from "@/components/nav/mode-toggle";
+import NavItems from "@/components/nav/nav-items";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/ui/logo";
 import {
   Sheet,
   SheetClose,
@@ -12,20 +15,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { navItems } from "@/data/nav-items";
 
-import Logo from "../ui/logo";
-import ModeToggle from "./mode-toggle";
-import NavItems, { type NavItem } from "./nav-items";
-
-export const navItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Benefits", href: "#benefits" },
-  { label: "Features", href: "#features" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Blogs", href: "/blogs" },
-];
-
-export default function NavBar() {
+export default async function NavBar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
