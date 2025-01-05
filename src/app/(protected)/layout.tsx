@@ -1,7 +1,9 @@
 import React from "react";
 
-import Footer from "@/components/footer";
-import NavBar from "@/components/nav/nav-bar";
+import AppHeader from "@/components/sidebar/app-header";
+import AppSidebar from "@/components/sidebar/app-sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function ProtectedLayout({
   children,
@@ -9,10 +11,14 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <NavBar />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <AppHeader />
+        <main className="flex-1 overflow-hidden">
+          <ScrollArea className="h-[calc(100vh-4rem)]">{children}</ScrollArea>
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
