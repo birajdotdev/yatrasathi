@@ -36,4 +36,4 @@ export const apiTrpcPrefix = "/api/trpc";
  * after completing the authentication process.
  * @constant
  */
-export const DEFAULT_LOGIN_REDIRECT = "/home";
+export const DEFAULT_LOGIN_REDIRECT = "/dashboard";
