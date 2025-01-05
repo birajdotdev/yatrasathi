@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { Menu } from "lucide-react";
 
-import AvatarDropdownMenu from "@/components/nav/avatar-dropdown-menu";
 import ModeToggle from "@/components/nav/mode-toggle";
 import NavItems from "@/components/nav/nav-items";
 import { Button } from "@/components/ui/button";
@@ -16,13 +15,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getNavItems } from "@/lib/nav-items";
-import { auth } from "@/server/auth";
+import { navItems } from "@/data/nav-items";
 
 export default async function NavBar() {
-  const session = await auth();
-  const navItems = await getNavItems();
-
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -35,16 +30,12 @@ export default async function NavBar() {
           </div>
           <div className="flex items-center space-x-4">
             <ModeToggle />
-            {!session?.user ? (
-              <Button
-                className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                asChild
-              >
-                <Link href="/signin">Sign in</Link>
-              </Button>
-            ) : (
-              <AvatarDropdownMenu />
-            )}
+            <Button
+              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              asChild
+            >
+              <Link href="/signin">Sign in</Link>
+            </Button>
           </div>
         </div>
         <div className="flex items-center md:hidden">

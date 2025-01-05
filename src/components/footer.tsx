@@ -9,9 +9,9 @@ import {
   Twitter,
 } from "lucide-react";
 
-import Logo from "@/components/nav/logo";
 import { Button } from "@/components/ui/button";
-import { getNavItems } from "@/lib/nav-items";
+import Logo from "@/components/ui/logo";
+import { navItems } from "@/data/nav-items";
 
 type SocialItem = {
   icon: LucideIcon;
@@ -25,8 +25,6 @@ const socialItems: SocialItem[] = [
 ];
 
 export default async function Footer() {
-  const navItems = await getNavItems();
-
   return (
     <footer className="bg-secondary text-foreground">
       <div className="container mx-auto px-4 pb-8 pt-16 sm:px-6 lg:px-8">

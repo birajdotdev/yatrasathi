@@ -16,18 +16,21 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-export default function LogoutButton() {
+export default function LogoutButton({
+  setIsOpen,
+}: {
+  setIsOpen: (isOpen: boolean) => void;
+}) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <DropdownMenuItem
-          className="text-red-600 focus:text-red-600 cursor-pointer"
           onSelect={(e) => {
             e.preventDefault();
           }}
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <LogOut />
+          Log out
         </DropdownMenuItem>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -39,7 +42,12 @@ export default function LogoutButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => signOut({ redirectTo: "/" })}>
+          <AlertDialogAction
+            onClick={async () => {
+              setIsOpen(false);
+              await signOut({ redirectTo: "/" });
+            }}
+          >
             Log out
           </AlertDialogAction>
         </AlertDialogFooter>
