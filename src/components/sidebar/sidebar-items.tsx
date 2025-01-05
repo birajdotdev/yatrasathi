@@ -10,13 +10,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export interface NavItem {
+export interface SidebarItem {
   name: string;
   url: string;
   icon: LucideIcon;
 }
 
-export function NavItems({ items }: { items: NavItem[] }) {
+export function SidebarItems({ items }: { items: SidebarItem[] }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Items</SidebarGroupLabel>

@@ -1,7 +1,7 @@
 import React from "react";
 
-import AppHeader from "@/components/sidebar/app-header";
-import AppSidebar from "@/components/sidebar/app-sidebar";
+import AppSidebar from "@/components/sidebar";
+import SidebarHeader from "@/components/sidebar/sidebar-header";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
@@ -14,7 +14,7 @@ export default function ProtectedLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <AppHeader />
+        <SidebarHeader />
         <main className="flex-1 overflow-hidden">
           <ScrollArea className="h-[calc(100vh-4rem)]">{children}</ScrollArea>
         </main>

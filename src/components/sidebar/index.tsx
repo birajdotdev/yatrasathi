@@ -7,9 +7,11 @@ import {
   Settings,
 } from "lucide-react";
 
-import { NavItems } from "@/components/sidebar/nav-items";
-import { type NavItem } from "@/components/sidebar/nav-items";
-import { NavUser } from "@/components/sidebar/nav-user";
+import {
+  type SidebarItem,
+  SidebarItems,
+} from "@/components/sidebar/sidebar-items";
+import { SidebarUser } from "@/components/sidebar/sidebar-user";
 import Logo from "@/components/ui/logo";
 import {
   Sidebar,
@@ -22,7 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { auth } from "@/server/auth";
 
-const sidebarItems: NavItem[] = [
+const sidebarItems: SidebarItem[] = [
   { name: "Dashboard", url: "/dashboard", icon: Home },
   { name: "Explore", url: "/explore", icon: Globe },
   { name: "Itineraries", url: "/itineraries", icon: Calendar },
@@ -51,11 +53,11 @@ export default async function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <NavItems items={sidebarItems} />
+          <SidebarItems items={sidebarItems} />
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <SidebarUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

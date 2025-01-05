@@ -29,15 +29,15 @@ import {
 } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 
-export function NavUser({
-  user,
-}: {
+interface SidebarUserProps {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
-}) {
+}
+
+export function SidebarUser({ user }: SidebarUserProps) {
   const { isMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 

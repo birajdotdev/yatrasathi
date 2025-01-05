@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,9 +15,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-import { ThemeToggle } from "../theme-toggle";
-
-export default function AppHeader() {
+export default function SidebarHeader() {
   const pathname = usePathname();
 
   // Create breadcrumb items from the full path
