@@ -11,3 +11,7 @@ export function getInitials(name: string) {
     .map((n) => n[0])
     .join("");
 }
+
+export function getFirstName(name: string) {
+  return name.split(" ")[0];
+}

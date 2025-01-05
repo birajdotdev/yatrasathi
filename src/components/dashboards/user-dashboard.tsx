@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { getFirstName } from "@/lib/utils";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,7 +51,7 @@ const itemVariants = {
   },
 };
 
-export default function UserDashboard() {
+export default function UserDashboard({ user }: { user: User }) {
   const [progress, setProgress] = useState(66);
 
   return (
@@ -61,7 +63,7 @@ export default function UserDashboard() {
     >
       <motion.div variants={itemVariants} className="mb-12">
         <h2 className="text-3xl font-bold tracking-tight">
-          Welcome back, John!
+          Welcome back, {getFirstName(user.name!)}!
         </h2>
         <p className="mt-2 text-lg text-muted-foreground">
           Here&apos;s an overview of your travel plans and activities.
