@@ -1,16 +1,8 @@
-import {
-  Calendar,
-  CreditCard,
-  Globe,
-  Home,
-  PenTool,
-  Settings,
-} from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
-import {
-  type SidebarItem,
-  SidebarItems,
-} from "@/components/sidebar/sidebar-items";
+import SidebarMain from "@/components/sidebar/sidebar-main";
+import SidebarSecondary from "@/components/sidebar/sidebar-secondary";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
 import Logo from "@/components/ui/logo";
 import {
@@ -22,18 +14,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import sidebarData from "@/data/sidebar-data";
 import { auth } from "@/server/auth";
 
-const sidebarItems: SidebarItem[] = [
-  { name: "Dashboard", url: "/dashboard", icon: Home },
-  { name: "Explore", url: "/explore", icon: Globe },
-  { name: "Itineraries", url: "/itineraries", icon: Calendar },
-  { name: "Blog", url: "/blog", icon: PenTool },
-  { name: "Credits", url: "/credits", icon: CreditCard },
-  { name: "Settings", url: "/settings", icon: Settings },
-];
-
-export default async function AppSidebar() {
+export default async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const session = await auth();
   const user = {
     name: session?.user?.name ?? "",
@@ -41,20 +27,24 @@ export default async function AppSidebar() {
     avatar: session?.user?.image ?? "",
   };
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Logo className="h-auto w-full" />
-            </SidebarMenuButton>
+            <Link href="/dashboard">
+              <SidebarMenuButton size="lg" asChild>
+                <Logo className="h-12 w-auto" />
+              </SidebarMenuButton>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          <SidebarItems items={sidebarItems} />
-        </SidebarMenu>
+        <SidebarMain items={sidebarData.sidebarMain} />
+        <SidebarSecondary
+          items={sidebarData.sidebarSecondary}
+          className="mt-auto"
+        />
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser user={user} />

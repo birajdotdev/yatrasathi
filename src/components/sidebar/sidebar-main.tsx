@@ -10,23 +10,25 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export interface SidebarItem {
-  name: string;
-  url: string;
-  icon: LucideIcon;
-}
+type SidebarMainProps = {
+  items: {
+    title: string;
+    url: string;
+    icon: LucideIcon;
+  }[];
+} & React.ComponentPropsWithoutRef<typeof SidebarGroup>;
 
-export function SidebarItems({ items }: { items: SidebarItem[] }) {
+export default function SidebarMain({ items, ...props }: SidebarMainProps) {
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Items</SidebarGroupLabel>
+    <SidebarGroup {...props}>
+      <SidebarGroupLabel>Main</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild>
               <Link href={item.url}>
                 <item.icon />
-                <span>{item.name}</span>
+                <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

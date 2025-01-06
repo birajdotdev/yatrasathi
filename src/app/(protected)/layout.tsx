@@ -16,7 +16,7 @@ export default function ProtectedLayout({
       <SidebarInset>
         <SidebarHeader />
         <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-[calc(100vh-4rem)]">{children}</ScrollArea>
+          <ScrollArea className="h-[calc(100vh-5rem)]">{children}</ScrollArea>
         </main>
       </SidebarInset>
     </SidebarProvider>
