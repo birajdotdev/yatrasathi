@@ -33,7 +33,7 @@ export default function SidebarHeader() {
     }));
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 justify-between px-6">
+    <header className="flex h-16 shrink-0 items-center gap-2 justify-between px-6 border-b">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mr-2 h-4" />
@@ -58,7 +58,7 @@ export default function SidebarHeader() {
       </div>
       <div className="flex items-center gap-2">
         <SearchForm />
-        <ThemeToggle />
+        <ThemeToggle className="size-9" />
       </div>
     </header>
   );
