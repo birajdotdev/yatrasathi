@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 
-import { Globe, MapPin, Search } from "lucide-react";
+import { Globe, MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,45 +12,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const destinations = [
   {
     name: "Bali, Indonesia",
     description: "Tropical paradise with rich culture",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/1020016/pexels-photo-1020016.jpeg",
   },
   {
     name: "Santorini, Greece",
     description: "Picturesque islands and sunsets",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/1010657/pexels-photo-1010657.jpeg",
   },
   {
     name: "Kyoto, Japan",
     description: "Ancient temples and traditional gardens",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/402028/pexels-photo-402028.jpeg",
   },
   {
     name: "Machu Picchu, Peru",
     description: "Incan citadel set high in the Andes Mountains",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg",
   },
   {
     name: "Banff, Canada",
     description: "Turquoise lakes and snow-capped peaks",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg",
   },
   {
     name: "Marrakech, Morocco",
     description: "Vibrant markets and stunning architecture",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg",
   },
 ];
 
 export default function ExplorePage() {
-  const [searchQuery, setSearchQuery] = useState("");
-
   return (
     <main className="h-[calc(100vh-4rem)]">
       <div className="p-6 lg:p-8">
@@ -62,19 +58,6 @@ export default function ExplorePage() {
           <p className="mt-2 text-lg text-muted-foreground">
             Discover new places and plan your next adventure.
           </p>
-        </div>
-
-        <div className="mb-8">
-          <div className="flex items-center space-x-2">
-            <Search className="h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search destinations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
         </div>
 
         <Tabs defaultValue="all" className="mb-8">

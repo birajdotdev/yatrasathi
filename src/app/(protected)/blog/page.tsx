@@ -21,7 +21,7 @@ const blogPosts = [
     date: "May 15, 2023",
     likes: 245,
     comments: 37,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2014872/pexels-photo-2014872.jpeg",
   },
   {
     title: "A Foodie's Guide to Tokyo",
@@ -29,7 +29,7 @@ const blogPosts = [
     date: "April 28, 2023",
     likes: 189,
     comments: 42,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg",
   },
   {
     title: "Backpacking Through Europe: Tips and Tricks",
@@ -37,7 +37,7 @@ const blogPosts = [
     date: "June 2, 2023",
     likes: 312,
     comments: 56,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/258196/pexels-photo-258196.jpeg",
   },
 ];
 
