@@ -14,7 +14,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import sidebarData from "@/data/sidebar-data";
 import { auth } from "@/server/auth";
 
 export default async function AppSidebar({
@@ -40,11 +39,8 @@ export default async function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMain items={sidebarData.sidebarMain} />
-        <SidebarSecondary
-          items={sidebarData.sidebarSecondary}
-          className="mt-auto"
-        />
+        <SidebarMain />
+        <SidebarSecondary className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser user={user} />

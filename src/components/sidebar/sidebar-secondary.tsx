@@ -1,7 +1,8 @@
-import Link from "next/link";
-import * as React from "react";
+"use client";
 
-import { type LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
 
 import {
   SidebarGroup,
@@ -10,26 +11,27 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import sidebarData from "@/data/sidebar-data";
 
-type SidebarSecondaryProps = {
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>;
+type SidebarSecondaryProps = React.ComponentPropsWithoutRef<
+  typeof SidebarGroup
+>;
 
-export default function SidebarSecondary({
-  items,
-  ...props
-}: SidebarSecondaryProps) {
+export default function SidebarSecondary({ ...props }: SidebarSecondaryProps) {
+  const pathname = usePathname();
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
+          {sidebarData.sidebarSecondary.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
+              <SidebarMenuButton
+                isActive={
+                  pathname === item.url || pathname.startsWith(item.url)
+                }
+                asChild
+                size="sm"
+              >
                 <Link href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
