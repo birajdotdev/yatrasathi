@@ -1,3 +1,4 @@
+import { type Metadata } from "next";
 import Image from "next/image";
 
 import { Calendar, MessageCircle, Plus, ThumbsUp, User } from "lucide-react";
@@ -13,6 +14,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Share your adventures and read about others' experiences",
+};
 
 const blogPosts = [
   {

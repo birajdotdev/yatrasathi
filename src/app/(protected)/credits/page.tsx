@@ -1,3 +1,5 @@
+import { type Metadata } from "next";
+
 import { Gift, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+export const metadata: Metadata = {
+  title: "Credits",
+  description: "Manage your AI-powered travel planning credits",
+};
 
 const creditHistory = [
   { date: "2023-06-01", description: "Monthly subscription", amount: 100 },

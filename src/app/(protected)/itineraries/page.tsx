@@ -1,3 +1,5 @@
+import { type Metadata } from "next";
+
 import { Calendar, Edit, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +12,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export const metadata: Metadata = {
+  title: "Itineraries",
+  description: "Manage and view your travel plans",
+};
 
 const itineraries = [
   {

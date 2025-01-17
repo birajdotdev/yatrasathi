@@ -1,5 +1,4 @@
-"use client";
-
+import { type Metadata } from "next";
 import Image from "next/image";
 
 import { Globe, MapPin } from "lucide-react";
@@ -13,6 +12,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export const metadata: Metadata = {
+  title: "Explore",
+  description: "Discover new places and plan your next adventure",
+};
 
 const destinations = [
   {
