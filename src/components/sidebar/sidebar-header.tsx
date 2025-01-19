@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
-import { ThemeToggle } from "@/components/theme-toggle";
+import ThemeToggle from "@/components/theme-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,6 +14,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+
+import NotificationButton from "../notification-button";
+import SearchDialog from "../search-dialog";
 
 export default function SidebarHeader() {
   const pathname = usePathname();
@@ -32,7 +35,7 @@ export default function SidebarHeader() {
     }));
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 justify-between border-b px-3">
+    <header className="flex h-16 shrink-0 items-center gap-2 justify-between px-6 border-b">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mr-2 h-4" />
@@ -55,7 +58,11 @@ export default function SidebarHeader() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <ThemeToggle />
+      <div className="flex items-center gap-3">
+        <SearchDialog />
+        <NotificationButton />
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
