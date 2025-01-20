@@ -1,12 +1,19 @@
+import * as dotenv from "dotenv";
 import { type Config } from "drizzle-kit";
 
-import { env } from "@/env";
+// Load the appropriate .env file
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
+
+dotenv.config({ path: envFile });
 
 export default {
   schema: "./src/server/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: process.env.DATABASE_URL!,
   },
   tablesFilter: ["yatrasathi_*"],
 } satisfies Config;

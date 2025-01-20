@@ -21,13 +21,13 @@ cd yatrasathi
 3. Copy the example environment file and update it:
 
 ```sh
-cp .env.example .env
+cp .env.example .env.development
 ```
 
 4. Start the database:
 
 ```sh
-docker compose up
+docker compose up -d
 ```
 
 5. Install dependencies:
@@ -39,7 +39,7 @@ pnpm install
 6. Push the database schema:
 
 ```sh
-pnpm run db:push
+pnpm run db:push:dev
 ```
 
 7. Start the development server:
@@ -52,7 +52,6 @@ pnpm run dev
 
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
 - [Drizzle](https://orm.drizzle.team)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
