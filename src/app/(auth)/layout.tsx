@@ -1,5 +1,5 @@
 import BackButton from "@/components/auth/back-button";
-import { ThemeToggle } from "@/components/theme-toggle";
+import ThemeToggle from "@/components/theme-toggle";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       <BackButton />
 
       <div className="absolute right-4 top-4 z-50">
-        <ThemeToggle />
+        <ThemeToggle variant="ghost" />
       </div>
 
       <div className="relative z-10 m-4 w-full max-w-[420px]">{children}</div>

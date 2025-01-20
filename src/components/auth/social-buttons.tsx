@@ -33,7 +33,7 @@ export default function SocialButtons() {
           action={async () => {
             "use server";
             await signIn(button.provider, {
-              callbackUrl: "/home",
+              redirectTo: "/dashboard",
             });
           }}
         >

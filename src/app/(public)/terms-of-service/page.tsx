@@ -1,5 +1,13 @@
+import { type Metadata } from "next";
+
 import TermsCard from "@/components/terms/terms-card";
 import TermsHeader from "@/components/terms/terms-header";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "Read our Terms of Service to understand the rules, guidelines, and agreements for using our services.",
+};
 
 export default function TermsOfService() {
   return (
