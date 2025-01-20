@@ -18,7 +18,7 @@ export default function NotificationButton() {
     <Button
       variant="outline"
       size="icon"
-      className="relative"
+      className="relative rounded-lg"
       onClick={handleClick}
       aria-label="Notifications"
     >

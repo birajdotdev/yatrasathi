@@ -1,5 +1,5 @@
 import BackButton from "@/components/auth/back-button";
-import ThemeToggle from "@/components/theme-toggle";
+import ThemeToggle from "@/components/nav/theme-toggle";
 
 interface AuthLayoutProps {
   children: React.ReactNode;

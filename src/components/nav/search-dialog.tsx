@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { MapPinned, Search } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -12,8 +13,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-
-import { Button } from "./ui/button";
 
 const destinations: string[] = ["Kathmandu", "Pokhara", "Swoyambhunath"];
 
