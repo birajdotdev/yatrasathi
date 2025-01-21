@@ -55,7 +55,7 @@ export default function SearchDialog() {
       <Button
         variant="outline"
         size="icon"
-        className="sm:hidden"
+        className="sm:hidden rounded-lg"
         onClick={() => setOpen(true)}
         aria-label="Notifications"
       >
