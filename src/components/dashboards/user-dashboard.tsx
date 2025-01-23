@@ -5,14 +5,7 @@ import { useState } from "react";
 
 import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
-import {
-  Calendar,
-  Globe,
-  MapPin,
-  PenTool,
-  Plus,
-  TrendingUp,
-} from "lucide-react";
+import { Calendar, MapPin, PenTool, Plus, TrendingUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +44,27 @@ const itemVariants = {
   },
 };
 
+const destinations = [
+  {
+    name: "Bali, Indonesia",
+    description: "Tropical paradise with rich culture",
+    image:
+      "https://images.pexels.com/photos/2166608/pexels-photo-2166608.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "Santorini, Greece",
+    description: "Picturesque islands and sunsets",
+    image:
+      "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "Kyoto, Japan",
+    description: "Ancient temples and traditional gardens",
+    image:
+      "https://images.pexels.com/photos/1822605/pexels-photo-1822605.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+];
+
 export default function UserDashboard({ user }: { user: User }) {
   const [progress, setProgress] = useState(66);
 
@@ -63,7 +77,8 @@ export default function UserDashboard({ user }: { user: User }) {
     >
       <motion.div variants={itemVariants} className="mb-12">
         <h2 className="text-3xl font-bold tracking-tight">
-          Welcome back, {getFirstName(user.name!)}!
+          Welcome back,{" "}
+          <span className="text-primary">{getFirstName(user.name!)}!</span>
         </h2>
         <p className="mt-2 text-lg text-muted-foreground">
           Here&apos;s an overview of your travel plans and activities.
@@ -156,31 +171,12 @@ export default function UserDashboard({ user }: { user: User }) {
       <Separator className="my-8" />
 
       {/* Recommendations */}
-      <motion.div variants={itemVariants} className="mb-12">
+      <motion.div variants={itemVariants}>
         <h2 className="mb-6 text-2xl font-semibold tracking-tight">
           Personalized Recommendations
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              name: "Bali, Indonesia",
-              description: "Tropical paradise with rich culture",
-              image:
-                "https://images.pexels.com/photos/2166608/pexels-photo-2166608.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            },
-            {
-              name: "Santorini, Greece",
-              description: "Picturesque islands and sunsets",
-              image:
-                "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            },
-            {
-              name: "Kyoto, Japan",
-              description: "Ancient temples and traditional gardens",
-              image:
-                "https://images.pexels.com/photos/1822605/pexels-photo-1822605.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            },
-          ].map((destination, index) => (
+          {destinations.map((destination, index) => (
             <Card key={index} className="overflow-hidden">
               <Image
                 src={destination.image}
@@ -205,26 +201,6 @@ export default function UserDashboard({ user }: { user: User }) {
               </CardContent>
             </Card>
           ))}
-        </div>
-      </motion.div>
-
-      <Separator className="my-8" />
-
-      {/* Quick Actions */}
-      <motion.div variants={itemVariants} className="mb-12">
-        <h2 className="mb-6 text-2xl font-semibold tracking-tight">
-          Quick Actions
-        </h2>
-        <div className="flex flex-wrap gap-4">
-          <Button variant="outline">
-            <Calendar className="mr-2 h-4 w-4" /> Plan New Trip
-          </Button>
-          <Button variant="outline">
-            <PenTool className="mr-2 h-4 w-4" /> Write Blog Post
-          </Button>
-          <Button variant="outline">
-            <Globe className="mr-2 h-4 w-4" /> Explore Destinations
-          </Button>
         </div>
       </motion.div>
     </motion.div>
