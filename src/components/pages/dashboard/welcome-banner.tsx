@@ -3,7 +3,7 @@
 import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
 
-import { type ItemVariants } from "@/components/dashboards/user-dashboard";
+import { type ItemVariants } from "@/components/pages/dashboard";
 import { getFirstName } from "@/lib/utils";
 
 interface WelcomeBannerProps {

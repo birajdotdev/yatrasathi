@@ -3,9 +3,9 @@
 import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
 
-import { BlogSection } from "@/components/dashboards/user-dashboard/blog-section";
-import { ItinerariesSection } from "@/components/dashboards/user-dashboard/itineraries-section";
-import { WelcomeBanner } from "@/components/dashboards/user-dashboard/welcome-banner";
+import { BlogSection } from "@/components/pages/dashboard/blog-section";
+import { ItinerariesSection } from "@/components/pages/dashboard/itineraries-section";
+import { WelcomeBanner } from "@/components/pages/dashboard/welcome-banner";
 
 const containerVariants = {
   hidden: { opacity: 0 },

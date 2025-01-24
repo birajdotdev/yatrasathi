@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
 
-import { type ItemVariants } from "@/components/dashboards/user-dashboard";
+import { type ItemVariants } from "@/components/pages/dashboard";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -54,7 +54,7 @@ export function ItinerariesSection({ variants }: ItinerariesSectionProps) {
   );
 }
 
-function ItineraryCard({
+export function ItineraryCard({
   itinerary,
   variants,
 }: {

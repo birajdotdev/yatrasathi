@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronRight, Heart, MessageSquare } from "lucide-react";
 
-import { type ItemVariants } from "@/components/dashboards/user-dashboard";
+import { type ItemVariants } from "@/components/pages/dashboard";
 import { Button } from "@/components/ui/button";
 
 interface BlogSectionProps {
