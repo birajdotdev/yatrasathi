@@ -17,7 +17,7 @@ export default function ThemeToggle({
       variant="outline"
       size="icon"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="size-9"
+      className="size-9 rounded-lg"
       {...props}
     >
       <Sun size={16} strokeWidth={2} className="dark:hidden" />

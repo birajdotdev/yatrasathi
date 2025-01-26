@@ -3,7 +3,9 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
-import ThemeToggle from "@/components/theme-toggle";
+import NotificationButton from "@/components/nav/notification-button";
+import SearchDialog from "@/components/nav/search-dialog";
+import ThemeToggle from "@/components/nav/theme-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,10 +17,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-import NotificationButton from "../notification-button";
-import SearchDialog from "../search-dialog";
+import QuickActionButton from "./quick-action-button";
 
-export default function SidebarHeader() {
+export default function DashboardNav() {
   const pathname = usePathname();
 
   // Create breadcrumb items from the full path
@@ -60,6 +61,7 @@ export default function SidebarHeader() {
       </div>
       <div className="flex items-center gap-3">
         <SearchDialog />
+        <QuickActionButton />
         <NotificationButton />
         <ThemeToggle />
       </div>
