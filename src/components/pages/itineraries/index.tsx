@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
@@ -71,11 +73,14 @@ export default function ItinerariesClient() {
               variant="outline"
               size="lg"
               className="group relative overflow-hidden rounded-full border-primary/50 px-8 transition-all hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10"
+              asChild
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <Plus className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
-                <span>Create New Itinerary</span>
-              </span>
+              <Link href="/itineraries/create">
+                <span className="relative z-10 flex items-center gap-2">
+                  <Plus className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+                  <span>Create New Itinerary</span>
+                </span>
+              </Link>
             </Button>
           </div>
         </motion.div>
