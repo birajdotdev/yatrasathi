@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Calendar, PenTool, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,13 +32,23 @@ export default function QuickActionButton() {
         <DropdownMenuLabel className="text-sm font-semibold">
           Quick actions
         </DropdownMenuLabel>
-        <DropdownMenuItem className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors">
-          <Calendar size={18} className="text-muted-foreground" />
-          <span>Plan new trip</span>
+        <DropdownMenuItem
+          className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
+          asChild
+        >
+          <Link href="/itineraries/create">
+            <Calendar size={18} className="text-muted-foreground" />
+            <span>Plan new trip</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors">
-          <PenTool size={18} className="text-muted-foreground" />
-          <span>Write blog post</span>
+        <DropdownMenuItem
+          className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
+          asChild
+        >
+          <Link href="/blog/create">
+            <PenTool size={18} className="text-muted-foreground" />
+            <span>Write blog post</span>
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

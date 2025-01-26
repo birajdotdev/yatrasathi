@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { motion } from "framer-motion";
 import { ChevronRight, Heart, MessageSquare } from "lucide-react";
@@ -28,11 +29,14 @@ export function BlogSection({ variants }: BlogSectionProps) {
           variant="outline"
           size="sm"
           className="group relative overflow-hidden rounded-full border-primary/50 px-6 transition-all hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10"
+          asChild
         >
-          <span className="relative z-10 flex items-center gap-2">
-            <span>View More</span>
-            <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-          </span>
+          <Link href="/explore">
+            <span className="relative z-10 flex items-center gap-2">
+              <span>View More</span>
+              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </span>
+          </Link>
         </Button>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
