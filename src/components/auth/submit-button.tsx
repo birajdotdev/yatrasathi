@@ -6,16 +6,15 @@ import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 
-type SocialButtonProps = ComponentProps<typeof Button>;
+type SubmitButtonProps = ComponentProps<typeof Button>;
 
-export default function SocialButton({
+export default function SubmitButton({
   children,
   ...props
-}: SocialButtonProps) {
+}: SubmitButtonProps) {
   const { pending } = useFormStatus();
   return (
     <Button
-      variant="outline"
       className="w-full text-sm sm:text-base font-semibold"
       size="lg"
       {...props}

@@ -4,11 +4,11 @@ import Form from "next/form";
 import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
 
-import { Mail } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
 
 import { signinWithResend } from "@/actions/auth-action";
 import AuthMessage from "@/components/auth/auth-message";
-import { Button } from "@/components/ui/button";
+import SubmitButton from "@/components/auth/submit-button";
 import { Input } from "@/components/ui/input";
 
 const getOAuthErrorMessage = (error: string | null) => {
@@ -34,10 +34,11 @@ export function SigninForm() {
 
   return (
     <Form action={action} className="flex flex-col gap-4">
-      {state?.message && (
+      {state?.message ? (
         <AuthMessage success={state.success} message={state.message} />
-      )}
-      {errorMessage && <AuthMessage success={false} message={errorMessage} />}
+      ) : errorMessage ? (
+        <AuthMessage success={false} message={errorMessage} />
+      ) : null}
       <div className="relative">
         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
@@ -47,13 +48,10 @@ export function SigninForm() {
           className="w-full pl-10 h-10"
         />
       </div>
-      <Button
-        className="w-full text-sm sm:text-base font-semibold"
-        size="lg"
-        isLoading={isLoading}
-      >
+      <SubmitButton>
+        {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
         Continue with Email
-      </Button>
+      </SubmitButton>
     </Form>
   );
 }

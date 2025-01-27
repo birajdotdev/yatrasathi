@@ -1,6 +1,6 @@
 import Form from "next/form";
 
-import SubmitButton from "@/components/auth/social-button";
+import SubmitButton from "@/components/auth/submit-button";
 import { FacebookIcon, GoogleIcon } from "@/components/icons";
 import { signIn } from "@/server/auth";
 
@@ -30,7 +30,7 @@ export default function SocialButtons() {
             });
           }}
         >
-          <SubmitButton>
+          <SubmitButton variant="outline">
             <button.icon className="mr-2 h-5 w-5" />
             Continue with {button.name}
           </SubmitButton>
