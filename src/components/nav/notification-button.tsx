@@ -115,7 +115,7 @@ export default function NotificationButton() {
         <Button
           size="icon"
           variant="outline"
-          className="relative"
+          className="relative data-[state=open]:bg-accent"
           aria-label="Open notifications"
         >
           <Bell size={16} strokeWidth={2} aria-hidden="true" />
@@ -126,7 +126,7 @@ export default function NotificationButton() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-1" align="end">
+      <PopoverContent className="w-80 p-1 rounded-lg" align="end">
         <div className="flex items-baseline justify-between gap-4 px-3 py-2">
           <div className="text-sm font-semibold">Notifications</div>
           {unreadCount > 0 && (
