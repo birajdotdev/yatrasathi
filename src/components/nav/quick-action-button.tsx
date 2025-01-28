@@ -34,7 +34,7 @@ export default function QuickActionButton() {
           variant="outline"
           size="icon"
           aria-label="Quick actions"
-          className="rounded-lg data-[state=open]:bg-muted hover:bg-muted/50 transition-colors"
+          className="rounded-lg data-[state=open]:bg-muted transition-colors"
         >
           <Plus size={16} strokeWidth={2} aria-hidden="true" />
         </Button>
