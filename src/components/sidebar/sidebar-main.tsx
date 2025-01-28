@@ -17,6 +17,10 @@ type SidebarMainProps = React.ComponentPropsWithoutRef<typeof SidebarGroup>;
 export default function SidebarMain({ ...props }: SidebarMainProps) {
   const pathname = usePathname();
 
+  const isActive = (url: string) => {
+    return pathname === url || pathname.startsWith(url);
+  };
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupLabel>Main</SidebarGroupLabel>
@@ -24,7 +28,9 @@ export default function SidebarMain({ ...props }: SidebarMainProps) {
         {sidebarData.sidebarMain.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
-              isActive={pathname === item.url || pathname.startsWith(item.url)}
+              isActive={isActive(item.url)}
+              data-active={isActive(item.url)}
+              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-medium transition-all duration-300"
               asChild
             >
               <Link href={item.url}>
