@@ -42,8 +42,12 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    GoogleProvider,
-    FacebookProvider,
+    GoogleProvider({
+      allowDangerousEmailAccountLinking: true,
+    }),
+    FacebookProvider({
+      allowDangerousEmailAccountLinking: true,
+    }),
     ResendProvider({
       apiKey: env.RESEND_KEY,
       from: env.MAIL_FROM_ADDRESS,
@@ -64,6 +68,22 @@ export const authConfig = {
         id: user.id,
       },
     }),
+    signIn: async ({ user, account }) => {
+      if (!user.email) return false;
+
+      switch (account?.provider) {
+        case "google":
+          return true;
+        case "facebook":
+          return true;
+        default:
+          if (user.name) return true;
+          const name = user.email?.split("@")[0] ?? "user";
+          user.name = name;
+          user.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+          return true;
+      }
+    },
   },
   pages: {
     signIn: "/signin",

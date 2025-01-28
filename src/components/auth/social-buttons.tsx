@@ -1,17 +1,10 @@
 import Form from "next/form";
-import { type ComponentType } from "react";
 
+import SubmitButton from "@/components/auth/submit-button";
 import { FacebookIcon, GoogleIcon } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { signIn } from "@/server/auth";
 
-interface SocialButton {
-  icon: ComponentType<{ className?: string }>;
-  name: string;
-  provider: "google" | "facebook";
-}
-
-const socialButtons: SocialButton[] = [
+const socialButtons = [
   {
     icon: GoogleIcon,
     name: "Google",
@@ -37,14 +30,10 @@ export default function SocialButtons() {
             });
           }}
         >
-          <Button
-            variant="outline"
-            className="w-full text-sm sm:text-base font-semibold"
-            size="lg"
-          >
+          <SubmitButton variant="outline">
             <button.icon className="mr-2 h-5 w-5" />
             Continue with {button.name}
-          </Button>
+          </SubmitButton>
         </Form>
       ))}
     </div>

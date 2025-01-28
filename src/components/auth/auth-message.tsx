@@ -14,7 +14,7 @@ export default function AuthMessage({ success, message }: AuthMessageProps) {
         "flex items-center gap-2 text-sm px-3 h-10 py-2 rounded-md border",
         success
           ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400"
-          : "bg-destructive/10 border-destructive/30 text-destructive dark:bg-destructive/20 dark:border-destructive/30 dark:text-destructive-foreground"
+          : "bg-destructive/10 border-destructive/30 text-destructive dark:bg-destructive/20 dark:border-destructive/30 dark:text-red-500"
       )}
     >
       {success ? (
