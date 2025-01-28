@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { Menu } from "lucide-react";
 
-import ModeToggle from "@/components/nav/mode-toggle";
 import NavItems from "@/components/nav/nav-items";
+import ThemeToggle from "@/components/nav/theme-toggle";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 import {
@@ -29,7 +29,7 @@ export default async function NavBar() {
             <NavItems items={navItems} />
           </div>
           <div className="flex items-center space-x-4">
-            <ModeToggle />
+            <ThemeToggle variant="ghost" />
             <Button
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
               asChild
@@ -64,7 +64,7 @@ export default async function NavBar() {
                 <span className="font-medium text-muted-foreground">
                   Toggle Mode
                 </span>
-                <ModeToggle />
+                <ThemeToggle />
               </div>
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
