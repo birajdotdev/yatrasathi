@@ -11,6 +11,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const quickActions = [
+  {
+    icon: Calendar,
+    title: "Itinerary",
+    description: "Plan new trip",
+    href: "/itineraries/create",
+  },
+  {
+    icon: PenTool,
+    title: "Blog",
+    description: "Write blog post",
+    href: "/blog/create",
+  },
+];
+
 export default function QuickActionButton() {
   return (
     <DropdownMenu>
@@ -19,37 +34,37 @@ export default function QuickActionButton() {
           variant="outline"
           size="icon"
           aria-label="Quick actions"
-          className="rounded-lg data-[state=open]:bg-muted hover:bg-muted/50 transition-colors"
+          className="rounded-lg data-[state=open]:bg-muted transition-colors"
         >
           <Plus size={16} strokeWidth={2} aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-[--radix-dropdown-menu-trigger-width] rounded-lg min-w-56"
-        align="end"
-        sideOffset={4}
-      >
-        <DropdownMenuLabel className="text-sm font-semibold">
-          Quick actions
+      <DropdownMenuContent className="min-w-56 rounded-lg" align="end">
+        <DropdownMenuLabel className="text-xs text-muted-foreground font-medium">
+          Quick Actions
         </DropdownMenuLabel>
-        <DropdownMenuItem
-          className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
-          asChild
-        >
-          <Link href="/itineraries/create">
-            <Calendar size={18} className="text-muted-foreground" />
-            <span>Plan new trip</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
-          asChild
-        >
-          <Link href="/blog/create">
-            <PenTool size={18} className="text-muted-foreground" />
-            <span>Write blog post</span>
-          </Link>
-        </DropdownMenuItem>
+        {quickActions.map((action) => (
+          <DropdownMenuItem
+            className="rounded-md cursor-pointer group"
+            key={action.title}
+            asChild
+          >
+            <Link href={action.href}>
+              <div
+                className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
+                aria-hidden="true"
+              >
+                <action.icon size={16} strokeWidth={2} />
+              </div>
+              <div>
+                <div className="text-sm font-medium">{action.title}</div>
+                <div className="text-xs text-muted-foreground">
+                  {action.description}
+                </div>
+              </div>
+            </Link>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
