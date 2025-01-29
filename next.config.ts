@@ -18,6 +18,9 @@ const config: NextConfig = {
       },
     ],
   },
+  experimental: {
+    reactCompiler: true,
+  },
 };
 
 export default config;
