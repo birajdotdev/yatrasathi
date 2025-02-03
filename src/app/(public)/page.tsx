@@ -1,18 +1,15 @@
-import { redirect } from "next/navigation";
-
 import {
   Benefits,
   Features,
   Hero,
   Testimonials,
 } from "@/components/landing-page";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { auth } from "@/server/auth";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function LandingPage() {
-  const session = await auth();
-
-  if (session) return redirect(DEFAULT_LOGIN_REDIRECT);
+  const { userId } = await auth();
+  if (userId) redirect("/dashboard");
 
   return (
     <>

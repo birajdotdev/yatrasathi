@@ -1,6 +1,5 @@
 "use client";
 
-import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
 
 import { BlogSection } from "@/components/pages/dashboard/blog-section";
@@ -34,7 +33,7 @@ const itemVariants = {
 
 export type ItemVariants = typeof itemVariants;
 
-export default function UserDashboard({ user }: { user: User }) {
+export default function UserDashboard() {
   return (
     <motion.div
       className="p-6 lg:p-8"
@@ -42,7 +41,7 @@ export default function UserDashboard({ user }: { user: User }) {
       initial="hidden"
       animate="visible"
     >
-      <WelcomeBanner user={user} variants={itemVariants} />
+      <WelcomeBanner variants={itemVariants} />
       <ItinerariesSection variants={itemVariants} />
       <BlogSection variants={itemVariants} />
     </motion.div>

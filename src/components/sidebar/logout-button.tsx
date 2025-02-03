@@ -1,7 +1,6 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
 
 import {
   AlertDialog,
@@ -15,12 +14,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useClerk } from "@clerk/nextjs";
 
 export default function LogoutButton({
   setIsOpen,
 }: {
   setIsOpen: (isOpen: boolean) => void;
 }) {
+  const { signOut } = useClerk();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -45,7 +46,7 @@ export default function LogoutButton({
           <AlertDialogAction
             onClick={async () => {
               setIsOpen(false);
-              await signOut({ redirectTo: "/" });
+              await signOut({ redirectUrl: "/" });
             }}
           >
             Log out

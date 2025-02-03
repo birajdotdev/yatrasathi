@@ -2,11 +2,9 @@
 
 import Form from "next/form";
 import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
 
 import { Loader2, Mail } from "lucide-react";
 
-import { signinWithResend } from "@/actions/auth-action";
 import AuthMessage from "@/components/auth/auth-message";
 import SubmitButton from "@/components/auth/submit-button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +25,6 @@ const getOAuthErrorMessage = (error: string | null) => {
 };
 
 export function SigninForm() {
-  const [state, action, isLoading] = useActionState(signinWithResend, null);
   const searchParams = useSearchParams();
   const oauthError = searchParams.get("error");
   const errorMessage = getOAuthErrorMessage(oauthError);

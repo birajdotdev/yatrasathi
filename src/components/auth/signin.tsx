@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { SigninForm } from "@/components/auth/signin-form";
-import SocialButtons from "@/components/auth/social-buttons";
 import {
   Card,
   CardContent,
@@ -28,15 +26,13 @@ export default function Signin() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Suspense>
-          <SigninForm />
-        </Suspense>
+        <Suspense>{/* <SigninForm /> */}</Suspense>
         <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
           <Separator className="flex-1" />
           <span>OR</span>
           <Separator className="flex-1" />
         </div>
-        <SocialButtons />
+        {/* <SocialButtons /> */}
         <div className="text-center text-xs sm:text-sm text-muted-foreground">
           By continuing, you agree to our{" "}
           <Link

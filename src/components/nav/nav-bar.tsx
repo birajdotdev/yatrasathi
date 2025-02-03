@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { navItems } from "@/data/nav-items";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default async function NavBar() {
   return (
@@ -30,11 +31,11 @@ export default async function NavBar() {
           </div>
           <div className="flex items-center space-x-4">
             <ThemeToggle variant="ghost" />
-            <Button
-              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              asChild
-            >
-              <Link href="/signin">Sign in</Link>
+            <Button variant="ghost" asChild>
+              <SignInButton />
+            </Button>
+            <Button asChild>
+              <SignUpButton />
             </Button>
           </div>
         </div>

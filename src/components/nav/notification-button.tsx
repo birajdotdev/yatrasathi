@@ -115,7 +115,7 @@ export default function NotificationButton() {
         <Button
           size="icon"
           variant="outline"
-          className="relative data-[state=open]:bg-accent"
+          className="relative data-[state=open]:bg-accent rounded-lg"
           aria-label="Open notifications"
         >
           <Bell size={16} strokeWidth={2} aria-hidden="true" />

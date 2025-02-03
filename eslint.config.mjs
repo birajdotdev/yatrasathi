@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// @ts-ignore
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+// @ts-ignore
 import checkFile from "eslint-plugin-check-file";
+// @ts-ignore
 import drizzle from "eslint-plugin-drizzle";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
