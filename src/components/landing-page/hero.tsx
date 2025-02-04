@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { useClerk } from "@clerk/nextjs";
 import { motion } from "framer-motion";
@@ -96,13 +97,11 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button
-                size="lg"
-                className="group cursor-pointer"
-                onClick={() => openSignUp()}
-              >
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button size="lg" className="group cursor-pointer" asChild>
+                <Link href="/sign-up">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline">
                 Learn More
