@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
+import { useClerk } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -60,6 +60,7 @@ const itemVariants = {
 };
 
 export default function Hero() {
+  const { openSignUp } = useClerk();
   return (
     <section className="relative overflow-hidden bg-[url(/bg-light.svg)] bg-fixed dark:bg-[url(/bg-dark.svg)]">
       <div className="absolute inset-0 bg-gradient-to-br from-background/10 via-background/50 to-background/80 backdrop-blur-none" />
@@ -95,11 +96,13 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button size="lg" className="group" asChild>
-                <Link href="/signup">
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
+              <Button
+                size="lg"
+                className="group cursor-pointer"
+                onClick={() => openSignUp()}
+              >
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button size="lg" variant="outline">
                 Learn More
