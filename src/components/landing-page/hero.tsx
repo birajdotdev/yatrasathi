@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { useClerk } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -61,7 +60,6 @@ const itemVariants = {
 };
 
 export default function Hero() {
-  const { openSignUp } = useClerk();
   return (
     <section className="relative overflow-hidden bg-[url(/bg-light.svg)] bg-fixed dark:bg-[url(/bg-dark.svg)]">
       <div className="absolute inset-0 bg-gradient-to-br from-background/10 via-background/50 to-background/80 backdrop-blur-none" />
