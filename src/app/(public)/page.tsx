@@ -5,7 +5,7 @@ import {
   Testimonials,
 } from "@/components/landing-page";
 
-export default async function LandingPage() {
+export default function LandingPage() {
   return (
     <>
       <Hero />
