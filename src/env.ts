@@ -9,6 +9,8 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    NGROK_DOMAIN: z.string().optional(),
+    NGROK_AUTHTOKEN: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -30,6 +32,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+    NGROK_DOMAIN: process.env.NGROK_DOMAIN,
+    NGROK_AUTHTOKEN: process.env.NGROK_AUTHTOKEN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

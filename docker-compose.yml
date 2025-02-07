@@ -11,5 +11,18 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=yatrasathi
 
+  ngrok:
+    image: ngrok/ngrok:latest
+    ports:
+      - "4040:4040"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command: "http host.docker.internal:3000 --domain=${NGROK_DOMAIN} --log=stdout"
+    network_mode: "bridge"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - postgres
+
 volumes:
   db_data:
