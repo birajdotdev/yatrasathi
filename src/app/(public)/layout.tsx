@@ -6,10 +6,8 @@ import NavBar from "@/components/nav/nav-bar";
 import { getCurrentUser } from "@/server/auth";
 
 export default async function UserLayout({
-  auth,
   children,
 }: {
-  auth: React.ReactNode;
   children: React.ReactNode;
 }) {
   const { clerkUserId } = await getCurrentUser();
@@ -18,10 +16,7 @@ export default async function UserLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <NavBar />
-      <main className="flex-1">
-        {children}
-        {auth}
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

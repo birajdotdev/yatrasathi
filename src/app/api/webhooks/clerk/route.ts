@@ -7,6 +7,8 @@ import { env } from "@/env";
 import { syncClerkUserMetadata } from "@/server/auth";
 import { api } from "@/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   // Create new Svix instance with secret
   const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
