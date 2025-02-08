@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
 
 import NavItems from "@/components/nav/nav-items";
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { navItems } from "@/data/nav-items";
 
-export default async function NavBar() {
+export default function NavBar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -30,11 +31,11 @@ export default async function NavBar() {
           </div>
           <div className="flex items-center space-x-4">
             <ThemeToggle variant="ghost" />
-            <Button
-              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              asChild
-            >
-              <Link href="/signin">Sign in</Link>
+            <Button variant="ghost" asChild>
+              <SignInButton mode="modal">Sign in</SignInButton>
+            </Button>
+            <Button asChild>
+              <SignUpButton mode="modal">Sign up</SignUpButton>
             </Button>
           </div>
         </div>
@@ -68,8 +69,13 @@ export default async function NavBar() {
               </div>
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
                 <SheetClose asChild>
-                  <Button className="w-full sm:w-auto" asChild>
-                    <Link href="/signin">Sign in</Link>
+                  <Button variant="outline" className="w-full sm:w-auto">
+                    <SignInButton mode="modal">Sign in</SignInButton>
+                  </Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button className="w-full sm:w-auto">
+                    <SignUpButton mode="modal">Sign up</SignUpButton>
                   </Button>
                 </SheetClose>
               </SheetFooter>

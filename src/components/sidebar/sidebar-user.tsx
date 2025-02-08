@@ -2,14 +2,9 @@
 
 import { useState } from "react";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  Sparkles,
-} from "lucide-react";
+import { Bell, ChevronsUpDown, CreditCard, Sparkles } from "lucide-react";
 
+import AccountButton from "@/components/sidebar/account-button";
 import LogoutButton from "@/components/sidebar/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -92,10 +87,7 @@ export function SidebarUser({ user }: SidebarUserProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
+              <AccountButton />
               <DropdownMenuItem>
                 <CreditCard />
                 Billing

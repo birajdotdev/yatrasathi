@@ -14,17 +14,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { auth } from "@/server/auth";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const session = await auth();
+  const userData = await currentUser();
   const user = {
-    name: session?.user?.name ?? "",
-    email: session?.user?.email ?? "",
-    avatar: session?.user?.image ?? "",
+    name: userData?.fullName ?? "",
+    email: userData?.emailAddresses[0].emailAddress ?? "",
+    avatar: userData?.imageUrl ?? "",
   };
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>

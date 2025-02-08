@@ -1,17 +1,16 @@
 "use client";
 
-import { type User } from "@auth/core/types";
 import { motion } from "framer-motion";
 
 import { type ItemVariants } from "@/components/pages/dashboard";
-import { getFirstName } from "@/lib/utils";
+import { useClerk } from "@clerk/nextjs";
 
 interface WelcomeBannerProps {
-  user: User;
   variants: ItemVariants;
 }
 
-export function WelcomeBanner({ user, variants }: WelcomeBannerProps) {
+export function WelcomeBanner({ variants }: WelcomeBannerProps) {
+  const { user } = useClerk();
   return (
     <motion.div
       variants={variants}
@@ -30,7 +29,7 @@ export function WelcomeBanner({ user, variants }: WelcomeBannerProps) {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             Welcome back,{" "}
             <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              {getFirstName(user.name!)}!
+              {user?.firstName}!
             </span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">

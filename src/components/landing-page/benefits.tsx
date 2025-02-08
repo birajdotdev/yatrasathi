@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Clock, Globe, Lightbulb, ThumbsUp } from "lucide-react";
 
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 
 const benefits = [
   {

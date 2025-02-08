@@ -1,14 +1,15 @@
 import Link from "next/link";
 
 import { LatestPost } from "@/components/post";
-import { auth } from "@/server/auth";
 import { HydrateClient, api } from "@/trpc/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function DemoPage() {
   const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
+  const user = await currentUser();
 
-  if (session?.user) {
+  if (session?.userId) {
     void api.post.getLatest.prefetch();
   }
 
@@ -50,7 +51,7 @@ export default async function DemoPage() {
 
             <div className="flex flex-col items-center justify-center gap-4">
               <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
+                {session && <span>Logged in as {user?.fullName}</span>}
               </p>
               <Link
                 href={session ? "/api/auth/signout" : "/api/auth/signin"}
@@ -61,7 +62,7 @@ export default async function DemoPage() {
             </div>
           </div>
 
-          {session?.user && <LatestPost />}
+          {session?.userId && <LatestPost />}
         </div>
       </main>
     </HydrateClient>

@@ -1,7 +1,5 @@
-"use client";
-
+import { SignOutButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
 
 import {
   AlertDialog,
@@ -42,14 +40,15 @@ export default function LogoutButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              setIsOpen(false);
-              await signOut({ redirectTo: "/" });
-            }}
-          >
-            Log out
-          </AlertDialogAction>
+          <SignOutButton>
+            <AlertDialogAction
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Log out
+            </AlertDialogAction>
+          </SignOutButton>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

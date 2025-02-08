@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 
 import { GeistSans } from "geist/font/sans";
 
-import Providers from "@/components/providers/providers";
+import Providers from "@/components/providers";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {

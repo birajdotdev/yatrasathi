@@ -1,11 +1,29 @@
-import { cache } from "react";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
-import NextAuth from "next-auth";
+import { type UserRole } from "@/server/db/schema";
 
-import { authConfig } from "./config";
+const client = await clerkClient();
 
-const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth(authConfig);
+export async function getCurrentUser() {
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
 
-const auth = cache(uncachedAuth);
+  return {
+    clerkUserId: userId,
+    dbId: sessionClaims?.dbId,
+    role: sessionClaims?.role,
+    redirectToSignIn,
+  };
+}
 
-export { auth, handlers, signIn, signOut };
+export function syncClerkUserMetadata(user: {
+  id: string;
+  clerkUserId: string;
+  role: UserRole;
+}) {
+  return client.users.updateUserMetadata(user.clerkUserId, {
+    privateMetadata: {
+      dbId: user.id,
+      role: user.role,
+    },
+  });
+}
