@@ -14,9 +14,9 @@ import {
 const quickActions = [
   {
     icon: Calendar,
-    title: "Itinerary",
+    title: "Trip",
     description: "Plan new trip",
-    href: "/itineraries/create",
+    href: "/trips/plan",
   },
   {
     icon: PenTool,

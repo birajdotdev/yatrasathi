@@ -1,9 +1,9 @@
 import CreateItineraryForm from "@/components/pages/itineraries/itinerary-form";
 import { Banner } from "@/components/ui/banner";
 
-export default function CreateItinerary() {
+export default function PlanTripPage() {
   return (
-    <main className="p-6 lg:p-8">
+    <main>
       <Banner
         badgeText="Plan your trip"
         title={{ text: "Create New", highlight: "Itinerary" }}

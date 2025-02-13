@@ -35,12 +35,7 @@ export type ItemVariants = typeof itemVariants;
 
 export default function UserDashboard() {
   return (
-    <motion.div
-      className="p-6 lg:p-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div variants={containerVariants} initial="hidden" animate="visible">
       <WelcomeBanner variants={itemVariants} />
       <ItinerariesSection variants={itemVariants} />
       <BlogSection variants={itemVariants} />

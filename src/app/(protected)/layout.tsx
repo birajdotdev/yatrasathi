@@ -21,7 +21,9 @@ export default async function ProtectedLayout({
       <SidebarInset>
         <DashboardNav />
         <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-[calc(100vh-5rem)]">{children}</ScrollArea>
+          <ScrollArea className="h-[calc(100vh-5rem)] p-6 lg:p-8">
+            {children}
+          </ScrollArea>
         </main>
       </SidebarInset>
     </SidebarProvider>

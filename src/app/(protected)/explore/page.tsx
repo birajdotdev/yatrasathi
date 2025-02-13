@@ -54,15 +54,7 @@ const destinations = [
 
 export default function ExplorePage() {
   return (
-    <main className="p-6 lg:p-8">
-      {/* <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Explore Destinations
-        </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Discover new places and plan your next adventure.
-        </p>
-      </div> */}
+    <main>
       <Banner
         title={{
           text: "Explore",

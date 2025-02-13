@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserDashboardSkeletonLoading() {
   return (
-    <div className="p-6 lg:p-8">
+    <main>
       {/* Welcome Banner Skeleton */}
       <div className="mb-12 rounded-3xl bg-gradient-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
         <div className="p-6 sm:p-8 lg:p-12">
@@ -74,6 +74,6 @@ export default function UserDashboardSkeletonLoading() {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }
