@@ -1,16 +1,16 @@
 import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
 import { Banner } from "@/components/ui/banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { trips } from "@/data/itineraries";
+import { itineraries } from "@/data/itineraries";
 
-export default function TripsPage() {
+export default function ItinerariesPage() {
   return (
     <main>
       {/* Welcome Banner */}
       <Banner
         title={{
           text: "Your",
-          highlight: "Trips",
+          highlight: "Itineraries",
         }}
         description="Manage and organize all your upcoming adventures in one place."
         badgeText="Travel Plans"
@@ -25,7 +25,7 @@ export default function TripsPage() {
         </TabsList>
         <TabsContent value="upcoming">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {trips
+            {itineraries
               .filter((i) => i.status === "upcoming")
               .map((itinerary) => (
                 <ItineraryCard key={itinerary.title} itinerary={itinerary} />
@@ -34,7 +34,7 @@ export default function TripsPage() {
         </TabsContent>
         <TabsContent value="past">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {trips
+            {itineraries
               .filter((i) => i.status === "past")
               .map((itinerary) => (
                 <ItineraryCard key={itinerary.title} itinerary={itinerary} />

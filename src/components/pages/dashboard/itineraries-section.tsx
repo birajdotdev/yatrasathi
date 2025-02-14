@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { type ItemVariants } from "@/components/pages/dashboard";
 import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
 import { Button } from "@/components/ui/button";
-import { trips } from "@/data/itineraries";
+import { itineraries } from "@/data/itineraries";
 
 interface ItinerariesSectionProps {
   variants: ItemVariants;
@@ -41,7 +41,7 @@ export function ItinerariesSection({ variants }: ItinerariesSectionProps) {
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {trips.slice(0, 3).map((itinerary) => (
+        {itineraries.slice(0, 3).map((itinerary) => (
           <ItineraryCard key={itinerary.title} itinerary={itinerary} />
         ))}
       </div>

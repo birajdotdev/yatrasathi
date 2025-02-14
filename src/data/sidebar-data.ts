@@ -9,11 +9,11 @@ import {
   Settings,
 } from "lucide-react";
 
-const sidebarData = {
+export const sidebarData = {
   sidebarMain: [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "Explore", url: "/explore", icon: Globe },
-    { title: "Trips", url: "/trips", icon: Calendar },
+    { title: "Itineraries", url: "/itineraries", icon: Calendar },
     { title: "Blog", url: "/blog", icon: PenTool },
     { title: "Credits", url: "/credits", icon: CreditCard },
     { title: "Settings", url: "/settings", icon: Settings },
@@ -23,5 +23,3 @@ const sidebarData = {
     { title: "Feedback", url: "/feedback", icon: Send },
   ],
 };
-
-export default sidebarData;

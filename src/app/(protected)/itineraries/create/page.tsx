@@ -1,7 +1,7 @@
 import CreateItineraryForm from "@/components/pages/itineraries/itinerary-form";
 import { Banner } from "@/components/ui/banner";
 
-export default function PlanTripPage() {
+export default function CreateItineraryPage() {
   return (
     <main>
       <Banner

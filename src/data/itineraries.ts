@@ -1,4 +1,4 @@
-export interface Trip {
+export interface Itinerary {
   title: string;
   remainingDays: number;
   date: string;
@@ -6,7 +6,7 @@ export interface Trip {
   image: string;
 }
 
-export const trips: Trip[] = [
+export const itineraries: Itinerary[] = [
   {
     title: "Nepal Adventure",
     remainingDays: 10,
