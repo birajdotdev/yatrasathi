@@ -1,7 +1,8 @@
 import { type Metadata } from "next";
 
-import { Gift, Plus } from "lucide-react";
+import { CreditCard, Gift, Plus } from "lucide-react";
 
+import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,13 +41,13 @@ export default function CreditsPage() {
   const creditPercentage = (usedCredits / totalCredits) * 100;
 
   return (
-    <main>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">AI Credits</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Manage your AI-powered travel planning credits.
-        </p>
-      </div>
+    <main className="space-y-6 lg:space-y-8">
+      <Banner
+        badgeText="AI Credits"
+        title="Your Credits"
+        description="Manage your AI-powered travel planning credits"
+        icon={CreditCard}
+      />
 
       <div className="mb-8">
         <Card>

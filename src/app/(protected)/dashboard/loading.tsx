@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserDashboardSkeletonLoading() {
   return (
-    <main>
+    <main className="space-y-6 lg:space-y-8">
       {/* Welcome Banner Skeleton */}
-      <div className="mb-12 rounded-3xl bg-gradient-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
+      <div className="rounded-3xl bg-gradient-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
         <div className="p-6 sm:p-8 lg:p-12">
           <Skeleton className="mb-4 h-6 w-40" />
           <Skeleton className="mb-4 h-12 w-3/4" />
@@ -21,8 +21,8 @@ export default function UserDashboardSkeletonLoading() {
       </div>
 
       {/* Itineraries Skeleton */}
-      <div className="mb-12">
-        <div className="mb-8 flex items-center justify-between">
+      <div>
+        <div className="mb-4 flex items-center justify-between">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-10 w-32" />
         </div>
@@ -44,7 +44,7 @@ export default function UserDashboardSkeletonLoading() {
 
       {/* Blog Recommendations Skeleton */}
       <div>
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-10 w-32" />
         </div>

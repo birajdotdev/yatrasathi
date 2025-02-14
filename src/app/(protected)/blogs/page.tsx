@@ -1,8 +1,9 @@
 import { type Metadata } from "next";
 import Image from "next/image";
 
-import { Calendar, MessageCircle, Plus, ThumbsUp, User } from "lucide-react";
+import { Calendar, MessageCircle, PenTool, ThumbsUp, User } from "lucide-react";
 
+import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata: Metadata = {
@@ -49,36 +49,21 @@ const blogPosts = [
 
 export default function BlogPage() {
   return (
-    <main>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Travel Blog</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Share your adventures and read about others&apos; experiences.
-        </p>
-      </div>
+    <main className="space-y-6 lg:space-y-8">
+      <Banner
+        badgeText="Travel Blogs"
+        title="Your Blogs"
+        description="Share your adventures and read about others' experiences"
+        icon={PenTool}
+      />
 
-      <div className="mb-8">
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Write New Post
-        </Button>
-      </div>
-
-      <div className="mb-8">
-        <Input
-          type="text"
-          placeholder="Search blog posts..."
-          className="max-w-sm"
-        />
-      </div>
-
-      <Tabs defaultValue="featured" className="mb-8">
+      <Tabs defaultValue="all" className="mb-8">
         <TabsList>
-          <TabsTrigger value="featured">Featured</TabsTrigger>
+          <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="recent">Recent</TabsTrigger>
           <TabsTrigger value="popular">Popular</TabsTrigger>
-          <TabsTrigger value="following">Following</TabsTrigger>
         </TabsList>
-        <TabsContent value="featured">
+        <TabsContent value="all">
           <div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {blogPosts.map((post, index) => (

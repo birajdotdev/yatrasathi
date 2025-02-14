@@ -3,20 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { motion } from "framer-motion";
 import { ChevronRight, Heart, MessageSquare } from "lucide-react";
 
-import { type ItemVariants } from "@/components/pages/dashboard";
 import { Button } from "@/components/ui/button";
 
-interface BlogSectionProps {
-  variants: ItemVariants;
-}
-
-export function BlogSection({ variants }: BlogSectionProps) {
+export function BlogSection() {
   return (
-    <motion.div variants={variants}>
-      <div className="mb-8 flex items-center justify-between">
+    <section>
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">
           <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Popular
@@ -41,25 +35,16 @@ export function BlogSection({ variants }: BlogSectionProps) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {destinations.map((post, index) => (
-          <BlogCard key={index} post={post} variants={variants} />
+          <BlogCard key={index} post={post} />
         ))}
       </div>
-    </motion.div>
+    </section>
   );
 }
 
-function BlogCard({
-  post,
-  variants,
-}: {
-  post: (typeof destinations)[0];
-  variants: ItemVariants;
-}) {
+function BlogCard({ post }: { post: (typeof destinations)[0] }) {
   return (
-    <motion.div
-      variants={variants}
-      className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={post.image}
@@ -120,7 +105,7 @@ function BlogCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

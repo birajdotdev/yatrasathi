@@ -1,10 +1,12 @@
+import { type LucideIcon } from "lucide-react";
+
+import { splitTitle } from "@/lib/utils";
+
 interface BannerProps {
   badgeText: string;
-  title: {
-    text: string;
-    highlight: string;
-  };
+  title: string;
   description: string;
+  icon: LucideIcon;
   quickStats?: boolean;
 }
 
@@ -13,23 +15,25 @@ export function Banner({
   title,
   description,
   quickStats,
+  icon: Icon,
 }: BannerProps) {
+  const [text, highlight] = splitTitle(title);
   return (
-    <div className="relative mb-12 overflow-hidden rounded-3xl bg-gradient-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
       {/* Decorative Elements */}
-      <div className="absolute right-0 top-0 h-[500px] w-[500px] translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl dark:bg-primary/10" />
-      <div className="absolute bottom-0 left-0 h-[300px] w-[300px] -translate-x-1/2 translate-y-1/2 rounded-full bg-primary/5 blur-3xl dark:bg-primary/10" />
+      <div className="absolute right-0 top-0 h-[500px] w-[500px] translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/10" />
+      <div className="absolute bottom-0 left-0 h-[300px] w-[300px] -translate-x-1/2 translate-y-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/10" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col gap-4 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:p-12">
         <div className="max-w-2xl">
-          <div className="mb-4 inline-flex items-center rounded-full bg-primary/10 px-4 py-1 text-sm text-primary dark:bg-primary/20">
+          <div className="mb-4 inline-flex items-center rounded-full bg-primary/15 px-4 py-1 text-sm text-primary dark:bg-primary/20">
             {badgeText}
           </div>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            {title.text}{" "}
+            {text}{" "}
             <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              {title.highlight}
+              {highlight}
             </span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">{description}</p>
@@ -38,9 +42,12 @@ export function Banner({
         {/* Decorative illustration */}
         <div className="hidden lg:block">
           <div className="relative h-32 w-32">
-            <div className="absolute inset-0 rounded-full bg-primary/10 dark:bg-primary/20" />
-            <div className="absolute inset-2 rounded-full bg-primary/20 dark:bg-primary/30" />
-            <div className="absolute inset-4 rounded-full bg-primary/30 dark:bg-primary/40" />
+            <div className="absolute inset-0 rounded-full bg-primary/15 dark:bg-primary/20" />
+            <div className="absolute inset-2 rounded-full bg-primary/25 dark:bg-primary/30" />
+            <div className="absolute inset-4 rounded-full bg-primary/35 dark:bg-primary/40" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Icon className="h-12 w-12 text-primary-foreground" />
+            </div>
           </div>
         </div>
       </div>

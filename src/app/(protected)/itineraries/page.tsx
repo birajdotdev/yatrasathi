@@ -1,3 +1,5 @@
+import { CalendarDays } from "lucide-react";
+
 import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
 import { Banner } from "@/components/ui/banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,18 +7,13 @@ import { itineraries } from "@/data/itineraries";
 
 export default function ItinerariesPage() {
   return (
-    <main>
-      {/* Welcome Banner */}
+    <main className="space-y-6 lg:space-y-8">
       <Banner
-        title={{
-          text: "Your",
-          highlight: "Itineraries",
-        }}
+        title="Your Itineraries"
         description="Manage and organize all your upcoming adventures in one place."
         badgeText="Travel Plans"
+        icon={CalendarDays}
       />
-
-      {/* Tabs Section */}
       <Tabs defaultValue="upcoming">
         <TabsList>
           <TabsTrigger value="upcoming">Upcoming</TabsTrigger>

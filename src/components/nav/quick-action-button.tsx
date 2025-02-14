@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Calendar, PenTool, Plus } from "lucide-react";
+import { CalendarDays, PenTool, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
 
 const quickActions = [
   {
-    icon: Calendar,
+    icon: CalendarDays,
     title: "Itinerary",
     description: "Plan new trip",
     href: "/itineraries/create",

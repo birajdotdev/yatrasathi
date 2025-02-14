@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import Image from "next/image";
 
-import { MapPin } from "lucide-react";
+import { GlobeIcon, MapPin } from "lucide-react";
 
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
@@ -13,55 +13,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { destinations } from "@/data/destinations";
 
 export const metadata: Metadata = {
   title: "Explore",
   description: "Discover new places and plan your next adventure",
 };
 
-const destinations = [
-  {
-    name: "Bali, Indonesia",
-    description: "Tropical paradise with rich culture",
-    image: "https://images.pexels.com/photos/1020016/pexels-photo-1020016.jpeg",
-  },
-  {
-    name: "Santorini, Greece",
-    description: "Picturesque islands and sunsets",
-    image: "https://images.pexels.com/photos/1010657/pexels-photo-1010657.jpeg",
-  },
-  {
-    name: "Kyoto, Japan",
-    description: "Ancient temples and traditional gardens",
-    image: "https://images.pexels.com/photos/402028/pexels-photo-402028.jpeg",
-  },
-  {
-    name: "Machu Picchu, Peru",
-    description: "Incan citadel set high in the Andes Mountains",
-    image: "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg",
-  },
-  {
-    name: "Banff, Canada",
-    description: "Turquoise lakes and snow-capped peaks",
-    image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg",
-  },
-  {
-    name: "Marrakech, Morocco",
-    description: "Vibrant markets and stunning architecture",
-    image: "https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg",
-  },
-];
-
 export default function ExplorePage() {
   return (
-    <main>
+    <main className="space-y-6 lg:space-y-8">
       <Banner
-        title={{
-          text: "Explore",
-          highlight: "Destinations",
-        }}
+        title="Explore Destinations"
         description="Discover new places and plan your next adventure."
         badgeText="Discover More"
+        icon={GlobeIcon}
       />
 
       <Tabs defaultValue="all" className="mb-8">

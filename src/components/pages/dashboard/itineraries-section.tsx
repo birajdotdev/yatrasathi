@@ -1,23 +1,15 @@
-"use client";
-
 import Link from "next/link";
 
-import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
-import { type ItemVariants } from "@/components/pages/dashboard";
 import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
 import { Button } from "@/components/ui/button";
 import { itineraries } from "@/data/itineraries";
 
-interface ItinerariesSectionProps {
-  variants: ItemVariants;
-}
-
-export function ItinerariesSection({ variants }: ItinerariesSectionProps) {
+export function ItinerariesSection() {
   return (
-    <motion.div variants={variants} className="mb-12">
-      <div className="mb-8 flex items-center justify-between">
+    <section>
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">
           <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Your
@@ -45,6 +37,6 @@ export function ItinerariesSection({ variants }: ItinerariesSectionProps) {
           <ItineraryCard key={itinerary.title} itinerary={itinerary} />
         ))}
       </div>
-    </motion.div>
+    </section>
   );
 }

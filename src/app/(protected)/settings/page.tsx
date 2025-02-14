@@ -1,6 +1,9 @@
 import { type Metadata } from "next";
 
+import { Settings } from "lucide-react";
+
 import Notifications from "@/components/settings/notifications";
+import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,13 +24,19 @@ export const metadata: Metadata = {
 
 export default function SettingsPage() {
   return (
-    <main>
-      <div className="mb-8">
+    <main className="space-y-6 lg:space-y-8">
+      {/* <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="mt-2 text-lg text-muted-foreground">
           Manage your account settings and preferences.
         </p>
-      </div>
+      </div> */}
+      <Banner
+        badgeText="Account Settings"
+        title="Your Settings"
+        description="Manage your account settings and preferences"
+        icon={Settings}
+      />
 
       <Tabs defaultValue="account" className="mb-8">
         <TabsList>
