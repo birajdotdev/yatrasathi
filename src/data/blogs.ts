@@ -1,48 +1,4 @@
-"use client";
-
-import Link from "next/link";
-
-import { ChevronRight } from "lucide-react";
-
-import BlogCard from "@/components/pages/blogs/blog-card";
-import { Button } from "@/components/ui/button";
-
-export function BlogSection() {
-  return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Popular
-          </span>{" "}
-          <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Blog Posts
-          </span>
-        </h2>
-        <Button
-          variant="outline"
-          size="sm"
-          className="group relative overflow-hidden rounded-full border-primary/50 px-6 transition-all hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10"
-          asChild
-        >
-          <Link href="/explore">
-            <span className="relative z-10 flex items-center gap-2">
-              <span>View More</span>
-              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </span>
-          </Link>
-        </Button>
-      </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {destinations.map((post, index) => (
-          <BlogCard key={index} post={post} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export const destinations = [
+export const blogs = [
   {
     title: "Ultimate Guide to Bali",
     excerpt:
@@ -93,5 +49,53 @@ export const destinations = [
         "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300",
     },
     comments: 35,
+  },
+  {
+    title: "Hiking the Inca Trail to Machu Picchu",
+    excerpt:
+      "A complete trekking guide to one of the world's most iconic archaeological sites...",
+    image: "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg",
+    readTime: "10 min read",
+    category: "Adventure",
+    publishedAt: "5 days ago",
+    likes: 312,
+    author: {
+      name: "Mike Johnson",
+      avatar:
+        "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=300",
+    },
+    comments: 56,
+  },
+  {
+    title: "Winter Magic in Banff National Park",
+    excerpt:
+      "Your ultimate guide to experiencing the best of Banff's winter wonderland...",
+    image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg",
+    readTime: "7 min read",
+    category: "Winter Sports",
+    publishedAt: "4 days ago",
+    likes: 245,
+    author: {
+      name: "Sarah Wilson",
+      avatar:
+        "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=300",
+    },
+    comments: 38,
+  },
+  {
+    title: "Colors of Marrakech: A Market Guide",
+    excerpt:
+      "Navigate the vibrant souks and discover the best bargains in Marrakech's maze-like medina...",
+    image: "https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg",
+    readTime: "9 min read",
+    category: "Shopping",
+    publishedAt: "1 day ago",
+    likes: 178,
+    author: {
+      name: "Ahmed Hassan",
+      avatar:
+        "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=300",
+    },
+    comments: 45,
   },
 ];
