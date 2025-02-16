@@ -6,7 +6,7 @@ const client = await clerkClient();
 
 export async function getCurrentUser() {
   const { userId, redirectToSignIn } = await auth();
-  if (!userId) return redirectToSignIn();
+  if (!userId) throw new Error("User not logged in!!");
   const { privateMetadata } = await client.users.getUser(userId);
   return {
     clerkUserId: userId,

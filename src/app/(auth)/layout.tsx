@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 
+import { auth } from "@clerk/nextjs/server";
+
 import BackButton from "@/components/auth/back-button";
 import ThemeToggle from "@/components/nav/theme-toggle";
-import { getCurrentUser } from "@/server/auth";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -27,8 +28,8 @@ function GlowEffects() {
 }
 
 export default async function AuthLayout({ children }: AuthLayoutProps) {
-  const { clerkUserId } = await getCurrentUser();
-  if (clerkUserId) return redirect("/dashboard");
+  const { userId } = await auth();
+  if (userId) return redirect("/dashboard");
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-muted dark:bg-background">

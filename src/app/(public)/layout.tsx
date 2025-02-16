@@ -1,17 +1,18 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { auth } from "@clerk/nextjs/server";
+
 import Footer from "@/components/footer";
 import NavBar from "@/components/nav/nav-bar";
-import { getCurrentUser } from "@/server/auth";
 
 export default async function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { clerkUserId } = await getCurrentUser();
-  if (clerkUserId) return redirect("/dashboard");
+  const { userId } = await auth();
+  if (userId) return redirect("/dashboard");
 
   return (
     <div className="flex min-h-screen flex-col">
