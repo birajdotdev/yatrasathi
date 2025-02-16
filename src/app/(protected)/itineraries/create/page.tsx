@@ -12,7 +12,7 @@ export default function CreateItineraryPage() {
         description="Plan your perfect trip step by step."
         icon={CalendarPlus}
       />
-      <ItineraryForm />
+      <ItineraryForm mode="create" />
     </main>
   );
 }

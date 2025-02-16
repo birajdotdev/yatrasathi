@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, PlusCircle, X } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -34,6 +37,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
 
 const tripTypes = [
   "Vacation",
@@ -113,18 +117,115 @@ const itineraryFormSchema = z.object({
 
 type ItineraryFormValues = z.infer<typeof itineraryFormSchema>;
 
-export function ItineraryForm() {
+type ItineraryFormProps = {
+  mode?: "create" | "update";
+  itineraryId?: string;
+  defaultValues?: ItineraryFormValues;
+};
+
+export function ItineraryForm({
+  mode = "create",
+  itineraryId,
+  defaultValues,
+}: ItineraryFormProps) {
+  const router = useRouter();
+  const utils = api.useUtils();
+
   const form = useForm<ItineraryFormValues>({
     resolver: zodResolver(itineraryFormSchema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
+      tripTitle: "",
+      tripType: "Vacation",
+      startDate: new Date(),
+      endDate: new Date(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       destinations: [],
       transportation: [],
       accommodations: [],
       activities: [],
       attachments: [],
       coverImage: "",
+      generalNotes: "",
     },
   });
+
+  // Create mutation
+  const createMutation = api.itinerary.create.useMutation({
+    onSuccess: (itinerary) => {
+      toast.success("Itinerary created successfully!");
+      void utils.itinerary.getAll.invalidate();
+      router.push(`/itineraries/${itinerary.id}`);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // Update mutation
+  const updateMutation = api.itinerary.update.useMutation({
+    onSuccess: (itinerary) => {
+      toast.success("Itinerary updated successfully!");
+      void utils.itinerary.getAll.invalidate();
+      router.push(`/itineraries/${itinerary.id}`);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // Get itinerary data for update mode
+  const { data: itineraryData } = api.itinerary.getById.useQuery(
+    { id: itineraryId! },
+    {
+      enabled: mode === "update" && !!itineraryId,
+    }
+  );
+
+  // Use useEffect to update form data when itineraryData changes
+  useEffect(() => {
+    if (itineraryData) {
+      // Transform data to match form schema
+      const formData: ItineraryFormValues = {
+        tripTitle: itineraryData.tripTitle,
+        tripType: itineraryData.tripType,
+        coverImage: itineraryData.coverImage ?? undefined,
+        startDate: itineraryData.startDate,
+        endDate: itineraryData.endDate,
+        timeZone: itineraryData.timeZone,
+        destinations: itineraryData.destinations.map((dest) => ({
+          location: dest.location,
+          arrivalDateTime: dest.arrivalDateTime,
+          departureDateTime: dest.departureDateTime,
+          notes: dest.notes ?? undefined,
+        })),
+        transportation: itineraryData.transportation.map((trans) => ({
+          mode: trans.mode,
+          departureDateTime: trans.departureDateTime,
+          arrivalDateTime: trans.arrivalDateTime,
+          bookingReference: trans.bookingReference ?? undefined,
+          attachments: trans.attachments ?? undefined,
+        })),
+        accommodations: itineraryData.accommodations.map((acc) => ({
+          name: acc.name,
+          checkInDateTime: acc.checkInDateTime,
+          checkOutDateTime: acc.checkOutDateTime,
+          address: acc.address,
+          confirmationNumber: acc.confirmationNumber ?? undefined,
+        })),
+        activities: itineraryData.activities.map((act) => ({
+          name: act.name,
+          dateTime: act.dateTime,
+          location: act.location,
+          notes: act.notes ?? undefined,
+          attachments: act.attachments ?? undefined,
+        })),
+        generalNotes: itineraryData.generalNotes ?? undefined,
+        attachments: itineraryData.attachments ?? undefined,
+      };
+
+      form.reset(formData);
+    }
+  }, [form, itineraryData]);
 
   const {
     fields: destinationFields,
@@ -163,8 +264,14 @@ export function ItineraryForm() {
   });
 
   function onSubmit(data: ItineraryFormValues) {
-    console.log(data);
-    // TODO: Implement form submission
+    if (mode === "create") {
+      createMutation.mutate(data);
+    } else {
+      updateMutation.mutate({
+        id: itineraryId!,
+        data,
+      });
+    }
   }
 
   return (
@@ -435,15 +542,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -460,15 +568,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -577,15 +686,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -602,15 +712,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -708,15 +819,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -733,15 +845,16 @@ export function ItineraryForm() {
                           <FormControl>
                             <Input
                               type="datetime-local"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                field.onChange(new Date(e.target.value))
-                              }
+                              value={format(
+                                field.value || new Date(),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )}
+                              onChange={(e) => {
+                                const date = e.target.value
+                                  ? new Date(e.target.value)
+                                  : new Date();
+                                field.onChange(date);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -854,15 +967,16 @@ export function ItineraryForm() {
                         <FormControl>
                           <Input
                             type="datetime-local"
-                            {...field}
-                            value={
-                              field.value
-                                ? format(field.value, "yyyy-MM-dd'T'HH:mm")
-                                : ""
-                            }
-                            onChange={(e) =>
-                              field.onChange(new Date(e.target.value))
-                            }
+                            value={format(
+                              field.value || new Date(),
+                              "yyyy-MM-dd'T'HH:mm"
+                            )}
+                            onChange={(e) => {
+                              const date = e.target.value
+                                ? new Date(e.target.value)
+                                : new Date();
+                              field.onChange(date);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -937,10 +1051,25 @@ export function ItineraryForm() {
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline">
-            Save Draft
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/itineraries")}
+          >
+            Cancel
           </Button>
-          <Button type="submit">Create Itinerary</Button>
+          <Button
+            type="submit"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
+            {createMutation.isPending || updateMutation.isPending ? (
+              <span>Saving...</span>
+            ) : mode === "create" ? (
+              "Create Itinerary"
+            ) : (
+              "Update Itinerary"
+            )}
+          </Button>
         </div>
       </form>
     </Form>
