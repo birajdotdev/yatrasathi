@@ -1,6 +1,6 @@
 import { CalendarPlus } from "lucide-react";
 
-import CreateItineraryForm from "@/components/pages/itineraries/itinerary-form";
+import { ItineraryForm } from "@/components/pages/itineraries/itinerary-form";
 import { Banner } from "@/components/ui/banner";
 
 export default function CreateItineraryPage() {
@@ -12,7 +12,7 @@ export default function CreateItineraryPage() {
         description="Plan your perfect trip step by step."
         icon={CalendarPlus}
       />
-      <CreateItineraryForm />
+      <ItineraryForm />
     </main>
   );
 }
