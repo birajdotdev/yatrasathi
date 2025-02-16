@@ -1,7 +1,8 @@
 import { type Metadata } from "next";
 
-import { Gift, Plus } from "lucide-react";
+import { CreditCard, Gift, Plus } from "lucide-react";
 
+import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,90 +41,86 @@ export default function CreditsPage() {
   const creditPercentage = (usedCredits / totalCredits) * 100;
 
   return (
-    <main>
-      <div className="p-6 lg:p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">AI Credits</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            Manage your AI-powered travel planning credits.
-          </p>
-        </div>
+    <main className="space-y-6 lg:space-y-8">
+      <Banner
+        badgeText="AI Credits"
+        title="Your Credits"
+        description="Manage your AI-powered travel planning credits"
+        icon={CreditCard}
+      />
 
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Credit Balance</CardTitle>
-              <CardDescription>
-                Your current AI credit balance and usage
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {remainingCredits} credits
-              </div>
-              <Progress value={creditPercentage} className="mt-2" />
-              <p className="mt-2 text-sm text-muted-foreground">
-                {usedCredits} of {totalCredits} credits used
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button className="mr-2">
-                <Plus className="mr-2 h-4 w-4" /> Buy Credits
-              </Button>
-              <Button variant="outline">
-                <Gift className="mr-2 h-4 w-4" /> Redeem Code
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+      <div className="mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Credit Balance</CardTitle>
+            <CardDescription>
+              Your current AI credit balance and usage
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{remainingCredits} credits</div>
+            <Progress value={creditPercentage} className="mt-2" />
+            <p className="mt-2 text-sm text-muted-foreground">
+              {usedCredits} of {totalCredits} credits used
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button className="mr-2">
+              <Plus className="mr-2 h-4 w-4" /> Buy Credits
+            </Button>
+            <Button variant="outline">
+              <Gift className="mr-2 h-4 w-4" /> Redeem Code
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Credit Packages</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { name: "Starter", credits: 100, price: "$10" },
-              { name: "Explorer", credits: 500, price: "$45" },
-              { name: "Adventurer", credits: 1000, price: "$80" },
-            ].map((pack, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle>{pack.name}</CardTitle>
-                  <CardDescription>{pack.credits} credits</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">{pack.price}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline">Purchase</Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Credit Packages</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { name: "Starter", credits: 100, price: "$10" },
+            { name: "Explorer", credits: 500, price: "$45" },
+            { name: "Adventurer", credits: 1000, price: "$80" },
+          ].map((pack, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle>{pack.name}</CardTitle>
+                <CardDescription>{pack.credits} credits</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">{pack.price}</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline">Purchase</Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
+      </div>
 
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Credit History</h2>
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Amount</TableHead>
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Credit History</h2>
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {creditHistory.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.date}</TableCell>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell>{item.amount} credits</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {creditHistory.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item.date}</TableCell>
-                    <TableCell>{item.description}</TableCell>
-                    <TableCell>{item.amount} credits</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </div>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
       </div>
     </main>
   );

@@ -10,8 +10,8 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+import { getCurrentUser } from "@/server/auth";
 import { db } from "@/server/db";
-import { auth } from "@clerk/nextjs/server";
 
 /**
  * 1. CONTEXT
@@ -26,11 +26,11 @@ import { auth } from "@clerk/nextjs/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return {
     db,
-    session,
+    user,
     ...opts,
   };
 };
@@ -120,13 +120,17 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.userId) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!ctx.user.dbId) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message:
+          "User database ID not found. Please try signing out and signing back in.",
+      });
     }
     return next({
       ctx: {
         // infers the `session` as non-nullable
-        session: { ...ctx.session },
+        user: { ...ctx.user },
       },
     });
   });

@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 
-import { GlobeIcon } from "lucide-react";
+import { PenTool } from "lucide-react";
 
 import BlogCard from "@/components/pages/blogs/blog-card";
 import { Banner } from "@/components/ui/banner";
@@ -8,26 +8,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { blogs } from "@/data/blogs";
 
 export const metadata: Metadata = {
-  title: "Explore",
-  description: "Discover new places and plan your next adventure",
+  title: "Blog",
+  description: "Share your adventures and read about others' experiences",
 };
 
-export default function ExplorePage() {
+export default function BlogPage() {
   return (
     <main className="space-y-6 lg:space-y-8">
       <Banner
-        title="Explore Destinations"
-        description="Discover new places and plan your next adventure."
-        badgeText="Discover More"
-        icon={GlobeIcon}
+        badgeText="Travel Blogs"
+        title="Your Blogs"
+        description="Share your adventures and read about others' experiences"
+        icon={PenTool}
       />
 
       <Tabs defaultValue="all" className="mb-8">
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="recent">Recent</TabsTrigger>
           <TabsTrigger value="popular">Popular</TabsTrigger>
-          <TabsTrigger value="trending">Trending</TabsTrigger>
-          <TabsTrigger value="recommended">Recommended</TabsTrigger>
         </TabsList>
         <TabsContent value="all">
           <div>
@@ -38,19 +37,15 @@ export default function ExplorePage() {
             </div>
           </div>
         </TabsContent>
+        <TabsContent value="recent">
+          <p className="text-muted-foreground">Recent blog posts go here...</p>
+        </TabsContent>
         <TabsContent value="popular">
-          <p className="text-muted-foreground">
-            Popular destinations content goes here.
-          </p>
+          <p className="text-muted-foreground">Popular blog posts go here...</p>
         </TabsContent>
-        <TabsContent value="trending">
+        <TabsContent value="following">
           <p className="text-muted-foreground">
-            Trending destinations content goes here.
-          </p>
-        </TabsContent>
-        <TabsContent value="recommended">
-          <p className="text-muted-foreground">
-            Recommended destinations content goes here.
+            Blog posts from authors you&apos;re following go here...
           </p>
         </TabsContent>
       </Tabs>

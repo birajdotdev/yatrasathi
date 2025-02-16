@@ -1,15 +1,18 @@
-import CreateItineraryForm from "@/components/pages/itineraries/itinerary-form";
+import { CalendarPlus } from "lucide-react";
+
+import { ItineraryForm } from "@/components/pages/itineraries/itinerary-form";
 import { Banner } from "@/components/ui/banner";
 
-export default function CreateItinerary() {
+export default function CreateItineraryPage() {
   return (
-    <main className="p-6 lg:p-8">
+    <main className="space-y-6 lg:space-y-8">
       <Banner
         badgeText="Plan your trip"
-        title={{ text: "Create New", highlight: "Itinerary" }}
+        title="Create New Itinerary"
         description="Plan your perfect trip step by step."
+        icon={CalendarPlus}
       />
-      <CreateItineraryForm />
+      <ItineraryForm mode="create" />
     </main>
   );
 }

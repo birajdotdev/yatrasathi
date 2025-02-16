@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import sidebarData from "@/data/sidebar-data";
+import { sidebarData } from "@/data/sidebar-data";
 
 type SidebarMainProps = React.ComponentPropsWithoutRef<typeof SidebarGroup>;
 
