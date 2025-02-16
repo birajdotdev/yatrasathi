@@ -7,18 +7,15 @@ import { Banner } from "@/components/ui/banner";
 import { api } from "@/trpc/server";
 
 interface EditItineraryPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditItineraryPage({
   params,
 }: EditItineraryPageProps) {
   // Pre-fetch the itinerary data
-  const itinerary = await api.itinerary
-    .getById({ id: params.id })
-    .catch(() => null);
+  const { id } = await params;
+  const itinerary = await api.itinerary.getById({ id }).catch(() => null);
 
   if (!itinerary) {
     notFound();
@@ -28,11 +25,11 @@ export default async function EditItineraryPage({
     <main className="space-y-6 lg:space-y-8">
       <Banner
         badgeText="Edit trip"
-        title={`Edit "${itinerary.tripTitle}"`}
+        title="Edit Itinerary"
         description="Update your trip details and plans."
         icon={PencilLine}
       />
-      <ItineraryForm mode="update" itineraryId={params.id} />
+      <ItineraryForm mode="update" itineraryId={id} />
     </main>
   );
 }

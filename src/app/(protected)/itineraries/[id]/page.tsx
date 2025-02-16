@@ -19,17 +19,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 
 interface ItineraryDetailsPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default async function ItineraryDetailsPage({
   params,
 }: ItineraryDetailsPageProps) {
-  const itinerary = await api.itinerary
-    .getById({ id: params.id })
-    .catch(() => null);
+  const { id } = await params;
+  const itinerary = await api.itinerary.getById({ id }).catch(() => null);
 
   if (!itinerary) {
     notFound();
@@ -47,7 +44,7 @@ export default async function ItineraryDetailsPage({
           )}`}
           icon={CalendarRange}
         />
-        <Link href={`/itineraries/${params.id}/edit`}>
+        <Link href={`/itineraries/${id}/edit`}>
           <Button variant="outline" className="gap-2">
             <PencilLine className="h-4 w-4" />
             Edit Itinerary
