@@ -120,10 +120,11 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.user.dbId && !ctx.user.clerkUserId) {
+    if (!ctx.user.dbId) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
-        message: "User not found",
+        message:
+          "User database ID not found. Please try signing out and signing back in.",
       });
     }
     return next({

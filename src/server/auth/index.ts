@@ -5,12 +5,13 @@ import { type UserRole } from "@/server/db/schema";
 const client = await clerkClient();
 
 export async function getCurrentUser() {
-  const { userId, sessionClaims, redirectToSignIn } = await auth();
-
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) return redirectToSignIn();
+  const { privateMetadata } = await client.users.getUser(userId);
   return {
     clerkUserId: userId,
-    dbId: sessionClaims?.dbId,
-    role: sessionClaims?.role,
+    dbId: privateMetadata?.dbId,
+    role: privateMetadata?.role,
     redirectToSignIn,
   };
 }
