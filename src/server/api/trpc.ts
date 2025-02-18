@@ -6,12 +6,14 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+import { auth } from "@clerk/nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { getCurrentUser } from "@/server/auth";
 import { db } from "@/server/db";
+import { users } from "@/server/db/schema";
 
 /**
  * 1. CONTEXT
@@ -26,11 +28,11 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = await getCurrentUser();
+  const session = await auth();
 
   return {
     db,
-    user,
+    session,
     ...opts,
   };
 };
@@ -119,18 +121,22 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next }) => {
-    if (!ctx.user.dbId) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message:
-          "User database ID not found. Please try signing out and signing back in.",
-      });
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session?.userId) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const [user] = await ctx.db
+      .select()
+      .from(users)
+      .where(eq(users.clerkUserId, ctx.session.userId))
+      .limit(1);
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND" });
     }
     return next({
       ctx: {
         // infers the `session` as non-nullable
-        user: { ...ctx.user },
+        session: { ...ctx.session, user },
       },
     });
   });
