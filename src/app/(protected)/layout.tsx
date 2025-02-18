@@ -1,11 +1,10 @@
 import React from "react";
 
-import { auth } from "@clerk/nextjs/server";
-
 import DashboardNav from "@/components/nav/dashboard-nav";
 import AppSidebar from "@/components/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { auth } from "@/server/auth";
 
 export default async function ProtectedLayout({
   children,
