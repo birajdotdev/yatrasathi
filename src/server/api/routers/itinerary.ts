@@ -81,7 +81,7 @@ export const itineraryRouter = createTRPCRouter({
               timeZone: input.timeZone,
               generalNotes: input.generalNotes,
               attachments: input.attachments as string[] | null,
-              createdById: ctx.session.user.id,
+              createdById: ctx.session.user.dbId,
             },
           ])
           .returning();
@@ -138,7 +138,7 @@ export const itineraryRouter = createTRPCRouter({
   // Get all itineraries for the current user
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.itineraries.findMany({
-      where: eq(itineraries.createdById, ctx.session.user.id),
+      where: eq(itineraries.createdById, ctx.session.user.dbId),
       with: {
         destinations: true,
         transportation: true,
@@ -170,7 +170,7 @@ export const itineraryRouter = createTRPCRouter({
         });
       }
 
-      if (itinerary.createdById !== ctx.session.user.id) {
+      if (itinerary.createdById !== ctx.session.user.dbId) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Not authorized to access this itinerary",
@@ -200,7 +200,7 @@ export const itineraryRouter = createTRPCRouter({
         });
       }
 
-      if (existing.createdById !== ctx.session.user.id) {
+      if (existing.createdById !== ctx.session.user.dbId) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Not authorized to update this itinerary",
@@ -300,7 +300,7 @@ export const itineraryRouter = createTRPCRouter({
         });
       }
 
-      if (itinerary.createdById !== ctx.session.user.id) {
+      if (itinerary.createdById !== ctx.session.user.dbId) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Not authorized to delete this itinerary",

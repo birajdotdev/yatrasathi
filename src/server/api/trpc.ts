@@ -7,13 +7,12 @@
  * need to use are documented accordingly near the end.
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { users } from "@/server/db/schema";
+import { type UserRole } from "@/server/db/schema";
 
 /**
  * 1. CONTEXT
@@ -122,21 +121,49 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
-    if (!ctx.session?.userId) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!ctx.session) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this resource",
+      });
     }
-    const [user] = await ctx.db
-      .select()
-      .from(users)
-      .where(eq(users.clerkUserId, ctx.session.userId))
-      .limit(1);
-    if (!user) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+
+    if (!hasRequiredClaims(ctx.session)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Your session is missing required claims (dbId or role)",
+      });
     }
+
+    // At this point TypeScript knows the session has all required claims
     return next({
       ctx: {
-        // infers the `session` as non-nullable
-        session: { ...ctx.session, user },
+        session: {
+          ...ctx.session,
+          user: {
+            clerkUserId: ctx.session.userId,
+            dbId: ctx.session.sessionClaims.dbId,
+            role: ctx.session.sessionClaims.role,
+          },
+        },
       },
     });
   });
+
+type SessionWithClaims = NonNullable<Awaited<ReturnType<typeof auth>>> & {
+  userId: string;
+  sessionClaims: {
+    dbId: string;
+    role: UserRole;
+  };
+};
+
+const hasRequiredClaims = (
+  session: NonNullable<Awaited<ReturnType<typeof auth>>>
+): session is SessionWithClaims => {
+  return Boolean(
+    session?.userId &&
+      typeof session?.sessionClaims?.dbId === "string" &&
+      typeof session?.sessionClaims?.role === "string"
+  );
+};

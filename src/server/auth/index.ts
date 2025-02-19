@@ -6,19 +6,18 @@ import { type UserRole } from "@/server/db/schema";
 
 const client = await clerkClient();
 
-// export async function getCurrentUser() {
-//   const { userId, redirectToSignIn } = await auth();
-//   if (!userId) throw new Error("User not logged in!!");
-//   const { privateMetadata } = await client.users.getUser(userId);
-//   return {
-//     clerkUserId: userId,
-//     dbId: privateMetadata?.dbId,
-//     role: privateMetadata?.role,
-//     redirectToSignIn,
-//   };
-// }
-
 export const auth = cache(uncachedAuth);
+
+export const getCurrentUser = cache(async () => {
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
+
+  return {
+    clerkUserId: userId,
+    dbId: sessionClaims?.dbId,
+    role: sessionClaims?.role,
+    redirectToSignIn,
+  };
+});
 
 export function syncClerkUserMetadata(user: {
   id: string;
@@ -26,7 +25,7 @@ export function syncClerkUserMetadata(user: {
   role: UserRole;
 }) {
   return client.users.updateUserMetadata(user.clerkUserId, {
-    privateMetadata: {
+    publicMetadata: {
       dbId: user.id,
       role: user.role,
     },
