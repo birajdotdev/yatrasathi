@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@clerk/nextjs/server";
-
 import BackButton from "@/components/auth/back-button";
 import ThemeToggle from "@/components/nav/theme-toggle";
+import { auth } from "@/server/auth";
 
 interface AuthLayoutProps {
   children: React.ReactNode;

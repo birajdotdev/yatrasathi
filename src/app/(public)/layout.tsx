@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { auth } from "@clerk/nextjs/server";
-
 import Footer from "@/components/footer";
 import NavBar from "@/components/nav/nav-bar";
+import { auth } from "@/server/auth";
 
 export default async function UserLayout({
   children,

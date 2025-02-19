@@ -10,8 +10,9 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { getCurrentUser } from "@/server/auth";
+import { auth } from "@/server/auth";
 import { db } from "@/server/db";
+import { type UserRole } from "@/server/db/schema";
 
 /**
  * 1. CONTEXT
@@ -26,11 +27,11 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = await getCurrentUser();
+  const session = await auth();
 
   return {
     db,
-    user,
+    session,
     ...opts,
   };
 };
@@ -119,18 +120,50 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next }) => {
-    if (!ctx.user.dbId) {
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
-        message:
-          "User database ID not found. Please try signing out and signing back in.",
+        message: "You must be logged in to access this resource",
       });
     }
+
+    if (!hasRequiredClaims(ctx.session)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Your session is missing required claims (dbId or role)",
+      });
+    }
+
+    // At this point TypeScript knows the session has all required claims
     return next({
       ctx: {
-        // infers the `session` as non-nullable
-        user: { ...ctx.user },
+        session: {
+          ...ctx.session,
+          user: {
+            clerkUserId: ctx.session.userId,
+            dbId: ctx.session.sessionClaims.dbId,
+            role: ctx.session.sessionClaims.role,
+          },
+        },
       },
     });
   });
+
+type SessionWithClaims = NonNullable<Awaited<ReturnType<typeof auth>>> & {
+  userId: string;
+  sessionClaims: {
+    dbId: string;
+    role: UserRole;
+  };
+};
+
+const hasRequiredClaims = (
+  session: NonNullable<Awaited<ReturnType<typeof auth>>>
+): session is SessionWithClaims => {
+  return Boolean(
+    session?.userId &&
+      typeof session?.sessionClaims?.dbId === "string" &&
+      typeof session?.sessionClaims?.role === "string"
+  );
+};
