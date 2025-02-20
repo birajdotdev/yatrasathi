@@ -12,9 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
 export default async function ItinerariesPage() {
-  void api.itinerary.getAll.prefetch("upcoming");
-  void api.itinerary.getAll.prefetch("past");
   void api.itinerary.getAll.prefetch("all");
+
   return (
     <HydrateClient>
       <main className="space-y-6 lg:space-y-8">
