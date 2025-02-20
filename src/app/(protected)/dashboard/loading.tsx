@@ -1,3 +1,4 @@
+import { ItinerariesSkeleton } from "@/components/pages/itineraries";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserDashboardSkeletonLoading() {
@@ -26,20 +27,7 @@ export default function UserDashboardSkeletonLoading() {
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-10 w-32" />
         </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="rounded-xl border border-border/50">
-              <Skeleton className="aspect-video w-full" />
-              <div className="p-5">
-                <Skeleton className="mb-3 h-6 w-3/4" />
-                <div className="flex gap-3">
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ItinerariesSkeleton />
       </div>
 
       {/* Blog Recommendations Skeleton */}
