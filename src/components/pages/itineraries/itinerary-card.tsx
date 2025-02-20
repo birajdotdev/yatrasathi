@@ -1,27 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { type RouterOutputs } from "@/trpc/react";
+
+import ActionButton from "./action-button";
 
 type Itinerary = RouterOutputs["itinerary"]["getAll"][0];
 
 export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
   return (
-    <Link href={`/itineraries/${itinerary.id}`}>
-      <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10">
-        <div className="relative">
-          <div className="relative aspect-video w-full overflow-hidden">
+    <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10">
+      <div className="relative">
+        <div className="relative aspect-video w-full overflow-hidden">
+          {/* Action button */}
+          <div className="absolute right-4 top-4 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100 [&:has([data-state=open])]:opacity-100">
+            <ActionButton itineraryId={itinerary.id} />
+          </div>
+          <Link href={`/itineraries/${itinerary.id}`} className="block">
             <Image
-              src={itinerary.coverImage ?? ""}
+              src={
+                itinerary.coverImage?.length === 0
+                  ? "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                  : itinerary.coverImage!
+              }
               alt={itinerary.tripTitle}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -57,40 +58,9 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
                 </time>
               </div>
             </div>
-
-            {/* Action button */}
-            <div className="absolute right-4 top-4 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full bg-background/80 shadow-sm backdrop-blur-sm transition-colors hover:bg-background/90 dark:bg-background/40 dark:hover:bg-background/50"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-[160px] animate-in fade-in-0 zoom-in-95"
-                >
-                  <Link href={`/itineraries/${itinerary.id}/edit`}>
-                    <DropdownMenuItem className="gap-2">
-                      <Pencil className="h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
-                    <Trash className="h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
