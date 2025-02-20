@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq, gt, lt } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -136,18 +136,33 @@ export const itineraryRouter = createTRPCRouter({
     }),
 
   // Get all itineraries for the current user
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.itineraries.findMany({
-      where: eq(itineraries.createdById, ctx.session.user.dbId),
-      with: {
-        destinations: true,
-        transportation: true,
-        accommodations: true,
-        activities: true,
-      },
-      orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
-    });
-  }),
+  getAll: protectedProcedure
+    .input(z.enum(["all", "upcoming", "past"]).default("all"))
+    .query(async ({ ctx, input }) => {
+      const baseQuery = {
+        where: eq(itineraries.createdById, ctx.session.user.dbId),
+      };
+
+      switch (input) {
+        case "upcoming":
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            where: and(baseQuery.where, gt(itineraries.startDate, new Date())),
+            orderBy: (itineraries, { asc }) => [asc(itineraries.startDate)],
+          });
+        case "past":
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            where: and(baseQuery.where, lt(itineraries.endDate, new Date())),
+            orderBy: (itineraries, { desc }) => [desc(itineraries.endDate)],
+          });
+        default: // 'all'
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
+          });
+      }
+    }),
 
   // Get single itinerary by ID
   getById: protectedProcedure

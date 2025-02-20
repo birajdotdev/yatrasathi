@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) return <RedirectToSignIn />;
 
-  void api.itinerary.getAll.prefetch();
+  void api.itinerary.getAll.prefetch("upcoming");
 
   return (
     <HydrateClient>
@@ -63,7 +63,7 @@ export default async function DashboardPage() {
           </div>
           <Suspense fallback={<ItinerariesSkeleton />}>
             <ErrorBoundary fallback={<div>Error loading itineraries</div>}>
-              <ItinerariesClient />
+              <ItinerariesClient filter="upcoming" />
             </ErrorBoundary>
           </Suspense>
         </section>

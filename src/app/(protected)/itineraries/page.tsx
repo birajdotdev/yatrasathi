@@ -3,15 +3,18 @@ import { Suspense } from "react";
 import { CalendarDays } from "lucide-react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ItinerariesSkeleton } from "@/components/pages/itineraries";
-import { ItinerariesClient } from "@/components/pages/itineraries";
+import {
+  ItinerariesClient,
+  ItinerariesSkeleton,
+} from "@/components/pages/itineraries";
 import { Banner } from "@/components/ui/banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
 export default async function ItinerariesPage() {
-  void api.itinerary.getAll.prefetch();
-
+  void api.itinerary.getAll.prefetch("upcoming");
+  void api.itinerary.getAll.prefetch("past");
+  void api.itinerary.getAll.prefetch("all");
   return (
     <HydrateClient>
       <main className="space-y-6 lg:space-y-8">
@@ -21,30 +24,32 @@ export default async function ItinerariesPage() {
           badgeText="Travel Plans"
           icon={CalendarDays}
         />
-        <Tabs defaultValue="upcoming">
+        <Tabs defaultValue="all">
           <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
-            <TabsTrigger value="drafts">Drafts</TabsTrigger>
           </TabsList>
-          <TabsContent value="upcoming">
+          <TabsContent value="all">
             <Suspense fallback={<ItinerariesSkeleton />}>
               <ErrorBoundary fallback={<p>Error</p>}>
                 <ItinerariesClient />
+              </ErrorBoundary>
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="upcoming">
+            <Suspense fallback={<ItinerariesSkeleton />}>
+              <ErrorBoundary fallback={<p>Error</p>}>
+                <ItinerariesClient filter="upcoming" />
               </ErrorBoundary>
             </Suspense>
           </TabsContent>
           <TabsContent value="past">
             <Suspense fallback={<ItinerariesSkeleton />}>
               <ErrorBoundary fallback={<p>Error</p>}>
-                <ItinerariesClient />
+                <ItinerariesClient filter="past" />
               </ErrorBoundary>
             </Suspense>
-          </TabsContent>
-          <TabsContent value="drafts">
-            <p className="text-muted-foreground">
-              You don&apos;t have any draft itineraries.
-            </p>
           </TabsContent>
         </Tabs>
       </main>
