@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUploader } from "@/components/ui/image-uploader";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
@@ -304,32 +305,7 @@ export function ItineraryForm({
                   <FormItem>
                     <FormLabel>Cover Image</FormLabel>
                     <FormControl>
-                      <div className="flex items-center gap-4">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              // Here you would typically upload the file to your storage service
-                              // and get back a URL. For now, we'll use a local URL
-                              const imageUrl = URL.createObjectURL(file);
-                              field.onChange(imageUrl);
-                            }
-                          }}
-                        />
-                        {field.value && (
-                          <div className="relative h-24 w-24">
-                            <Image
-                              src={field.value}
-                              alt="Cover preview"
-                              className="h-full w-full rounded-md object-cover"
-                              width={100}
-                              height={100}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      <ImageUploader value={field.value} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

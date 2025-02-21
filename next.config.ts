@@ -16,6 +16,11 @@ const config: NextConfig = {
         hostname: "images.pexels.com",
         pathname: "/photos/**",
       },
+      {
+        protocol: "https",
+        hostname: "fux7glt2j7.ufs.sh",
+        pathname: "/f/*",
+      },
     ],
   },
 };
