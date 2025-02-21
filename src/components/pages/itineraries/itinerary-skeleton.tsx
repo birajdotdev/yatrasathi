@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ItinerarySkeleton() {
   return (
-    <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-card to-card/98">
+    <div className="group relative overflow-hidden rounded-xl">
       <div className="relative">
         <div className="relative aspect-video w-full overflow-hidden">
           {/* Action button skeleton */}
