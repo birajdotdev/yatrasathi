@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -78,60 +77,6 @@ export default function ItineraryForm({
       toast.error(error.message);
     },
   });
-
-  // Get itinerary data for update mode
-  const { data: itineraryData } = api.itinerary.getById.useQuery(
-    { id: itineraryId! },
-    {
-      enabled: mode === "update" && !!itineraryId,
-    }
-  );
-
-  // Use useEffect to update form data when itineraryData changes
-  useEffect(() => {
-    if (itineraryData) {
-      // Transform data to match form schema
-      const formData: ItineraryFormValues = {
-        tripTitle: itineraryData.tripTitle,
-        tripType: itineraryData.tripType,
-        coverImage: itineraryData.coverImage ?? undefined,
-        startDate: itineraryData.startDate,
-        endDate: itineraryData.endDate,
-        timeZone: itineraryData.timeZone,
-        destinations: itineraryData.destinations.map((dest) => ({
-          location: dest.location,
-          arrivalDateTime: dest.arrivalDateTime,
-          departureDateTime: dest.departureDateTime,
-          notes: dest.notes ?? undefined,
-        })),
-        transportation: itineraryData.transportation.map((trans) => ({
-          mode: trans.mode,
-          departureDateTime: trans.departureDateTime,
-          arrivalDateTime: trans.arrivalDateTime,
-          bookingReference: trans.bookingReference ?? undefined,
-          attachments: trans.attachments ?? undefined,
-        })),
-        accommodations: itineraryData.accommodations.map((acc) => ({
-          name: acc.name,
-          checkInDateTime: acc.checkInDateTime,
-          checkOutDateTime: acc.checkOutDateTime,
-          address: acc.address,
-          confirmationNumber: acc.confirmationNumber ?? undefined,
-        })),
-        activities: itineraryData.activities.map((act) => ({
-          name: act.name,
-          dateTime: act.dateTime,
-          location: act.location,
-          notes: act.notes ?? undefined,
-          attachments: act.attachments ?? undefined,
-        })),
-        generalNotes: itineraryData.generalNotes ?? undefined,
-        attachments: itineraryData.attachments ?? undefined,
-      };
-
-      form.reset(formData);
-    }
-  }, [form, itineraryData]);
 
   function onSubmit(data: ItineraryFormValues) {
     if (mode === "create") {
