@@ -12,7 +12,6 @@ import { ZodError } from "zod";
 
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { type UserRole } from "@/server/db/schema";
 
 /**
  * 1. CONTEXT
@@ -114,56 +113,42 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * Protected (authenticated) procedure
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
- * the session is valid and guarantees `ctx.session.user` is not null.
+ * the session is valid and guarantees `ctx.session.userId` exists and that the session contains
+ * valid dbId and role claims. The validated session data is then passed along in the context.
  *
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
-    if (!ctx.session) {
+    // Check for basic authentication first
+    if (!ctx.session?.userId) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "You must be logged in to access this resource",
       });
     }
 
-    if (!hasRequiredClaims(ctx.session)) {
+    // Validate session claims in a single check
+    const { sessionClaims } = ctx.session;
+    if (!sessionClaims?.dbId || !sessionClaims?.role) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Your session is missing required claims (dbId or role)",
+        message: "Your session is missing required claims (dbId and role)",
       });
     }
 
-    // At this point TypeScript knows the session has all required claims
+    // Proceed with validated session data
     return next({
       ctx: {
         session: {
           ...ctx.session,
           user: {
             clerkUserId: ctx.session.userId,
-            dbId: ctx.session.sessionClaims.dbId,
-            role: ctx.session.sessionClaims.role,
+            dbId: sessionClaims.dbId,
+            role: sessionClaims.role,
           },
         },
       },
     });
   });
-
-type SessionWithClaims = NonNullable<Awaited<ReturnType<typeof auth>>> & {
-  userId: string;
-  sessionClaims: {
-    dbId: string;
-    role: UserRole;
-  };
-};
-
-const hasRequiredClaims = (
-  session: NonNullable<Awaited<ReturnType<typeof auth>>>
-): session is SessionWithClaims => {
-  return Boolean(
-    session?.userId &&
-      typeof session?.sessionClaims?.dbId === "string" &&
-      typeof session?.sessionClaims?.role === "string"
-  );
-};

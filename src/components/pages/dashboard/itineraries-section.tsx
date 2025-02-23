@@ -1,12 +1,16 @@
+"use client";
+
 import Link from "next/link";
 
 import { Plus } from "lucide-react";
 
-import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
+import { ItineraryCard } from "@/components/pages/itineraries";
 import { Button } from "@/components/ui/button";
-import { itineraries } from "@/data/itineraries";
+import { api } from "@/trpc/react";
 
 export function ItinerariesSection() {
+  const [itineraries] = api.itinerary.getAll.useSuspenseQuery();
+
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
@@ -34,7 +38,7 @@ export function ItinerariesSection() {
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {itineraries.slice(0, 3).map((itinerary) => (
-          <ItineraryCard key={itinerary.title} itinerary={itinerary} />
+          <ItineraryCard key={itinerary.id} itinerary={itinerary} />
         ))}
       </div>
     </section>

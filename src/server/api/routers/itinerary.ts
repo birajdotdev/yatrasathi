@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { and, eq, gt, lt } from "drizzle-orm";
 import { z } from "zod";
 
+import { itineraryFormSchema } from "@/lib/schemas/itinerary";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
   accommodations,
@@ -12,78 +12,26 @@ import {
   transportation,
 } from "@/server/db/schema/itinerary";
 
-// Create base insert schemas
-const destinationInsertSchema = createInsertSchema(destinations, {
-  location: z.string().min(2, "Location is required"),
-}).omit({
-  id: true,
-  itineraryId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-const transportationInsertSchema = createInsertSchema(transportation).omit({
-  id: true,
-  itineraryId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-const accommodationInsertSchema = createInsertSchema(accommodations, {
-  name: z.string().min(2, "Accommodation name is required"),
-}).omit({
-  id: true,
-  itineraryId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-const activityInsertSchema = createInsertSchema(activities, {
-  name: z.string().min(2, "Activity name is required"),
-}).omit({
-  id: true,
-  itineraryId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-const createItinerarySchema = createInsertSchema(itineraries, {
-  tripTitle: z.string().min(3, "Trip title must be at least 3 characters"),
-})
-  .omit({
-    id: true,
-    createdById: true,
-    createdAt: true,
-    updatedAt: true,
-  })
-  .extend({
-    destinations: z.array(destinationInsertSchema),
-    transportation: z.array(transportationInsertSchema),
-    accommodations: z.array(accommodationInsertSchema),
-    activities: z.array(activityInsertSchema),
-  });
-
 export const itineraryRouter = createTRPCRouter({
   // Create new itinerary
   create: protectedProcedure
-    .input(createItinerarySchema)
+    .input(itineraryFormSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db.transaction(async (tx) => {
+        // Create the main itinerary
         const [itinerary] = await tx
           .insert(itineraries)
-          .values([
-            {
-              tripTitle: input.tripTitle,
-              tripType: input.tripType,
-              coverImage: input.coverImage,
-              startDate: input.startDate,
-              endDate: input.endDate,
-              timeZone: input.timeZone,
-              generalNotes: input.generalNotes,
-              attachments: input.attachments as string[] | null,
-              createdById: ctx.session.user.dbId,
-            },
-          ])
+          .values({
+            tripTitle: input.tripTitle,
+            tripType: input.tripType,
+            coverImage: input.coverImage ?? null,
+            startDate: input.startDate,
+            endDate: input.endDate,
+            timeZone: input.timeZone,
+            generalNotes: input.generalNotes ?? null,
+            attachments: input.attachments ?? null,
+            createdById: ctx.session.user.dbId,
+          })
           .returning();
 
         if (!itinerary) {
@@ -93,40 +41,61 @@ export const itineraryRouter = createTRPCRouter({
           });
         }
 
+        // Insert destinations if any
         if (input.destinations.length > 0) {
           await tx.insert(destinations).values(
             input.destinations.map((dest) => ({
-              ...dest,
               itineraryId: itinerary.id,
+              location: dest.location,
+              arrivalDateTime: dest.arrivalDateTime,
+              departureDateTime: dest.departureDateTime,
+              notes: dest.notes ?? null,
             }))
           );
         }
 
+        // Insert transportation if any
         if (input.transportation.length > 0) {
           await tx.insert(transportation).values(
             input.transportation.map((trans) => ({
-              ...trans,
               itineraryId: itinerary.id,
-              attachments: trans.attachments as string[] | null,
+              mode: trans.mode,
+              departureDateTime: trans.departureDateTime,
+              arrivalDateTime: trans.arrivalDateTime,
+              bookingReference: trans.bookingReference ?? null,
+              attachments: Array.isArray(trans.attachments)
+                ? trans.attachments
+                : null,
             }))
           );
         }
 
+        // Insert accommodations if any
         if (input.accommodations.length > 0) {
           await tx.insert(accommodations).values(
             input.accommodations.map((acc) => ({
-              ...acc,
               itineraryId: itinerary.id,
+              name: acc.name,
+              checkInDateTime: acc.checkInDateTime,
+              checkOutDateTime: acc.checkOutDateTime,
+              address: acc.address,
+              confirmationNumber: acc.confirmationNumber ?? null,
             }))
           );
         }
 
+        // Insert activities if any
         if (input.activities.length > 0) {
           await tx.insert(activities).values(
             input.activities.map((act) => ({
-              ...act,
               itineraryId: itinerary.id,
-              attachments: act.attachments as string[] | null,
+              name: act.name,
+              dateTime: act.dateTime,
+              location: act.location,
+              notes: act.notes ?? null,
+              attachments: Array.isArray(act.attachments)
+                ? act.attachments
+                : null,
             }))
           );
         }
@@ -136,18 +105,33 @@ export const itineraryRouter = createTRPCRouter({
     }),
 
   // Get all itineraries for the current user
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.itineraries.findMany({
-      where: eq(itineraries.createdById, ctx.session.user.dbId),
-      with: {
-        destinations: true,
-        transportation: true,
-        accommodations: true,
-        activities: true,
-      },
-      orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
-    });
-  }),
+  getAll: protectedProcedure
+    .input(z.enum(["all", "upcoming", "past"]).default("all"))
+    .query(async ({ ctx, input }) => {
+      const baseQuery = {
+        where: eq(itineraries.createdById, ctx.session.user.dbId),
+      };
+
+      switch (input) {
+        case "upcoming":
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            where: and(baseQuery.where, gt(itineraries.startDate, new Date())),
+            orderBy: (itineraries, { asc }) => [asc(itineraries.startDate)],
+          });
+        case "past":
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            where: and(baseQuery.where, lt(itineraries.endDate, new Date())),
+            orderBy: (itineraries, { desc }) => [desc(itineraries.endDate)],
+          });
+        default: // 'all'
+          return await ctx.db.query.itineraries.findMany({
+            ...baseQuery,
+            orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
+          });
+      }
+    }),
 
   // Get single itinerary by ID
   getById: protectedProcedure
@@ -185,7 +169,7 @@ export const itineraryRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid(),
-        data: createItinerarySchema,
+        data: itineraryFormSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -213,12 +197,12 @@ export const itineraryRouter = createTRPCRouter({
           .set({
             tripTitle: input.data.tripTitle,
             tripType: input.data.tripType,
-            coverImage: input.data.coverImage,
+            coverImage: input.data.coverImage ?? null,
             startDate: input.data.startDate,
             endDate: input.data.endDate,
             timeZone: input.data.timeZone,
-            generalNotes: input.data.generalNotes,
-            attachments: input.data.attachments as string[] | null,
+            generalNotes: input.data.generalNotes ?? null,
+            attachments: input.data.attachments ?? null,
           })
           .where(eq(itineraries.id, input.id))
           .returning();
@@ -246,8 +230,11 @@ export const itineraryRouter = createTRPCRouter({
         if (input.data.destinations.length > 0) {
           await tx.insert(destinations).values(
             input.data.destinations.map((dest) => ({
-              ...dest,
               itineraryId: input.id,
+              location: dest.location,
+              arrivalDateTime: dest.arrivalDateTime,
+              departureDateTime: dest.departureDateTime,
+              notes: dest.notes ?? null,
             }))
           );
         }
@@ -255,9 +242,14 @@ export const itineraryRouter = createTRPCRouter({
         if (input.data.transportation.length > 0) {
           await tx.insert(transportation).values(
             input.data.transportation.map((trans) => ({
-              ...trans,
               itineraryId: input.id,
-              attachments: trans.attachments as string[] | null,
+              mode: trans.mode,
+              departureDateTime: trans.departureDateTime,
+              arrivalDateTime: trans.arrivalDateTime,
+              bookingReference: trans.bookingReference ?? null,
+              attachments: Array.isArray(trans.attachments)
+                ? trans.attachments
+                : null,
             }))
           );
         }
@@ -265,8 +257,12 @@ export const itineraryRouter = createTRPCRouter({
         if (input.data.accommodations.length > 0) {
           await tx.insert(accommodations).values(
             input.data.accommodations.map((acc) => ({
-              ...acc,
               itineraryId: input.id,
+              name: acc.name,
+              checkInDateTime: acc.checkInDateTime,
+              checkOutDateTime: acc.checkOutDateTime,
+              address: acc.address,
+              confirmationNumber: acc.confirmationNumber ?? null,
             }))
           );
         }
@@ -274,9 +270,14 @@ export const itineraryRouter = createTRPCRouter({
         if (input.data.activities.length > 0) {
           await tx.insert(activities).values(
             input.data.activities.map((act) => ({
-              ...act,
               itineraryId: input.id,
-              attachments: act.attachments as string[] | null,
+              name: act.name,
+              dateTime: act.dateTime,
+              location: act.location,
+              notes: act.notes ?? null,
+              attachments: Array.isArray(act.attachments)
+                ? act.attachments
+                : null,
             }))
           );
         }

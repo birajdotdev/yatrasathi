@@ -1,49 +1,57 @@
-import { CalendarDays } from "lucide-react";
+import { Suspense } from "react";
 
-import { ItineraryCard } from "@/components/pages/itineraries/itinerary-card";
+import { CalendarDays } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
+
+import {
+  ItinerariesClient,
+  ItinerariesSkeleton,
+} from "@/components/pages/itineraries";
 import { Banner } from "@/components/ui/banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { itineraries } from "@/data/itineraries";
+import { HydrateClient, api } from "@/trpc/server";
 
-export default function ItinerariesPage() {
+export default async function ItinerariesPage() {
+  void api.itinerary.getAll.prefetch("all");
+
   return (
-    <main className="space-y-6 lg:space-y-8">
-      <Banner
-        title="Your Itineraries"
-        description="Manage and organize all your upcoming adventures in one place."
-        badgeText="Travel Plans"
-        icon={CalendarDays}
-      />
-      <Tabs defaultValue="upcoming">
-        <TabsList>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="past">Past</TabsTrigger>
-          <TabsTrigger value="drafts">Drafts</TabsTrigger>
-        </TabsList>
-        <TabsContent value="upcoming">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {itineraries
-              .filter((i) => i.status === "upcoming")
-              .map((itinerary) => (
-                <ItineraryCard key={itinerary.title} itinerary={itinerary} />
-              ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="past">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {itineraries
-              .filter((i) => i.status === "past")
-              .map((itinerary) => (
-                <ItineraryCard key={itinerary.title} itinerary={itinerary} />
-              ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="drafts">
-          <p className="text-muted-foreground">
-            You don&apos;t have any draft itineraries.
-          </p>
-        </TabsContent>
-      </Tabs>
-    </main>
+    <HydrateClient>
+      <main className="space-y-6 lg:space-y-8">
+        <Banner
+          title="Your Itineraries"
+          description="Manage and organize all your upcoming adventures in one place."
+          badgeText="Travel Plans"
+          icon={CalendarDays}
+        />
+        <Tabs defaultValue="all">
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+            <TabsTrigger value="past">Past</TabsTrigger>
+          </TabsList>
+          <TabsContent value="all">
+            <Suspense fallback={<ItinerariesSkeleton />}>
+              <ErrorBoundary fallback={<p>Error</p>}>
+                <ItinerariesClient />
+              </ErrorBoundary>
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="upcoming">
+            <Suspense fallback={<ItinerariesSkeleton />}>
+              <ErrorBoundary fallback={<p>Error</p>}>
+                <ItinerariesClient filter="upcoming" />
+              </ErrorBoundary>
+            </Suspense>
+          </TabsContent>
+          <TabsContent value="past">
+            <Suspense fallback={<ItinerariesSkeleton />}>
+              <ErrorBoundary fallback={<p>Error</p>}>
+                <ItinerariesClient filter="past" />
+              </ErrorBoundary>
+            </Suspense>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </HydrateClient>
   );
 }
