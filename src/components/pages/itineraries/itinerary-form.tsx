@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,7 +8,6 @@ import { format } from "date-fns";
 import { CalendarIcon, PlusCircle, X } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,6 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { ImageUploader } from "@/components/ui/image-uploader";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -36,87 +35,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ImageUploader } from "@/components/ui/image-uploader";
+import {
+  type ItineraryFormValues,
+  itineraryFormSchema,
+  transportationModes,
+  tripTypes,
+} from "@/lib/schemas/itinerary";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-
-const tripTypes = [
-  "Vacation",
-  "Business",
-  "Family",
-  "Adventure",
-  "Road Trip",
-  "Educational",
-  "Other",
-] as const;
-
-const transportationModes = [
-  "Flight",
-  "Train",
-  "Car",
-  "Bus",
-  "Ferry",
-  "Other",
-] as const;
-
-const itineraryFormSchema = z.object({
-  // Trip Overview
-  tripTitle: z.string().min(3, "Trip title must be at least 3 characters"),
-  tripType: z.enum(tripTypes),
-  coverImage: z.string().optional(),
-  startDate: z.date(),
-  endDate: z.date(),
-  timeZone: z.string(),
-
-  // Destinations
-  destinations: z.array(
-    z.object({
-      location: z.string().min(2, "Location is required"),
-      arrivalDateTime: z.date(),
-      departureDateTime: z.date(),
-      notes: z.string().optional(),
-    })
-  ),
-
-  // Transportation
-  transportation: z.array(
-    z.object({
-      mode: z.enum(transportationModes),
-      departureDateTime: z.date(),
-      arrivalDateTime: z.date(),
-      bookingReference: z.string().optional(),
-      attachments: z.array(z.string()).optional(),
-    })
-  ),
-
-  // Accommodations
-  accommodations: z.array(
-    z.object({
-      name: z.string().min(2, "Accommodation name is required"),
-      checkInDateTime: z.date(),
-      checkOutDateTime: z.date(),
-      address: z.string(),
-      confirmationNumber: z.string().optional(),
-    })
-  ),
-
-  // Activities
-  activities: z.array(
-    z.object({
-      name: z.string().min(2, "Activity name is required"),
-      dateTime: z.date(),
-      location: z.string(),
-      notes: z.string().optional(),
-      attachments: z.array(z.string()).optional(),
-    })
-  ),
-
-  // Notes
-  generalNotes: z.string().optional(),
-  attachments: z.array(z.string()).optional(),
-});
-
-type ItineraryFormValues = z.infer<typeof itineraryFormSchema>;
 
 type ItineraryFormProps = {
   mode?: "create" | "update";
@@ -305,7 +231,10 @@ export function ItineraryForm({
                   <FormItem>
                     <FormLabel>Cover Image</FormLabel>
                     <FormControl>
-                      <ImageUploader value={field.value} onChange={field.onChange} />
+                      <ImageUploader
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -572,6 +501,7 @@ export function ItineraryForm({
                           <Textarea
                             placeholder="Add any notes about this destination"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -716,6 +646,7 @@ export function ItineraryForm({
                           <Input
                             placeholder="Enter booking reference"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -866,6 +797,7 @@ export function ItineraryForm({
                           <Input
                             placeholder="Enter confirmation number"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -987,6 +919,7 @@ export function ItineraryForm({
                           <Textarea
                             placeholder="Add any notes about this activity"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1016,6 +949,7 @@ export function ItineraryForm({
                         placeholder="Add any general notes, packing lists, emergency contacts, etc."
                         className="min-h-[150px]"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
