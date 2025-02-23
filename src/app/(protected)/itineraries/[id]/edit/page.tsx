@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { PencilLine } from "lucide-react";
 
-import { ItineraryForm } from "@/components/pages/itineraries/itinerary-form";
+import { ItineraryForm } from "@/components/pages/itineraries";
 import { Banner } from "@/components/ui/banner";
 import { api } from "@/trpc/server";
 

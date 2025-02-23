@@ -1,6 +1,6 @@
 import { CalendarPlus } from "lucide-react";
 
-import { ItineraryForm } from "@/components/pages/itineraries/itinerary-form";
+import { ItineraryForm } from "@/components/pages/itineraries";
 import { Banner } from "@/components/ui/banner";
 
 export default function CreateItineraryPage() {
