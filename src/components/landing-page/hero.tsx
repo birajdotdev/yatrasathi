@@ -62,7 +62,7 @@ const itemVariants = {
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-[url(/bg-light.svg)] bg-fixed dark:bg-[url(/bg-dark.svg)]">
-      <div className="absolute inset-0 bg-gradient-to-br from-background/10 via-background/50 to-background/80 backdrop-blur-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-background/10 via-background/50 to-background/80 backdrop-blur-none" />
       <div className="container relative z-10 mx-auto px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
         <motion.div
           className="grid items-center gap-12 lg:grid-cols-2"
@@ -74,7 +74,7 @@ export default function Hero() {
             className="flex flex-col justify-center space-y-8"
             variants={itemVariants}
           >
-            <div className="inline-flex w-fit items-center rounded-full border bg-background/50 px-3 py-1 text-sm backdrop-blur-sm">
+            <div className="inline-flex w-fit items-center rounded-full border bg-background/50 px-3 py-1 text-sm backdrop-blur-xs">
               <Sparkles className="mr-2 h-4 w-4 text-primary" />
               <span className="text-muted-foreground">
                 AI-Powered Travel Planning
@@ -82,10 +82,10 @@ export default function Hero() {
             </div>
             <div className="space-y-4">
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="block bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Your Journey,
                 </span>
-                <span className="block bg-gradient-to-br from-primary to-primary/70 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-br from-primary to-primary/70 bg-clip-text text-transparent">
                   Simplified
                 </span>
               </h1>
@@ -124,7 +124,7 @@ export default function Hero() {
                   }}
                   className="group relative"
                 >
-                  <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-primary to-primary/50 opacity-10 blur transition duration-1000 group-hover:opacity-75" />
+                  <div className="absolute -inset-0.5 rounded-lg bg-linear-to-br from-primary to-primary/50 opacity-10 blur-sm transition duration-1000 group-hover:opacity-75" />
                   <Image
                     src={image.src}
                     alt={image.alt}
