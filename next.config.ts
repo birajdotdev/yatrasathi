@@ -1,8 +1,8 @@
-import { type NextConfig } from "next";
+import type { NextConfig } from "next";
 
 import "@/env";
 
-const config: NextConfig = {
+const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -25,4 +25,4 @@ const config: NextConfig = {
   },
 };
 
-export default config;
+export default nextConfig;

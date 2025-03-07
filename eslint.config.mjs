@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable import/no-anonymous-default-export */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // @ts-ignore
 import { FlatCompat } from "@eslint/eslintrc";
@@ -39,8 +37,8 @@ export default [
 
     languageOptions: {
       parser: tsParser,
-      ecmaVersion: 5,
-      sourceType: "script",
+      ecmaVersion: 2020,
+      sourceType: "module",
 
       parserOptions: {
         project: true,
@@ -91,9 +89,9 @@ export default [
         },
       ],
 
-      "prefer-arrow-callback": ["error"],
-      "prefer-template": ["error"],
-      semi: ["error"],
+      "prefer-arrow-callback": "error",
+      "prefer-template": "error",
+      semi: "error",
       quotes: ["error", "double"],
       "check-file/filename-naming-convention": [
         "error",

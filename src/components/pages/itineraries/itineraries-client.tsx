@@ -24,8 +24,8 @@ export default function ItinerariesClient({
           filter === "upcoming"
             ? "You don't have any upcoming trips planned."
             : filter === "past"
-            ? "You haven't completed any trips yet."
-            : "Get started by creating your first travel itinerary."
+              ? "You haven't completed any trips yet."
+              : "Get started by creating your first travel itinerary."
         }
         action={{
           label: "Create Itinerary",

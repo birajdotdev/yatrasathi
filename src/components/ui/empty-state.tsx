@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import { type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ export function EmptyState({
     <div
       className={cn(
         "flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed border-muted-foreground/25 bg-card/50 px-6 py-8 text-center",
-        className,
+        className
       )}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">

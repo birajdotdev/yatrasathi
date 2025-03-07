@@ -19,19 +19,19 @@ interface BlogCardProps {
 
 export default function BlogCard({ post }: { post: BlogCardProps }) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10">
-      <div className="relative aspect-[16/10] overflow-hidden">
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-linear-to-br from-card to-card/95 transition-all hover:border-primary/20 hover:shadow-[0_0_1rem_-0.25rem] hover:shadow-primary/20 dark:from-card/95 dark:to-card dark:hover:shadow-primary/10">
+      <div className="relative aspect-16/10 overflow-hidden">
         <Image
           src={post.image}
           alt={post.title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         {/* Category badge */}
         <div className="absolute left-4 top-4">
-          <div className="inline-flex rounded-full bg-background/80 px-3 py-1 text-xs font-medium backdrop-blur-sm transition-colors">
+          <div className="inline-flex rounded-full bg-background/80 px-3 py-1 text-xs font-medium backdrop-blur-xs transition-colors">
             {post.category}
           </div>
         </div>

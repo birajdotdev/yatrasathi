@@ -13,13 +13,13 @@ export default function TermsHeader() {
             transition={{ duration: 0.7, type: "spring", damping: 15 }}
           >
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
                 Terms of{" "}
               </span>
-              <span className="relative bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+              <span className="relative bg-linear-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                 Service
                 <motion.span
-                  className="absolute -bottom-2 left-0 h-1 w-full rounded-full bg-gradient-to-r from-primary/40 via-primary/30 to-transparent"
+                  className="absolute -bottom-2 left-0 h-1 w-full rounded-full bg-linear-to-r from-primary/40 via-primary/30 to-transparent"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
