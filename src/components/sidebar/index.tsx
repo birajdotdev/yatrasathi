@@ -1,6 +1,8 @@
 import Link from "next/link";
 import React from "react";
 
+import { currentUser } from "@clerk/nextjs/server";
+
 import SidebarMain from "@/components/sidebar/sidebar-main";
 import SidebarSecondary from "@/components/sidebar/sidebar-secondary";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
@@ -14,7 +16,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { currentUser } from "@clerk/nextjs/server";
 
 export default async function AppSidebar({
   ...props
@@ -22,7 +23,7 @@ export default async function AppSidebar({
   const userData = await currentUser();
   const user = {
     name: userData?.fullName ?? "",
-    email: userData?.emailAddresses[0].emailAddress ?? "",
+    email: userData?.emailAddresses[0]?.emailAddress ?? "",
     avatar: userData?.imageUrl ?? "",
   };
 
