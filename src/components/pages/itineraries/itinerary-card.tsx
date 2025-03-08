@@ -9,7 +9,7 @@ type Itinerary = RouterOutputs["itinerary"]["getAll"][0];
 
 export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card to-card/98 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 dark:from-card/90 dark:to-card/95 dark:hover:shadow-primary/5">
+    <div className="group relative overflow-hidden rounded-xl border border-border/40 bg-linear-to-br from-card to-card/98 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 dark:from-card/90 dark:to-card/95 dark:hover:shadow-primary/5">
       <div className="relative">
         <div className="relative aspect-video w-full overflow-hidden">
           {/* Action button */}
@@ -27,7 +27,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
               fill
               className="object-cover transition-all duration-700 will-change-transform group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/60 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-60 dark:from-background/95 dark:via-background/75 dark:opacity-80" />
+            <div className="absolute inset-0 bg-linear-to-t from-background/95 via-background/60 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-60 dark:from-background/95 dark:via-background/75 dark:opacity-80" />
 
             {/* Overlay content */}
             <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -35,7 +35,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
                 {itinerary.tripTitle}
               </h3>
               <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary/90 backdrop-blur-sm transition-colors group-hover:bg-primary/25 dark:bg-primary/25 dark:text-primary/90 dark:group-hover:bg-primary/30">
+                <div className="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary/90 backdrop-blur-xs transition-colors group-hover:bg-primary/25 dark:bg-primary/25 dark:text-primary/90 dark:group-hover:bg-primary/30">
                   {Math.max(
                     0,
                     Math.ceil(

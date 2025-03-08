@@ -67,7 +67,7 @@ export default function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="relative overflow-hidden bg-gradient-to-br from-background to-background/80 py-24"
+      className="relative overflow-hidden bg-linear-to-br from-background to-background/80 py-24"
       ref={ref}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,10 +79,10 @@ export default function Testimonials() {
         >
           <motion.div className="text-center" variants={itemVariants}>
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
-              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 What Our
               </span>{" "}
-              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Users Say
               </span>
             </h2>
@@ -103,7 +103,7 @@ export default function Testimonials() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-primary to-primary/50 opacity-30 blur transition duration-1000 group-hover:opacity-100" />
+                <div className="absolute -inset-0.5 rounded-2xl bg-linear-to-br from-primary to-primary/50 opacity-30 blur-sm transition duration-1000 group-hover:opacity-100" />
                 <Card className="relative flex h-full flex-col items-center space-y-8 rounded-xl bg-card p-6 shadow-lg transition duration-300 md:p-8">
                   <div className="flex w-full justify-between">
                     <div className="flex items-center space-x-4">
@@ -125,7 +125,7 @@ export default function Testimonials() {
                     </div>
                     <QuoteIcon className="h-8 w-8 text-primary/20 transition duration-300 group-hover:text-primary/80" />
                   </div>
-                  <div className="flex-grow">
+                  <div className="grow">
                     <p className="text-pretty text-muted-foreground">
                       &quot;{testimonial.content}&quot;
                     </p>

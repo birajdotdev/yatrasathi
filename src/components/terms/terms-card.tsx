@@ -16,7 +16,7 @@ export default function TermsCard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, type: "spring", damping: 15 }}
         >
-          <Card className="border border-border/40 bg-background/50 shadow-xl backdrop-blur-sm dark:border-border/5 dark:bg-card/40">
+          <Card className="border border-border/40 bg-background/50 shadow-xl backdrop-blur-xs dark:border-border/5 dark:bg-card/40">
             <CardContent className="grid gap-10 p-8 sm:p-10">
               <div className="flex items-center justify-between border-b border-border/40 pb-8">
                 <div className="space-y-1">

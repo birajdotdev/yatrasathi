@@ -5,7 +5,7 @@ export default function UserDashboardSkeletonLoading() {
   return (
     <main className="space-y-6 lg:space-y-8">
       {/* Welcome Banner Skeleton */}
-      <div className="rounded-3xl bg-gradient-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
+      <div className="rounded-3xl bg-linear-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
         <div className="p-6 sm:p-8 lg:p-12">
           <Skeleton className="mb-4 h-6 w-40" />
           <Skeleton className="mb-4 h-12 w-3/4" />
@@ -39,7 +39,7 @@ export default function UserDashboardSkeletonLoading() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="rounded-xl border border-border/50">
-              <Skeleton className="aspect-[16/10] w-full" />
+              <Skeleton className="aspect-16/10 w-full" />
               <div className="p-5">
                 <Skeleton className="mb-2 h-6 w-3/4" />
                 <Skeleton className="mb-4 h-4 w-full" />

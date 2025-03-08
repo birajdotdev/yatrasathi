@@ -51,10 +51,14 @@ export default function QuickActionButton() {
           >
             <Link href={action.href}>
               <div
-                className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
+                className="flex size-8 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary transition-colors duration-300"
                 aria-hidden="true"
               >
-                <action.icon size={16} strokeWidth={2} />
+                <action.icon
+                  size={16}
+                  strokeWidth={2}
+                  className="text-primary group-hover:text-primary-foreground transition-colors duration-300"
+                />
               </div>
               <div>
                 <div className="text-sm font-medium">{action.title}</div>

@@ -42,7 +42,7 @@ export default function ActionButton({ itineraryId }: ActionButtonProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full bg-background/90 shadow-sm backdrop-blur-lg transition-all hover:bg-background/95 hover:shadow-md dark:bg-background/50 dark:hover:bg-background/60"
+          className="h-8 w-8 rounded-full bg-background/90 shadow-xs backdrop-blur-lg transition-all hover:bg-background/95 hover:shadow-md dark:bg-background/50 dark:hover:bg-background/60"
         >
           <MoreHorizontal className="h-4 w-4 text-foreground/80" />
           <span className="sr-only">Open menu</span>

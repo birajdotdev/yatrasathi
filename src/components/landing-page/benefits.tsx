@@ -65,7 +65,7 @@ export default function Benefits() {
   return (
     <section
       id="benefits"
-      className="relative overflow-hidden bg-gradient-to-br from-background via-background/90 to-background/80 py-24"
+      className="relative overflow-hidden bg-linear-to-br from-background via-background/90 to-background/80 py-24"
       ref={ref}
     >
       <div className="bg-grid-white/[0.02] absolute inset-0 bg-[size:60px_60px]" />
@@ -78,10 +78,10 @@ export default function Benefits() {
         >
           <motion.div className="text-center" variants={itemVariants}>
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
-              <span className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <span className="bg-linear-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Why Choose
               </span>{" "}
-              <span className="mt-2 bg-gradient-to-br from-primary to-primary/70 bg-clip-text text-transparent">
+              <span className="mt-2 bg-linear-to-br from-primary to-primary/70 bg-clip-text text-transparent">
                 YatraSathi?
               </span>
             </h2>
@@ -102,7 +102,7 @@ export default function Benefits() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-primary to-primary/50 opacity-30 blur transition duration-1000 group-hover:opacity-100" />
+                <div className="absolute -inset-0.5 rounded-2xl bg-linear-to-br from-primary to-primary/50 opacity-30 blur-sm transition duration-1000 group-hover:opacity-100" />
                 <Card className="relative flex h-full flex-col items-center space-y-6 rounded-xl bg-card p-8 shadow-lg transition duration-300">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                     <benefit.icon className="h-8 w-8" />
