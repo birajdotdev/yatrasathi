@@ -67,12 +67,7 @@ export default function ThemeToggle({
             onClick={() => setTheme(theme.value)}
             className="rounded-md cursor-pointer"
           >
-            <theme.icon
-              size={16}
-              strokeWidth={2}
-              className="opacity-60"
-              aria-hidden="true"
-            />
+            <theme.icon size={16} strokeWidth={2} aria-hidden="true" />
             <span>{theme.name}</span>
           </DropdownMenuItem>
         ))}
