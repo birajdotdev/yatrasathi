@@ -1,18 +1,29 @@
 import { Suspense } from "react";
 
 import { CalendarDays } from "lucide-react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import {
   ItinerariesClient,
   ItinerariesSkeleton,
 } from "@/components/pages/itineraries";
 import { Banner } from "@/components/ui/banner";
+import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
 export default async function ItinerariesPage() {
-  void api.itinerary.getAll.prefetch("all");
+  // Prefetch all data in parallel
+  await Promise.all([
+    api.itinerary.getAll.prefetch("all"),
+    api.itinerary.getAll.prefetch("upcoming"),
+    api.itinerary.getAll.prefetch("past"),
+  ]);
+
+  const tabOptions = [
+    { value: "all", label: "All" },
+    { value: "upcoming", label: "Upcoming" },
+    { value: "past", label: "Past" },
+  ] as const;
 
   return (
     <HydrateClient>
@@ -25,31 +36,24 @@ export default async function ItinerariesPage() {
         />
         <Tabs defaultValue="all">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-            <TabsTrigger value="past">Past</TabsTrigger>
+            {tabOptions.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
-          <TabsContent value="all">
-            <Suspense fallback={<ItinerariesSkeleton />}>
-              <ErrorBoundary fallback={<p>Error</p>}>
-                <ItinerariesClient />
-              </ErrorBoundary>
-            </Suspense>
-          </TabsContent>
-          <TabsContent value="upcoming">
-            <Suspense fallback={<ItinerariesSkeleton />}>
-              <ErrorBoundary fallback={<p>Error</p>}>
-                <ItinerariesClient filter="upcoming" />
-              </ErrorBoundary>
-            </Suspense>
-          </TabsContent>
-          <TabsContent value="past">
-            <Suspense fallback={<ItinerariesSkeleton />}>
-              <ErrorBoundary fallback={<p>Error</p>}>
-                <ItinerariesClient filter="past" />
-              </ErrorBoundary>
-            </Suspense>
-          </TabsContent>
+
+          {tabOptions.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value}>
+              <Suspense fallback={<ItinerariesSkeleton />}>
+                <ErrorBoundaryWrapper fallbackMessage="Failed to load itineraries. Please try again later.">
+                  <ItinerariesClient
+                    filter={tab.value === "all" ? "all" : tab.value}
+                  />
+                </ErrorBoundaryWrapper>
+              </Suspense>
+            </TabsContent>
+          ))}
         </Tabs>
       </main>
     </HydrateClient>
