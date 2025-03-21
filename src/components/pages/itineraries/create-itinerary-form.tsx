@@ -18,43 +18,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-// Helper to normalize date for comparison (strip time)
-const normalizeDate = (date: Date): Date => {
-  const normalized = new Date(date);
-  normalized.setHours(0, 0, 0, 0);
-  return normalized;
-};
-
-// Get today's date normalized
-const getTodayNormalized = (): Date => {
-  return normalizeDate(new Date());
-};
-
 // Schema definition
 const formSchema = z.object({
   destination: z.string().min(1, { message: "Destination is required" }),
-  dateRange: z
-    .object(
-      {
-        from: z.date({ required_error: "Start date is required" }),
-        to: z.date().optional(),
-      },
-      { required_error: "Date range is required" }
-    )
-    .superRefine((data, ctx) => {
-      const today = getTodayNormalized();
-      const startDate = normalizeDate(data.from);
-
-      if (startDate < today) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message:
-            "Date cannot be in the past. Please select a current or future date.",
-          path: [],
-        });
-        return;
-      }
-    }),
+  dateRange: z.object(
+    {
+      from: z.date({ required_error: "Start date is required" }),
+      to: z.date().optional(),
+    },
+    { required_error: "Date range is required" }
+  ),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -81,13 +54,15 @@ export default function CreateItineraryForm() {
           <FormField
             control={form.control}
             name="destination"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">Where to?</FormLabel>
                 <FormControl>
                   <DestinationCombobox
                     value={field.value}
                     onChange={field.onChange}
+                    error={!!fieldState.error}
+                    placeholder="Enter a city or popular destination"
                   />
                 </FormControl>
                 <FormMessage />
@@ -99,7 +74,7 @@ export default function CreateItineraryForm() {
           <FormField
             control={form.control}
             name="dateRange"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
                   When are you traveling?
@@ -108,6 +83,9 @@ export default function CreateItineraryForm() {
                   <DatePickerWithRange
                     date={field.value}
                     setDate={field.onChange}
+                    error={!!fieldState.error}
+                    disablePastDates={true}
+                    placeholder="Choose your travel dates"
                   />
                 </FormControl>
                 <FormMessage />

@@ -37,6 +37,8 @@ type DestinationComboboxProps = {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  error?: boolean;
+  disabled?: boolean;
 };
 
 // Pre-create loading skeleton array to avoid recreating it on each render
@@ -63,6 +65,8 @@ export function DestinationCombobox({
   onChange,
   placeholder = "Select your destination",
   className,
+  error = false,
+  disabled = false,
 }: DestinationComboboxProps) {
   const [search, setSearch] = useState(value);
   const [open, setOpen] = useState(false);
@@ -72,7 +76,7 @@ export function DestinationCombobox({
   // Only query when we have a search string
   const shouldFetch = debouncedSearch.trim().length > 0;
 
-  const { data, isLoading, error } = api.places.search.useQuery(
+  const { data, isLoading, isError } = api.places.search.useQuery(
     { query: debouncedSearch },
     {
       enabled: shouldFetch,
@@ -97,9 +101,9 @@ export function DestinationCombobox({
 
   // Memoize the error message
   const errorMessage = useMemo(() => {
-    if (!error) return null;
-    return error.message || DEFAULT_ERROR_MESSAGE;
-  }, [error]);
+    if (!isError) return null;
+    return DEFAULT_ERROR_MESSAGE;
+  }, [isError]);
 
   // Handle open state changes
   const handleOpenChange = useCallback(
@@ -124,12 +128,25 @@ export function DestinationCombobox({
           aria-label="Select destination"
           className={cn(
             "w-full space-x-1 h-12 rounded-xl !bg-background hover:!bg-muted text-left font-normal",
-            className
+            className,
+            error &&
+              "!border-destructive !text-destructive !bg-destructive/20 hover:!bg-destructive/30 transition-colors"
           )}
+          disabled={disabled}
         >
-          <MapPin className="!size-5 text-muted-foreground pointer-events-none" />
+          <MapPin
+            className={cn(
+              "!size-5 text-muted-foreground pointer-events-none",
+              error && "!text-destructive"
+            )}
+          />
           <div className="flex items-center justify-between w-full">
-            <span className={cn(!value && "text-muted-foreground")}>
+            <span
+              className={cn(
+                !value && "text-muted-foreground",
+                error && "!text-destructive"
+              )}
+            >
               {value || placeholder}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
