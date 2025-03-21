@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import DestinationSearch from "@/components/pages/itineraries/destination-search";
+import { DestinationCombobox } from "@/components/pages/itineraries/destination-combobox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
@@ -85,7 +85,10 @@ export default function CreateItineraryForm() {
               <FormItem>
                 <FormLabel className="text-sm font-medium">Where to?</FormLabel>
                 <FormControl>
-                  <DestinationSearch />
+                  <DestinationCombobox
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
