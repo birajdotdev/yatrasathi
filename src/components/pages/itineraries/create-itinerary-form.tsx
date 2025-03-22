@@ -36,11 +36,9 @@ const placeSchema = z.object(
 
 // Schema definition
 const formSchema = z.object({
-  destination: placeSchema
-    .nullable()
-    .refine((val) => val !== null, {
-      message: "Please select a destination for your trip",
-    }),
+  destination: placeSchema.nullable().refine((val) => val !== null, {
+    message: "Please select a destination for your trip",
+  }),
   dateRange: z.object(
     {
       from: z.date({ required_error: "Start date is required" }),
