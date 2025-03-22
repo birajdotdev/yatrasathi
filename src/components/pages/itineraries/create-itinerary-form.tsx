@@ -17,33 +17,70 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Place } from "@/server/api/routers/places";
+
+// Define a Place zod schema that matches the Place type
+const placeSchema = z.object(
+  {
+    id: z.string(),
+    name: z.string(),
+    address: z.string(),
+    subcategory: z.string(),
+    latitude: z.number(),
+    longitude: z.number(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+  },
+  { required_error: "Please select a destination for your trip" }
+);
 
 // Schema definition
 const formSchema = z.object({
-  destination: z.string().min(1, { message: "Destination is required" }),
+  destination: placeSchema
+    .nullable()
+    .refine((val) => val !== null, {
+      message: "Please select a destination for your trip",
+    }),
   dateRange: z.object(
     {
       from: z.date({ required_error: "Start date is required" }),
       to: z.date().optional(),
     },
-    { required_error: "Date range is required" }
+    { required_error: "Please select your travel dates" }
   ),
 });
 
+// Use the inferred type from the schema
 type FormSchema = z.infer<typeof formSchema>;
+
+// The form submission data type with properly typed destination
+type ItineraryFormData = {
+  destination: Place; // Using the imported Place type
+  dateRange: {
+    from: Date;
+    to?: Date;
+  };
+};
 
 export default function CreateItineraryForm() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      destination: "",
+      destination: undefined, // Use undefined instead of null for compatibility
       dateRange: undefined,
-    },
+    } as unknown as FormSchema, // Type assertion to resolve the type check issue
     mode: "onChange",
   });
 
   const onSubmit = (data: FormSchema) => {
-    console.log(data);
+    // We can safely assert non-null because of the schema refinement
+    const formData: ItineraryFormData = {
+      destination: data.destination as Place,
+      dateRange: data.dateRange,
+    };
+
+    console.log("Submitting complete destination data:", formData);
+    // Now you have the full Place object with all the necessary data
   };
 
   return (
@@ -59,8 +96,12 @@ export default function CreateItineraryForm() {
                 <FormLabel className="text-sm font-medium">Where to?</FormLabel>
                 <FormControl>
                   <DestinationCombobox
-                    value={field.value}
-                    onChange={field.onChange}
+                    value={
+                      field.value || null
+                    } /* Ensure null is passed when undefined */
+                    onChange={(place) => {
+                      field.onChange(place);
+                    }}
                     error={!!fieldState.error}
                     placeholder="Enter a city or popular destination"
                   />

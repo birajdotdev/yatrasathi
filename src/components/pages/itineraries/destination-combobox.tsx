@@ -24,17 +24,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
-// Define types for better type safety and documentation
-type Place = {
-  id: string;
-  name: string;
-  address: string;
-  subcategory: string;
-};
+import type { Place } from "@/server/api/routers/places";
 
 type DestinationComboboxProps = {
-  value: string;
-  onChange: (value: string) => void;
+  value: Place | null;
+  onChange: (value: Place) => void;
   placeholder?: string;
   className?: string;
   error?: boolean;
@@ -68,7 +62,7 @@ export function DestinationCombobox({
   error = false,
   disabled = false,
 }: DestinationComboboxProps) {
-  const [search, setSearch] = useState(value);
+  const [search, setSearch] = useState(value?.name ?? "");
   const [open, setOpen] = useState(false);
 
   const [debouncedSearch] = useDebounce(search, 300);
@@ -91,12 +85,17 @@ export function DestinationCombobox({
 
   // Memoize the handleSelect callback
   const handleSelect = useCallback(
-    (currentValue: string) => {
-      onChange(currentValue);
-      setSearch(currentValue);
-      setOpen(false);
+    (selectedName: string) => {
+      // Find the place object that matches the selected name
+      const selectedPlace = places.find((place) => place.name === selectedName);
+      
+      if (selectedPlace) {
+        onChange(selectedPlace);
+        setSearch(selectedPlace.name);
+        setOpen(false);
+      }
     },
-    [onChange]
+    [onChange, places]
   );
 
   // Memoize the error message
@@ -111,7 +110,7 @@ export function DestinationCombobox({
       setOpen(isOpen);
       // Reset search to current value when closing
       if (!isOpen) {
-        setSearch(value);
+        setSearch(value?.name ?? "");
       }
     },
     [value]
@@ -147,17 +146,13 @@ export function DestinationCombobox({
                 error && "!text-destructive"
               )}
             >
-              {value || placeholder}
+              {value?.name ?? placeholder}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-[var(--radix-popover-trigger-width)] rounded-xl overflow-clip p-0"
-        align="start"
-        sideOffset={8}
-      >
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] rounded-xl overflow-clip p-0">
         <Command className="bg-background">
           <CommandInput
             placeholder="e.g. Paris, Hawaii, Japan"
@@ -178,7 +173,7 @@ export function DestinationCombobox({
                 >
                   {LOADING_SKELETONS}
                 </div>
-              ) : error ? (
+              ) : isError ? (
                 <span className="text-destructive" role="alert">
                   {errorMessage}
                 </span>
@@ -187,7 +182,7 @@ export function DestinationCombobox({
               )}
             </CommandEmpty>
             <CommandGroup>
-              {places.map((place: Place) => (
+              {places.map((place) => (
                 <CommandItem
                   key={place.id}
                   value={place.name}
@@ -210,7 +205,7 @@ export function DestinationCombobox({
                     </div>
                     <Badge
                       variant="outline"
-                      className="bg-primary/10 border-none text-primary rounded-full text-xs"
+                      className="bg-primary/10 border-none text-primary rounded-full text-xs capitalize"
                     >
                       {place.subcategory}
                     </Badge>

@@ -12,7 +12,7 @@ export const env = createEnv({
     NGROK_DOMAIN: z.string().optional(),
     NGROK_AUTHTOKEN: z.string().optional(),
     UPLOADTHING_TOKEN: z.string(),
-    FOURSQUARE_API_KEY: z.string(),
+    LOCATIONIQ_API_KEY: z.string(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -37,7 +37,7 @@ export const env = createEnv({
     NGROK_DOMAIN: process.env.NGROK_DOMAIN,
     NGROK_AUTHTOKEN: process.env.NGROK_AUTHTOKEN,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
-    FOURSQUARE_API_KEY: process.env.FOURSQUARE_API_KEY,
+    LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
