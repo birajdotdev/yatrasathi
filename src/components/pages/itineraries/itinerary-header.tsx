@@ -18,7 +18,7 @@ interface ItineraryHeaderProps {
   itinerary: Itinerary;
 }
 
-const ItineraryHeader = ({ itinerary }: ItineraryHeaderProps) => {
+export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const [text, highlight] = splitTitle(itinerary.title);
 
   // Format dates
@@ -34,7 +34,7 @@ const ItineraryHeader = ({ itinerary }: ItineraryHeaderProps) => {
   const durationText = `${tripDurationDays} ${tripDurationDays === 1 ? "day" : "days"} trip`;
 
   return (
-    <div className="relative mb-8 -m-6 lg:-m-8">
+    <div className="relative mb-8 lg:mb-12 -m-6 lg:-m-8">
       {/* Main hero section with parallax effect */}
       <div className="relative h-[40vh] min-h-[320px] overflow-hidden">
         <Image
@@ -121,6 +121,4 @@ const ItineraryHeader = ({ itinerary }: ItineraryHeaderProps) => {
       </div>
     </div>
   );
-};
-
-export default ItineraryHeader;
+}

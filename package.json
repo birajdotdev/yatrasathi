@@ -22,6 +22,7 @@
     "@clerk/themes": "^2.2.26",
     "@eslint/js": "^9.23.0",
     "@hookform/resolvers": "^4.1.3",
+    "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-dialog": "^1.1.6",
