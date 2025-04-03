@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/logo.svg" alt="YatraSathi Logo" width="200"/>
+  <p>Your Journey, Simplified</p>
+</div>
 
-## Getting Started
+This project is built with the [T3 Stack](https://create.t3.gg/), providing a modern travel companion platform.
 
-First, run the development server:
+## 📸 Screenshots
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+<div align="center">
+  <img src="public/screenshots/home.png" alt="Home Page" width="400"/>
+  <p><em>Home Page</em></p>
+
+  <img src="public/screenshots/dashboard.png" alt="Dashboard" width="400"/>
+  <p><em>User Dashboard</em></p>
+
+  <!-- Add more screenshots as needed -->
+</div>
+
+## ✨ Features
+
+- 🔐 Secure authentication with Clerk
+- 🎯 Modern and responsive design
+- 🚀 Fast and reliable performance
+- 📱 Mobile-friendly interface
+- 🛠️ Built with modern technologies
+
+## 🚀 Getting Started
+
+To run the application:
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/Sthabiraj/yatrasathi
+```
+
+2. Navigate to the project directory:
+
+```sh
+cd yatrasathi
+```
+
+3. Copy the example environment file and update it:
+
+```sh
+cp .env.example .env.development
+```
+
+4. Set up Clerk Authentication:
+
+   - Create an account at [Clerk.dev](https://clerk.dev)
+   - Create a new application
+   - Copy your Publishable Key and Secret Key to `.env.development`
+
+5. Start the database:
+
+```sh
+docker compose up -d
+```
+
+6. Install dependencies:
+
+```sh
+bun install
+```
+
+7. Push the database schema:
+
+```sh
+bun db:push
+```
+
+8. Start the development server:
+
+```sh
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js](https://nextjs.org) - React framework
+- [Clerk](https://clerk.dev) - Authentication and user management
+- [Drizzle](https://orm.drizzle.team) - TypeScript ORM
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
+- [tRPC](https://trpc.io) - End-to-end typesafe APIs
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Deployment
 
-## Learn More
+The application can be deployed on various platforms:
 
-To learn more about Next.js, take a look at the following resources:
+- [Vercel](https://create.t3.gg/en/deployment/vercel)
+- [Netlify](https://create.t3.gg/en/deployment/netlify)
+- [Docker](https://create.t3.gg/en/deployment/docker)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📝 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Deploy on Vercel
+## 🤝 Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+<div align="center">
+  <p>For more information, visit the <a href="https://create.t3.gg/">T3 Stack documentation</a></p>
+  <p>Made with ❤️ by birajdotdev</p>
+</div>
