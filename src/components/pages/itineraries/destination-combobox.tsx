@@ -22,12 +22,14 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import type { Place } from "@/server/api/routers/places";
 import { api } from "@/trpc/react";
 
-import type { Place } from "@/server/api/routers/places";
-
 type DestinationComboboxProps = {
-  value: Place | null;
+  value: {
+    name: string;
+    address: string;
+  };
   onChange: (value: Place) => void;
   placeholder?: string;
   className?: string;
@@ -88,7 +90,7 @@ export function DestinationCombobox({
     (selectedName: string) => {
       // Find the place object that matches the selected name
       const selectedPlace = places.find((place) => place.name === selectedName);
-      
+
       if (selectedPlace) {
         onChange(selectedPlace);
         setSearch(selectedPlace.name);

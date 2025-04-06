@@ -8,9 +8,19 @@ import ItineraryHeader from "@/components/pages/itineraries/itinerary-header";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { itinerary } from "@/data/itinerary";
+import { api } from "@/trpc/server";
 
-const ItineraryView = () => {
+interface ItineraryViewPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function ItineraryViewPage({
+  params,
+}: ItineraryViewPageProps) {
+  const itineraryId = (await params).id;
+  const itinerary = await api.itinerary.getById(itineraryId);
   // If no itinerary is found, redirect to home
   if (!itinerary) {
     return redirect("/itineraries/create");
@@ -45,6 +55,4 @@ const ItineraryView = () => {
       </main>
     </div>
   );
-};
-
-export default ItineraryView;
+}

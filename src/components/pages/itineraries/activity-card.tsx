@@ -1,6 +1,10 @@
-import Image from "next/image";
+"use client";
 
-import { Edit } from "lucide-react";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+
+import { Edit, Trash } from "lucide-react";
+import { toast } from "sonner";
 
 import ActivityForm from "@/components/pages/itineraries/activity-form";
 import LocationPin from "@/components/pages/itineraries/location-pin";
@@ -8,6 +12,7 @@ import TimeIndicator from "@/components/pages/itineraries/time-indicator";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { api } from "@/trpc/react";
 import { type Activity, type ItineraryDay } from "@/types/itinerary";
 
 interface ActivityCardProps {
@@ -16,6 +21,34 @@ interface ActivityCardProps {
 }
 
 export default function ActivityCard({ activity, day }: ActivityCardProps) {
+  const router = useRouter();
+  const utils = api.useUtils();
+  const params = useParams();
+  const itineraryId = params.id as string;
+
+  const deleteActivityMutation = api.itinerary.deleteActivity.useMutation({
+    onSuccess: () => {
+      toast.success("Activity deleted", {
+        description: "The activity has been removed from your itinerary",
+      });
+      // Invalidate the specific itinerary data
+      void utils.itinerary.getById.invalidate(itineraryId);
+    },
+    onError: (error) => {
+      toast.error("Failed to delete activity", {
+        description: error.message || "An unknown error occurred",
+      });
+    },
+  });
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (window.confirm("Are you sure you want to delete this activity?")) {
+      await deleteActivityMutation.mutateAsync(activity.id);
+    }
+  };
+
   return (
     <Card className="group p-0 overflow-hidden md:h-[180px]">
       <div className="flex flex-col md:flex-row h-full">
@@ -40,19 +73,31 @@ export default function ActivityCard({ activity, day }: ActivityCardProps) {
             <h3 className="font-medium text-base line-clamp-1">
               {activity.title}
             </h3>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
-                >
-                  <Edit className="h-3.5 w-3.5" />
-                  <span className="sr-only">Edit activity</span>
-                </Button>
-              </DialogTrigger>
-              <ActivityForm activity={activity} selectedDayDate={day.date} />
-            </Dialog>
+            <div className="flex">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                    <span className="sr-only">Edit activity</span>
+                  </Button>
+                </DialogTrigger>
+                <ActivityForm activity={activity} selectedDayDate={day.date} />
+              </Dialog>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
+                onClick={handleDelete}
+                disabled={deleteActivityMutation.isPending}
+              >
+                <Trash className="h-3.5 w-3.5" />
+                <span className="sr-only">Delete activity</span>
+              </Button>
+            </div>
           </div>
 
           {/* Time and location */}

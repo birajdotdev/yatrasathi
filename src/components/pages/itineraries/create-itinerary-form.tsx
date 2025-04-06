@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { toast } from "sonner";
 
 import { DestinationCombobox } from "@/components/pages/itineraries/destination-combobox";
 import { Button } from "@/components/ui/button";
@@ -17,39 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  type ItineraryFormSchema,
+  itineraryFormSchema,
+} from "@/lib/schemas/itinerary";
 import type { Place } from "@/server/api/routers/places";
-
-// Define a Place zod schema that matches the Place type
-const placeSchema = z.object(
-  {
-    id: z.string(),
-    name: z.string(),
-    address: z.string(),
-    subcategory: z.string(),
-    latitude: z.number(),
-    longitude: z.number(),
-    state: z.string().optional(),
-    country: z.string().optional(),
-  },
-  { required_error: "Please select a destination for your trip" }
-);
-
-// Schema definition
-const formSchema = z.object({
-  destination: placeSchema.nullable().refine((val) => val !== null, {
-    message: "Please select a destination for your trip",
-  }),
-  dateRange: z.object(
-    {
-      from: z.date({ required_error: "Start date is required" }),
-      to: z.date().optional(),
-    },
-    { required_error: "Please select your travel dates" }
-  ),
-});
-
-// Use the inferred type from the schema
-type FormSchema = z.infer<typeof formSchema>;
+import { api } from "@/trpc/react";
 
 // The form submission data type with properly typed destination
 type ItineraryFormData = {
@@ -61,24 +36,39 @@ type ItineraryFormData = {
 };
 
 export default function CreateItineraryForm() {
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+  const router = useRouter();
+  const createItinerary = api.itinerary.create.useMutation({
+    onSuccess: (data) => {
+      router.push(`/itineraries/${data.id}`);
+      toast.success("Itinerary created", {
+        description: "Your itinerary has been created",
+      });
+    },
+    onError: (error) => {
+      toast.error("Error creating itinerary", {
+        description: error.message,
+      });
+    },
+  });
+
+  const form = useForm<ItineraryFormSchema>({
+    resolver: zodResolver(itineraryFormSchema),
     defaultValues: {
       destination: undefined, // Use undefined instead of null for compatibility
       dateRange: undefined,
-    } as unknown as FormSchema, // Type assertion to resolve the type check issue
+    } as unknown as ItineraryFormData, // Type assertion to resolve the type check issue
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormSchema) => {
+  const onSubmit = (data: ItineraryFormSchema) => {
     // We can safely assert non-null because of the schema refinement
     const formData: ItineraryFormData = {
       destination: data.destination as Place,
       dateRange: data.dateRange,
     };
 
-    console.log("Submitting complete destination data:", formData);
-    // Now you have the full Place object with all the necessary data
+    console.log("Submitting to itinerary.createSimple:", formData);
+    createItinerary.mutate(formData);
   };
 
   return (
@@ -139,8 +129,9 @@ export default function CreateItineraryForm() {
             type="submit"
             size="lg"
             className="rounded-full group w-full sm:w-auto"
+            disabled={createItinerary.isPending}
           >
-            Start planning
+            {createItinerary.isPending ? "Creating..." : "Start planning"}
             <ArrowRight className="transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
           </Button>
 

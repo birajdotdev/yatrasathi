@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/trpc/react";
 import { type Activity } from "@/types/itinerary";
 
 const activityFormSchema = z.object({
@@ -35,7 +38,6 @@ const activityFormSchema = z.object({
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
   date: z.date({ required_error: "Date is required" }),
-  duration: z.string().min(1, "Duration is required"),
 });
 
 type ActivityFormValues = z.infer<typeof activityFormSchema>;
@@ -43,13 +45,110 @@ type ActivityFormValues = z.infer<typeof activityFormSchema>;
 interface ActivityFormProps {
   activity?: Activity;
   selectedDayDate?: Date;
+  onComplete?: () => void;
 }
 
 export default function ActivityForm({
   activity,
   selectedDayDate,
+  onComplete,
 }: ActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const utils = api.useUtils();
+  const params = useParams();
+  const itineraryId = params.id as string;
+  const dialogCloseRef = useRef<HTMLButtonElement>(null);
+
+  // Setup API mutations
+  const createActivityMutation = api.itinerary.createActivity.useMutation({
+    onSuccess: async () => {
+      toast.success("Activity added successfully", {
+        description: "Your itinerary has been updated",
+      });
+
+      if (itineraryId) {
+        // Force refetch the itinerary data
+        await utils.itinerary.getById.invalidate(itineraryId);
+        // Explicitly trigger a refetch
+        await utils.itinerary.getById.fetch(itineraryId);
+      }
+
+      // Force page refresh to ensure updated data is shown
+      router.refresh();
+
+      if (dialogCloseRef.current) {
+        dialogCloseRef.current.click();
+      }
+
+      if (onComplete) onComplete();
+    },
+    onError: (error) => {
+      toast.error("Failed to add activity", {
+        description: error.message || "An unknown error occurred",
+      });
+      setIsSubmitting(false);
+    },
+  });
+
+  const updateActivityMutation = api.itinerary.updateActivity.useMutation({
+    onSuccess: async () => {
+      toast.success("Activity updated successfully", {
+        description: "Your changes have been saved",
+      });
+
+      if (itineraryId) {
+        // Force refetch the itinerary data
+        await utils.itinerary.getById.invalidate(itineraryId);
+        // Explicitly trigger a refetch
+        await utils.itinerary.getById.fetch(itineraryId);
+      }
+
+      // Force page refresh to ensure updated data is shown
+      router.refresh();
+
+      if (dialogCloseRef.current) {
+        dialogCloseRef.current.click();
+      }
+
+      if (onComplete) onComplete();
+    },
+    onError: (error) => {
+      toast.error("Failed to update activity", {
+        description: error.message || "An unknown error occurred",
+      });
+      setIsSubmitting(false);
+    },
+  });
+
+  const deleteActivityMutation = api.itinerary.deleteActivity.useMutation({
+    onSuccess: async () => {
+      toast.success("Activity deleted", {
+        description: "The activity has been removed from your itinerary",
+      });
+
+      if (itineraryId) {
+        // Force refetch the itinerary data
+        await utils.itinerary.getById.invalidate(itineraryId);
+        // Explicitly trigger a refetch
+        await utils.itinerary.getById.fetch(itineraryId);
+      }
+
+      // Force page refresh to ensure updated data is shown
+      router.refresh();
+
+      if (dialogCloseRef.current) {
+        dialogCloseRef.current.click();
+      }
+
+      if (onComplete) onComplete();
+    },
+    onError: (error) => {
+      toast.error("Failed to delete activity", {
+        description: error.message || "An unknown error occurred",
+      });
+    },
+  });
 
   const form = useForm<ActivityFormValues>({
     resolver: zodResolver(activityFormSchema),
@@ -68,7 +167,7 @@ export default function ActivityForm({
           location: "",
           startTime: "",
           endTime: "",
-          date: undefined,
+          date: selectedDayDate,
         },
   });
 
@@ -76,18 +175,25 @@ export default function ActivityForm({
     setIsSubmitting(true);
 
     try {
-      // In a real app, this would be an API call to save the activity
-      console.log("Saving activity:", data);
-      console.log("Selected day date:", selectedDayDate);
-
-      // Mock success message
-      setTimeout(() => {
-        setIsSubmitting(false);
-        // Close dialog would happen here
-      }, 1000);
+      if (activity) {
+        await updateActivityMutation.mutateAsync({
+          activityId: activity.id,
+          data,
+        });
+      } else {
+        await createActivityMutation.mutateAsync(data);
+      }
     } catch (error) {
-      console.error("Error saving activity:", error);
+      console.error("Error processing activity:", error);
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!activity) return;
+
+    if (window.confirm("Are you sure you want to delete this activity?")) {
+      await deleteActivityMutation.mutateAsync(activity.id);
     }
   };
 
@@ -201,19 +307,33 @@ export default function ActivityForm({
             )}
           />
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
+          <DialogFooter className="flex justify-between">
+            {activity && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={deleteActivityMutation.isPending}
+              >
+                {deleteActivityMutation.isPending
+                  ? "Deleting..."
+                  : "Delete Activity"}
               </Button>
-            </DialogClose>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting
-                ? "Saving..."
-                : activity
-                  ? "Update Activity"
-                  : "Add Activity"}
-            </Button>
+            )}
+            <div className="flex gap-2">
+              <DialogClose asChild>
+                <Button type="button" variant="outline" ref={dialogCloseRef}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? "Saving..."
+                  : activity
+                    ? "Update Activity"
+                    : "Add Activity"}
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </Form>

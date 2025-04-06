@@ -1,6 +1,6 @@
 import CreateItineraryForm from "@/components/pages/itineraries/create-itinerary-form";
 
-export default function CreateItinerary() {
+export default function CreateItineraryPage() {
   return (
     <div className="flex flex-col justify-center items-center min-h-[calc(100vh-9rem)]">
       <div className="mb-12 text-center">

@@ -1,3 +1,5 @@
+import { type RouterOutputs } from "@/trpc/react";
+
 export interface Destination {
   id: string;
   name: string;
@@ -20,14 +22,7 @@ export interface ItineraryDay {
   activities: Activity[];
 }
 
-export interface Itinerary {
-  id: string;
-  title: string;
-  destination: Destination;
-  startDate: Date;
-  endDate: Date;
-  days: ItineraryDay[];
-}
+export type Itinerary = RouterOutputs["itinerary"]["getById"];
 
 export interface ActivityFormData {
   title: string;

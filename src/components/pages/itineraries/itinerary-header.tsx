@@ -25,11 +25,13 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const startDateObj = itinerary.startDate;
   const endDateObj = itinerary.endDate;
   const formattedStartDate = format(startDateObj, "MMM d");
-  const formattedEndDate = format(endDateObj, "MMM d, yyyy");
+  const formattedEndDate = endDateObj ? format(endDateObj, "MMM d, yyyy") : "";
   const dateRange = `${formattedStartDate} - ${formattedEndDate}`;
 
   // Calculate trip duration in days
-  const tripDurationMs = endDateObj.getTime() - startDateObj.getTime();
+  const tripDurationMs = endDateObj
+    ? endDateObj.getTime() - startDateObj.getTime()
+    : 0;
   const tripDurationDays = Math.ceil(tripDurationMs / (1000 * 60 * 60 * 24));
   const durationText = `${tripDurationDays} ${tripDurationDays === 1 ? "day" : "days"} trip`;
 
