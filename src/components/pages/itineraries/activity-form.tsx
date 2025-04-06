@@ -3,11 +3,12 @@
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   DialogClose,
   DialogContent,
@@ -25,30 +26,29 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { type Activity, type Itinerary } from "@/types/itinerary";
+import { type Activity } from "@/types/itinerary";
 
 const activityFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   location: z.string().min(1, "Location is required"),
-  time: z.string().min(1, "Time is required"),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  date: z.date({ required_error: "Date is required" }),
   duration: z.string().min(1, "Duration is required"),
-  image: z.string().optional(),
 });
 
 type ActivityFormValues = z.infer<typeof activityFormSchema>;
 
 interface ActivityFormProps {
   activity?: Activity;
-  itinerary?: Itinerary;
-  selectedDayDate?: string | null;
+  selectedDayDate?: Date;
 }
 
-const ActivityForm = ({
+export default function ActivityForm({
   activity,
-  itinerary,
   selectedDayDate,
-}: ActivityFormProps) => {
+}: ActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ActivityFormValues>({
@@ -58,17 +58,17 @@ const ActivityForm = ({
           title: activity.title,
           description: activity.description,
           location: activity.location,
-          time: activity.time,
-          duration: activity.duration,
-          image: activity.image,
+          startTime: activity.startTime,
+          endTime: activity.endTime,
+          date: selectedDayDate,
         }
       : {
           title: "",
           description: "",
           location: "",
-          time: "",
-          duration: "1 hour",
-          image: "",
+          startTime: "",
+          endTime: "",
+          date: undefined,
         },
   });
 
@@ -92,7 +92,7 @@ const ActivityForm = ({
   };
 
   return (
-    <DialogContent className="sm:max-w-[500px]">
+    <DialogContent className="sm:max-w-[500px] rounded-xl">
       <DialogHeader>
         <DialogTitle>
           {activity ? "Edit Activity" : "Add New Activity"}
@@ -100,7 +100,7 @@ const ActivityForm = ({
       </DialogHeader>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="title"
@@ -118,18 +118,29 @@ const ActivityForm = ({
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date</FormLabel>
+                <FormControl>
+                  <DatePicker date={field.value} setDate={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="time"
+              name="startTime"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Start Time</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input className="pl-10" type="time" {...field} />
-                    </div>
+                    <Input type="time" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,12 +149,12 @@ const ActivityForm = ({
 
             <FormField
               control={form.control}
-              name="duration"
+              name="endTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Duration</FormLabel>
+                  <FormLabel>End Time</FormLabel>
                   <FormControl>
-                    <Input placeholder="E.g., 2 hours" {...field} />
+                    <Input type="time" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -190,23 +201,6 @@ const ActivityForm = ({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image URL (optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
@@ -225,6 +219,4 @@ const ActivityForm = ({
       </Form>
     </DialogContent>
   );
-};
-
-export default ActivityForm;
+}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { Calendar, ImageIcon, MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +22,8 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const [text, highlight] = splitTitle(itinerary.title);
 
   // Format dates
-  const startDateObj = parseISO(itinerary.startDate);
-  const endDateObj = parseISO(itinerary.endDate);
+  const startDateObj = itinerary.startDate;
+  const endDateObj = itinerary.endDate;
   const formattedStartDate = format(startDateObj, "MMM d");
   const formattedEndDate = format(endDateObj, "MMM d, yyyy");
   const dateRange = `${formattedStartDate} - ${formattedEndDate}`;

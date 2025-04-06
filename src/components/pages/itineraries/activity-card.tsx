@@ -8,13 +8,14 @@ import TimeIndicator from "@/components/pages/itineraries/time-indicator";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { type Activity } from "@/types/itinerary";
+import { type Activity, type ItineraryDay } from "@/types/itinerary";
 
 interface ActivityCardProps {
   activity: Activity;
+  day: ItineraryDay;
 }
 
-export default function ActivityCard({ activity }: ActivityCardProps) {
+export default function ActivityCard({ activity, day }: ActivityCardProps) {
   return (
     <Card className="group p-0 overflow-hidden md:h-[180px]">
       <div className="flex flex-col md:flex-row h-full">
@@ -50,15 +51,15 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
                   <span className="sr-only">Edit activity</span>
                 </Button>
               </DialogTrigger>
-              <ActivityForm activity={activity} />
+              <ActivityForm activity={activity} selectedDayDate={day.date} />
             </Dialog>
           </div>
 
           {/* Time and location */}
           <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
             <TimeIndicator
-              time={activity.time}
-              duration={activity.duration}
+              startTime={activity.startTime}
+              endTime={activity.endTime}
               className="flex items-center gap-1.5 font-medium"
             />
             <LocationPin

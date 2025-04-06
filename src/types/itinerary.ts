@@ -10,13 +10,13 @@ export interface Activity {
   title: string;
   description: string;
   location: string;
-  time: string;
-  duration: string;
+  startTime: string;
+  endTime: string;
   image?: string;
 }
 
 export interface ItineraryDay {
-  date: string;
+  date: Date;
   activities: Activity[];
 }
 
@@ -24,8 +24,8 @@ export interface Itinerary {
   id: string;
   title: string;
   destination: Destination;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   days: ItineraryDay[];
 }
 

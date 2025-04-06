@@ -1,5 +1,5 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { ChevronDownIcon, MapPin } from "lucide-react";
 
 import { AccordionContent, AccordionItem } from "@/components/ui/accordion";
@@ -18,8 +18,6 @@ import ActivityCard from "./activity-card";
 interface DayTimelineProps {
   day: ItineraryDay;
 }
-
-// const DayTimeline = ({ day, index, isActive, onToggle }: DayTimelineProps) => {
 //   // Parse and format the date
 //   const dateObj = parseISO(day.date);
 //   const dayOfWeek = format(dateObj, "EEEE");
@@ -106,14 +104,14 @@ interface DayTimelineProps {
 
 export default function DayTimeline({ day }: DayTimelineProps) {
   // Parse and format the date
-  const dateObj = parseISO(day.date);
+  const dateObj = day.date;
   const dayOfWeek = format(dateObj, "EEEE");
   const dayDate = format(dateObj, "do MMMM");
 
   return (
     <AccordionItem
-      value={day.date}
-      key={day.date}
+      value={day.date.toISOString()}
+      key={day.date.toISOString()}
       className="bg-card has-focus-visible:border-ring has-focus-visible:ring-ring/50 rounded-xl border px-4 py-1 outline-none last:border-b has-focus-visible:ring-[3px]"
     >
       <AccordionPrimitive.Header className="flex">
@@ -155,7 +153,7 @@ export default function DayTimeline({ day }: DayTimelineProps) {
                 </TimelineIndicator>
               </TimelineHeader>
               <TimelineContent className="-mt-0.5">
-                <ActivityCard activity={activity} />
+                <ActivityCard activity={activity} day={day} />
               </TimelineContent>
             </TimelineItem>
           ))}

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { PlusCircle } from "lucide-react";
 
+import ActivityForm from "@/components/pages/itineraries/activity-form";
 import DayTimeline from "@/components/pages/itineraries/day-timeline";
 import ItineraryHeader from "@/components/pages/itineraries/itinerary-header";
 import { Accordion } from "@/components/ui/accordion";
@@ -32,15 +33,12 @@ const ItineraryView = () => {
                   Add Activity
                 </Button>
               </DialogTrigger>
-              {/* <ActivityForm
-                itinerary={itinerary}
-                selectedDayDate={selectedDayDate}
-              /> */}
+              <ActivityForm />
             </Dialog>
           </div>
           <Accordion type="single" collapsible className="w-full space-y-6">
             {itinerary.days.map((day) => (
-              <DayTimeline key={day.date} day={day} />
+              <DayTimeline key={day.date.toISOString()} day={day} />
             ))}
           </Accordion>
         </div>
