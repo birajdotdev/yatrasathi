@@ -23,7 +23,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
                   ? "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                   : itinerary.coverImage!
               }
-              alt={itinerary.tripTitle}
+              alt={itinerary.title}
               fill
               className="object-cover transition-all duration-700 will-change-transform group-hover:scale-105"
             />
@@ -32,7 +32,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
             {/* Overlay content */}
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <h3 className="mb-4 text-xl font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-foreground">
-                {itinerary.tripTitle}
+                {itinerary.title}
               </h3>
               <div className="flex flex-wrap items-center gap-3">
                 <div className="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary/90 backdrop-blur-xs transition-colors group-hover:bg-primary/25 dark:bg-primary/25 dark:text-primary/90 dark:group-hover:bg-primary/30">

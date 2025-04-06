@@ -1,4 +1,5 @@
 import { itineraryRouter } from "@/server/api/routers/itinerary";
+import { placesRouter } from "@/server/api/routers/places";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
@@ -10,6 +11,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 export const appRouter = createTRPCRouter({
   user: userRouter,
   itinerary: itineraryRouter,
+  places: placesRouter,
 });
 
 // export type definition of API

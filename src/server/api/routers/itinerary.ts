@@ -2,34 +2,56 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { z } from "zod";
 
+import { fetchImageFromUnsplash } from "@/lib/image-utils";
 import { itineraryFormSchema } from "@/lib/schemas/itinerary";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
-  accommodations,
   activities,
+  days,
   destinations,
   itineraries,
-  transportation,
 } from "@/server/db/schema/itinerary";
 
+// Activity schema for validation
+const activityInputSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  location: z.string().min(1, "Location is required"),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  date: z.date({ required_error: "Date is required" }),
+  image: z.string().optional(),
+});
+
+// Schema for updating an activity
+const updateActivitySchema = z.object({
+  activityId: z.string(),
+  data: activityInputSchema,
+});
+
 export const itineraryRouter = createTRPCRouter({
-  // Create new itinerary
+  // Create simple itinerary from the initial form
   create: protectedProcedure
     .input(itineraryFormSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db.transaction(async (tx) => {
+        // Generate a title based on the destination name
+        const title = `Trip to ${input.destination.name}`;
+
+        // Fetch an image for the destination using our utility function
+        const imageResult = await fetchImageFromUnsplash({
+          query: input.destination.name,
+          count: 1,
+          orientation: "landscape",
+        });
+
         // Create the main itinerary
         const [itinerary] = await tx
           .insert(itineraries)
           .values({
-            tripTitle: input.tripTitle,
-            tripType: input.tripType,
-            coverImage: input.coverImage ?? null,
-            startDate: input.startDate,
-            endDate: input.endDate,
-            timeZone: input.timeZone,
-            generalNotes: input.generalNotes ?? null,
-            attachments: input.attachments ?? null,
+            title: title,
+            startDate: input.dateRange.from,
+            endDate: input.dateRange.to ?? null,
             createdById: ctx.session.user.dbId,
           })
           .returning();
@@ -41,67 +63,122 @@ export const itineraryRouter = createTRPCRouter({
           });
         }
 
-        // Insert destinations if any
-        if (input.destinations.length > 0) {
-          await tx.insert(destinations).values(
-            input.destinations.map((dest) => ({
-              itineraryId: itinerary.id,
-              location: dest.location,
-              arrivalDateTime: dest.arrivalDateTime,
-              departureDateTime: dest.departureDateTime,
-              notes: dest.notes ?? null,
-            }))
-          );
+        // Create the destination
+        const [destination] = await tx
+          .insert(destinations)
+          .values({
+            itineraryId: itinerary.id,
+            name: input.destination.name,
+            address: input.destination.address,
+            image: imageResult.url,
+          })
+          .returning();
+
+        // Create days between start and end date
+        const startDate = new Date(input.dateRange.from);
+        const endDate = input.dateRange.to
+          ? new Date(input.dateRange.to)
+          : new Date(input.dateRange.from);
+
+        // Calculate the number of days
+        const daysCount =
+          Math.ceil(
+            (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+          ) + 1;
+
+        // Create day entries
+        for (let i = 0; i < daysCount; i++) {
+          const date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+
+          await tx.insert(days).values({
+            itineraryId: itinerary.id,
+            date: date,
+          });
         }
 
-        // Insert transportation if any
-        if (input.transportation.length > 0) {
-          await tx.insert(transportation).values(
-            input.transportation.map((trans) => ({
-              itineraryId: itinerary.id,
-              mode: trans.mode,
-              departureDateTime: trans.departureDateTime,
-              arrivalDateTime: trans.arrivalDateTime,
-              bookingReference: trans.bookingReference ?? null,
-              attachments: Array.isArray(trans.attachments)
-                ? trans.attachments
-                : null,
-            }))
-          );
-        }
-
-        // Insert accommodations if any
-        if (input.accommodations.length > 0) {
-          await tx.insert(accommodations).values(
-            input.accommodations.map((acc) => ({
-              itineraryId: itinerary.id,
-              name: acc.name,
-              checkInDateTime: acc.checkInDateTime,
-              checkOutDateTime: acc.checkOutDateTime,
-              address: acc.address,
-              confirmationNumber: acc.confirmationNumber ?? null,
-            }))
-          );
-        }
-
-        // Insert activities if any
-        if (input.activities.length > 0) {
-          await tx.insert(activities).values(
-            input.activities.map((act) => ({
-              itineraryId: itinerary.id,
-              name: act.name,
-              dateTime: act.dateTime,
-              location: act.location,
-              notes: act.notes ?? null,
-              attachments: Array.isArray(act.attachments)
-                ? act.attachments
-                : null,
-            }))
-          );
-        }
-
-        return itinerary;
+        return {
+          id: itinerary.id,
+          title: itinerary.title,
+          destination: destination,
+        };
       });
+    }),
+
+  // Get itinerary by id
+  getById: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      // Get the itinerary with basic information
+      const itinerary = await ctx.db.query.itineraries.findFirst({
+        where: eq(itineraries.id, input),
+      });
+
+      if (!itinerary) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Itinerary not found",
+        });
+      }
+
+      // Get the destination
+      const destination = await ctx.db.query.destinations.findFirst({
+        where: eq(destinations.itineraryId, input),
+      });
+
+      if (!destination) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Destination not found for this itinerary",
+        });
+      }
+
+      // Get all days for this itinerary, ordered by date
+      const daysResult = await ctx.db.query.days.findMany({
+        where: eq(days.itineraryId, input),
+        orderBy: (days, { asc }) => [asc(days.date)],
+      });
+
+      // Get activities for each day
+      const daysWithActivities = await Promise.all(
+        daysResult.map(async (day) => {
+          const dayActivities = await ctx.db.query.activities.findMany({
+            where: eq(activities.dayId, day.id),
+            orderBy: (activities, { asc }) => [asc(activities.startTime)],
+          });
+
+          return {
+            ...day,
+            activities: dayActivities,
+          };
+        })
+      );
+
+      // Format the response according to the itinerary.ts format
+      return {
+        id: itinerary.id,
+        title: itinerary.title,
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          address: destination.address,
+          image: destination.image,
+        },
+        startDate: itinerary.startDate,
+        endDate: itinerary.endDate,
+        days: daysWithActivities.map((day) => ({
+          date: day.date,
+          activities: day.activities.map((activity) => ({
+            id: activity.id,
+            title: activity.title,
+            description: activity.description,
+            location: activity.location,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            image: activity.image,
+          })),
+        })),
+      };
     }),
 
   // Get all itineraries for the current user
@@ -112,214 +189,229 @@ export const itineraryRouter = createTRPCRouter({
         where: eq(itineraries.createdById, ctx.session.user.dbId),
       };
 
+      let itinerariesResult;
+
       switch (input) {
         case "upcoming":
-          return await ctx.db.query.itineraries.findMany({
+          itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
             where: and(baseQuery.where, gt(itineraries.startDate, new Date())),
             orderBy: (itineraries, { asc }) => [asc(itineraries.startDate)],
           });
+          break;
         case "past":
-          return await ctx.db.query.itineraries.findMany({
+          itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
             where: and(baseQuery.where, lt(itineraries.endDate, new Date())),
             orderBy: (itineraries, { desc }) => [desc(itineraries.endDate)],
           });
+          break;
         default: // 'all'
-          return await ctx.db.query.itineraries.findMany({
+          itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
             orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
           });
       }
+
+      // Fetch destinations for each itinerary to get the image
+      const itinerariesWithCover = await Promise.all(
+        itinerariesResult.map(async (itinerary) => {
+          const destination = await ctx.db.query.destinations.findFirst({
+            where: eq(destinations.itineraryId, itinerary.id),
+            columns: {
+              image: true,
+            },
+          });
+
+          return {
+            ...itinerary,
+            coverImage: destination?.image ?? null,
+          };
+        })
+      );
+
+      return itinerariesWithCover;
     }),
 
-  // Get single itinerary by ID
-  getById: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .query(async ({ ctx, input }) => {
+  // Create a new activity
+  createActivity: protectedProcedure
+    .input(activityInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Find the day entry based on the date
+      const day = await ctx.db.query.days.findFirst({
+        where: eq(days.date, input.date),
+      });
+
+      if (!day) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Day not found for the specified date",
+        });
+      }
+
+      // Check if user has permission to add to this itinerary
       const itinerary = await ctx.db.query.itineraries.findFirst({
-        where: eq(itineraries.id, input.id),
+        where: eq(itineraries.id, day.itineraryId),
+      });
+
+      if (!itinerary || itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You do not have permission to add activities to this itinerary",
+        });
+      }
+
+      // Fetch an image if not provided
+      let imageUrl = input.image;
+      if (!imageUrl) {
+        try {
+          const imageResult = await fetchImageFromUnsplash({
+            query: input.title,
+            count: 1,
+            orientation: "landscape",
+          });
+          imageUrl = imageResult.url;
+        } catch (error) {
+          // If image fetch fails, use a default or continue without an image
+          console.error("Failed to fetch image for activity:", error);
+          imageUrl = ""; // Default empty string or could use a placeholder image
+        }
+      }
+
+      // Create the activity
+      const [activity] = await ctx.db
+        .insert(activities)
+        .values({
+          dayId: day.id,
+          title: input.title,
+          description: input.description,
+          location: input.location,
+          startTime: input.startTime,
+          endTime: input.endTime,
+          image: imageUrl ?? "",
+        })
+        .returning();
+
+      if (!activity) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create activity",
+        });
+      }
+
+      return activity;
+    }),
+
+  // Update an existing activity
+  updateActivity: protectedProcedure
+    .input(updateActivitySchema)
+    .mutation(async ({ ctx, input }) => {
+      // Find the activity
+      const existingActivity = await ctx.db.query.activities.findFirst({
+        where: eq(activities.id, input.activityId),
         with: {
-          destinations: true,
-          transportation: true,
-          accommodations: true,
-          activities: true,
+          day: {
+            with: {
+              itinerary: true,
+            },
+          },
         },
       });
 
-      if (!itinerary) {
+      if (!existingActivity) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Itinerary not found",
+          message: "Activity not found",
         });
       }
 
-      if (itinerary.createdById !== ctx.session.user.dbId) {
+      // Check if user has permission
+      if (
+        existingActivity.day.itinerary.createdById !== ctx.session.user.dbId
+      ) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Not authorized to access this itinerary",
+          message: "You do not have permission to update this activity",
         });
       }
 
-      return itinerary;
-    }),
-
-  // Update itinerary
-  update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        data: itineraryFormSchema,
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const existing = await ctx.db.query.itineraries.findFirst({
-        where: eq(itineraries.id, input.id),
-      });
-
-      if (!existing) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Itinerary not found",
+      // If the date has changed, find the new day
+      let dayId = existingActivity.dayId;
+      if (input.data.date.getTime() !== existingActivity.day.date.getTime()) {
+        const newDay = await ctx.db.query.days.findFirst({
+          where: eq(days.date, input.data.date),
         });
-      }
 
-      if (existing.createdById !== ctx.session.user.dbId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Not authorized to update this itinerary",
-        });
-      }
-
-      return await ctx.db.transaction(async (tx) => {
-        const [updated] = await tx
-          .update(itineraries)
-          .set({
-            tripTitle: input.data.tripTitle,
-            tripType: input.data.tripType,
-            coverImage: input.data.coverImage ?? null,
-            startDate: input.data.startDate,
-            endDate: input.data.endDate,
-            timeZone: input.data.timeZone,
-            generalNotes: input.data.generalNotes ?? null,
-            attachments: input.data.attachments ?? null,
-          })
-          .where(eq(itineraries.id, input.id))
-          .returning();
-
-        if (!updated) {
+        if (!newDay) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to update itinerary",
+            code: "NOT_FOUND",
+            message: "Day not found for the updated date",
           });
         }
 
-        // Delete existing related records
-        await tx
-          .delete(destinations)
-          .where(eq(destinations.itineraryId, input.id));
-        await tx
-          .delete(transportation)
-          .where(eq(transportation.itineraryId, input.id));
-        await tx
-          .delete(accommodations)
-          .where(eq(accommodations.itineraryId, input.id));
-        await tx.delete(activities).where(eq(activities.itineraryId, input.id));
-
-        // Insert new related records
-        if (input.data.destinations.length > 0) {
-          await tx.insert(destinations).values(
-            input.data.destinations.map((dest) => ({
-              itineraryId: input.id,
-              location: dest.location,
-              arrivalDateTime: dest.arrivalDateTime,
-              departureDateTime: dest.departureDateTime,
-              notes: dest.notes ?? null,
-            }))
-          );
-        }
-
-        if (input.data.transportation.length > 0) {
-          await tx.insert(transportation).values(
-            input.data.transportation.map((trans) => ({
-              itineraryId: input.id,
-              mode: trans.mode,
-              departureDateTime: trans.departureDateTime,
-              arrivalDateTime: trans.arrivalDateTime,
-              bookingReference: trans.bookingReference ?? null,
-              attachments: Array.isArray(trans.attachments)
-                ? trans.attachments
-                : null,
-            }))
-          );
-        }
-
-        if (input.data.accommodations.length > 0) {
-          await tx.insert(accommodations).values(
-            input.data.accommodations.map((acc) => ({
-              itineraryId: input.id,
-              name: acc.name,
-              checkInDateTime: acc.checkInDateTime,
-              checkOutDateTime: acc.checkOutDateTime,
-              address: acc.address,
-              confirmationNumber: acc.confirmationNumber ?? null,
-            }))
-          );
-        }
-
-        if (input.data.activities.length > 0) {
-          await tx.insert(activities).values(
-            input.data.activities.map((act) => ({
-              itineraryId: input.id,
-              name: act.name,
-              dateTime: act.dateTime,
-              location: act.location,
-              notes: act.notes ?? null,
-              attachments: Array.isArray(act.attachments)
-                ? act.attachments
-                : null,
-            }))
-          );
-        }
-
-        return updated;
-      });
-    }),
-
-  // Delete itinerary
-  delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ ctx, input }) => {
-      const itinerary = await ctx.db.query.itineraries.findFirst({
-        where: eq(itineraries.id, input.id),
-      });
-
-      if (!itinerary) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Itinerary not found",
-        });
+        dayId = newDay.id;
       }
 
-      if (itinerary.createdById !== ctx.session.user.dbId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Not authorized to delete this itinerary",
-        });
-      }
-
-      const [deleted] = await ctx.db
-        .delete(itineraries)
-        .where(eq(itineraries.id, input.id))
+      // Update the activity
+      const [updatedActivity] = await ctx.db
+        .update(activities)
+        .set({
+          dayId,
+          title: input.data.title,
+          description: input.data.description,
+          location: input.data.location,
+          startTime: input.data.startTime,
+          endTime: input.data.endTime,
+          image: input.data.image ?? existingActivity.image,
+        })
+        .where(eq(activities.id, input.activityId))
         .returning();
 
-      if (!deleted) {
+      if (!updatedActivity) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to delete itinerary",
+          message: "Failed to update activity",
         });
       }
 
-      return deleted;
+      return updatedActivity;
+    }),
+
+  // Delete an activity
+  deleteActivity: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      // Find the activity
+      const activity = await ctx.db.query.activities.findFirst({
+        where: eq(activities.id, input),
+        with: {
+          day: {
+            with: {
+              itinerary: true,
+            },
+          },
+        },
+      });
+
+      if (!activity) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Activity not found",
+        });
+      }
+
+      // Check if user has permission
+      if (activity.day.itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to delete this activity",
+        });
+      }
+
+      // Delete the activity
+      await ctx.db.delete(activities).where(eq(activities.id, input));
+
+      return { success: true };
     }),
 });
