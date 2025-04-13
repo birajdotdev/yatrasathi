@@ -382,6 +382,70 @@ export const itineraryRouter = createTRPCRouter({
     }),
 
   // Delete an activity
+  // Delete an itinerary and all related data
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Get the itinerary to check ownership
+      const itinerary = await ctx.db.query.itineraries.findFirst({
+        where: eq(itineraries.id, input.id),
+      });
+
+      if (!itinerary) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Itinerary not found",
+        });
+      }
+
+      // Check if the user owns this itinerary
+      if (itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this itinerary",
+        });
+      }
+
+      return await ctx.db.transaction(async (tx) => {
+        try {
+          // Get all days for this itinerary
+          const daysResult = await tx.query.days.findMany({
+            where: eq(days.itineraryId, input.id),
+          });
+
+          // Delete activities for each day
+          for (const day of daysResult) {
+            await tx
+              .delete(activities)
+              .where(eq(activities.dayId, day.id));
+          }
+
+          // Delete all days
+          await tx
+            .delete(days)
+            .where(eq(days.itineraryId, input.id));
+
+          // Delete destinations
+          await tx
+            .delete(destinations)
+            .where(eq(destinations.itineraryId, input.id));
+
+          // Delete the itinerary
+          await tx
+            .delete(itineraries)
+            .where(eq(itineraries.id, input.id));
+
+          return { success: true };
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to delete itinerary",
+            cause: error,
+          });
+        }
+      });
+    }),
+
   deleteActivity: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
