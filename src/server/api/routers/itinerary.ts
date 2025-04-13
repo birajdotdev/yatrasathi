@@ -1,8 +1,11 @@
+import { google } from "@ai-sdk/google";
 import { TRPCError } from "@trpc/server";
+import { generateObject } from "ai";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { z } from "zod";
 
 import { fetchImageFromUnsplash } from "@/lib/image-utils";
+import { aiGeneratedItinerarySchema } from "@/lib/schemas/ai-itinerary";
 import { itineraryFormSchema } from "@/lib/schemas/itinerary";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
@@ -413,5 +416,152 @@ export const itineraryRouter = createTRPCRouter({
       await ctx.db.delete(activities).where(eq(activities.id, input));
 
       return { success: true };
+    }),
+
+  // Generate itinerary with AI
+  generateWithAI: protectedProcedure
+    .input(itineraryFormSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Calculate number of days
+        const startDate = input.dateRange.from;
+        const endDate = input.dateRange.to ?? input.dateRange.from;
+        const daysCount =
+          Math.ceil(
+            (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+          ) + 1;
+
+        // Format dates for the prompt
+        const formatDate = (date: Date) => {
+          return date.toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+        };
+
+        // Create a system prompt for the AI
+        const systemPrompt = `You are an expert travel planner. Generate a detailed day-by-day itinerary for a trip to ${input.destination.name}.
+        
+        Trip details:
+        - Destination: ${input.destination.name}
+        - Start date: ${formatDate(startDate)}
+        - End date: ${formatDate(endDate)}
+        - Total days: ${daysCount}
+        
+        Your task is to create a realistic and enjoyable itinerary with multiple activities each day, including must-see attractions, food recommendations, and practical travel information.`;
+
+        // Initialize the Gemini model
+        // API key is automatically picked up from GOOGLE_GENERATIVE_AI_API_KEY environment variable
+        const model = google("models/gemini-1.5-flash");
+
+        // Generate structured data using the AI SDK and our Zod schema
+        const { object: generatedItinerary } = await generateObject({
+          model,
+          schema: aiGeneratedItinerarySchema,
+          prompt: `Please create a detailed itinerary for my trip to ${input.destination.name} from ${formatDate(startDate)} to ${formatDate(endDate)}. Include 3-4 activities for each day with realistic timings, locations, and descriptions.
+
+${systemPrompt}`,
+        });
+
+        // Save the generated itinerary to the database
+        return await ctx.db.transaction(async (tx) => {
+          // Create the main itinerary
+          const [itinerary] = await tx
+            .insert(itineraries)
+            .values({
+              title: generatedItinerary.title,
+              startDate: input.dateRange.from,
+              endDate: input.dateRange.to ?? null,
+              createdById: ctx.session.user.dbId,
+            })
+            .returning();
+
+          if (!itinerary) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create itinerary",
+            });
+          }
+
+          // Create the destination
+          const imageResult = await fetchImageFromUnsplash({
+            query: input.destination.name,
+            count: 1,
+            orientation: "landscape",
+          });
+
+          const [destination] = await tx
+            .insert(destinations)
+            .values({
+              itineraryId: itinerary.id,
+              name: input.destination.name,
+              address: input.destination.address,
+              image: imageResult.url,
+            })
+            .returning();
+
+          // Create days and activities
+          for (const dayData of generatedItinerary.days) {
+            // Create the day entry
+            const [day] = await tx
+              .insert(days)
+              .values({
+                itineraryId: itinerary.id,
+                date: dayData.date,
+              })
+              .returning();
+
+            if (!day) {
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Failed to create day entry",
+              });
+            }
+
+            // Create activities for the day
+            for (const activityData of dayData.activities) {
+              // Get image for the activity
+              let activityImage = "";
+              try {
+                const activityImageResult = await fetchImageFromUnsplash({
+                  query: `${activityData.title} ${input.destination.name}`,
+                  count: 1,
+                  orientation: "landscape",
+                });
+                activityImage = activityImageResult.url;
+              } catch (error) {
+                console.error("Failed to fetch activity image:", error);
+              }
+
+              await tx.insert(activities).values({
+                dayId: day.id,
+                title: activityData.title,
+                description: activityData.description,
+                location: activityData.location,
+                startTime: activityData.startTime,
+                endTime: activityData.endTime,
+                image: activityImage,
+              });
+            }
+          }
+
+          return {
+            id: itinerary.id,
+            title: itinerary.title,
+            destination: destination,
+          };
+        });
+      } catch (error) {
+        console.error("Error generating itinerary with AI:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to generate itinerary with AI",
+        });
+      }
     }),
 });
