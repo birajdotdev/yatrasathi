@@ -14,6 +14,7 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string(),
     LOCATIONIQ_API_KEY: z.string(),
     UNSPLASH_ACCESS_KEY: z.string(),
+    GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -40,6 +41,7 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
     UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,
+    GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -37,6 +37,8 @@ type ItineraryFormData = {
 
 export default function CreateItineraryForm() {
   const router = useRouter();
+
+  // Create itinerary mutation
   const createItinerary = api.itinerary.create.useMutation({
     onSuccess: (data) => {
       router.push(`/itineraries/${data.id}`);
@@ -46,6 +48,21 @@ export default function CreateItineraryForm() {
     },
     onError: (error) => {
       toast.error("Error creating itinerary", {
+        description: error.message,
+      });
+    },
+  });
+
+  // Generate with AI mutation
+  const generateWithAI = api.itinerary.generateWithAI.useMutation({
+    onSuccess: (data) => {
+      router.push(`/itineraries/${data.id}`);
+      toast.success("AI Itinerary generated", {
+        description: "Your AI-powered itinerary has been created",
+      });
+    },
+    onError: (error) => {
+      toast.error("Error generating itinerary with AI", {
         description: error.message,
       });
     },
@@ -129,7 +146,7 @@ export default function CreateItineraryForm() {
             type="submit"
             size="lg"
             className="rounded-full group w-full sm:w-auto"
-            disabled={createItinerary.isPending}
+            disabled={createItinerary.isPending || generateWithAI.isPending}
           >
             {createItinerary.isPending ? "Creating..." : "Start planning"}
             <ArrowRight className="transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
@@ -140,10 +157,30 @@ export default function CreateItineraryForm() {
             size="lg"
             variant="outline"
             className="rounded-full w-full sm:w-auto"
-            disabled
+            disabled={generateWithAI.isPending || !form.formState.isValid}
+            onClick={() => {
+              // Get form data
+              const formData = form.getValues();
+
+              // Submit to generate with AI
+              toast.info("Generating your itinerary", {
+                description: "This may take up to a minute...",
+              });
+
+              generateWithAI.mutate(formData as ItineraryFormData);
+            }}
           >
-            <Sparkles />
-            Generate with AI
+            {generateWithAI.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Generate with AI
+              </>
+            )}
           </Button>
         </div>
       </form>

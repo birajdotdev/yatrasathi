@@ -25,7 +25,7 @@ export default function Providers({
         <TRPCReactProvider>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           {children}
-          <Toaster />
+          <Toaster richColors />
         </TRPCReactProvider>
         <SpeedInsights />
         <Analytics />
