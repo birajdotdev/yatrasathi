@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Accessibility
+
+- Ensure all interactive elements are keyboard accessible
+- Implement proper ARIA attributes
+- Use semantic HTML elements
+- Maintain sufficient color contrast
+- Support screen readers with proper labels

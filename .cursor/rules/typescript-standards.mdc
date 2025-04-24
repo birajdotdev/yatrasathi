@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+  # TypeScript Standards
+
+- Use TypeScript strictly with proper typing for all variables, functions, and components
+- Create and use interfaces/types for all props, state, and data structures
+- Prefer interfaces for object shapes and types for unions/utility types
+- Use Zod for runtime validation and type inference
+- Utilize TypeScript's utility types when appropriate (Partial, Omit, Pick, etc.)
+- Name component prop interfaces as `ComponentNameProps`

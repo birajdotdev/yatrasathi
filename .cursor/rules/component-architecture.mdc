@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Component Architecture
+
+- Follow atomic design principles (atoms, molecules, organisms)
+- Create reusable components that are focused on a single responsibility
+- Implement proper prop drilling prevention with context or composition
+- Use shadcn/Radix UI components for interactive UI elements
+- Extend shadcn components following their patterns when adding functionality

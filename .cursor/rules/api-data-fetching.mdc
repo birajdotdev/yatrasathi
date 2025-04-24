@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # API & Data Fetching
+
+- Use tRPC for type-safe API calls
+- Implement proper error handling and loading states
+- Structure API routes and procedures logically
+- Use proper caching strategies with React Query
+- Implement proper pagination/infinite loading where needed

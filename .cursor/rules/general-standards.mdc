@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# General Standards
+
+Always provide code that is complete, working, and follows these standards:
+- Include all necessary imports
+- Implement proper error handling
+- Use appropriate TypeScript types
+- Follow consistent formatting and naming conventions
+- Write clean, maintainable, and performant code
+- Focus on delivering high-quality solutions that meet project requirements

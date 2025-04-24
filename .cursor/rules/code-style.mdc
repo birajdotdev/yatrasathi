@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# CODE STYLE
+
+- Use named exports for components and utility functions
+- Use descriptive variable and function names
+- Implement early returns to reduce nesting
+- Handle errors at the beginning of functions
+- Prefer arrow functions for component definitions
+- Use proper code organization with related functionality grouped together
+- Name event handlers with 'handle' prefix (e.g., handleSubmit)
+- Use singular names for form fields matching their schema
+- Use plural names for collections/arrays
+- Format dates consistently using date-fns

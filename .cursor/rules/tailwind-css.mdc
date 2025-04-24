@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Tailwind CSS
+
+- Use Tailwind classes exclusively for styling
+- Follow mobile-first responsive design patterns
+- Extract common patterns into reusable components
+- Use className composition with clsx/tailwind-merge
+- Implement consistent spacing, sizing, and color patterns

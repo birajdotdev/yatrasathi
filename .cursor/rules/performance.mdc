@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Performance
+
+- Implement proper memoization (useMemo, useCallback) when beneficial
+- Use proper code splitting and lazy loading
+- Optimize images and assets
+- Implement proper caching strategies
+- Minimize client-side JavaScript
