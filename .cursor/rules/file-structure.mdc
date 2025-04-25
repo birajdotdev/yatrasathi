@@ -1,0 +1,107 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# YatraSathi File Structure Guidelines
+
+## Directory Structure
+
+### Root Structure
+- `src/`: Main source code directory
+  - `app/`: Next.js App Router directory
+  - `components/`: Reusable UI components
+  - `lib/`: Utility functions and shared code
+  - `server/`: Server-side code including API routes and DB schema
+  - `styles/`: Global styles and theme configuration
+  - `types/`: TypeScript type definitions
+- `public/`: Static assets
+- `drizzle/`: Database migrations and schema
+- `.cursor/`: Cursor AI rules and configuration
+
+### App Directory Structure
+- `app/`
+  - `(auth)/`: Authentication routes (grouped)
+  - `api/`: API routes
+  - `(dashboard)/`: Dashboard routes (grouped)
+  - `@<name>/`: Parallel routes
+  - `layout.tsx`: Root layout
+  - `page.tsx`: Home page
+  - `error.tsx`: Error boundary
+  - `loading.tsx`: Loading state
+  - `not-found.tsx`: 404 page
+
+### Components Directory Structure
+- `components/`
+  - `ui/`: Low-level UI components (buttons, inputs, etc.)
+  - `forms/`: Form-related components
+  - `layout/`: Layout components (headers, footers, etc.)
+  - `<feature>/`: Feature-specific components
+  - `providers/`: Context providers
+
+### Server Directory Structure
+- `server/`
+  - `db/`: Database configuration and schema
+  - `api/`: API endpoints and handlers
+  - `auth/`: Authentication-related code
+  - `trpc/`: tRPC routers and procedures
+
+## Naming Conventions
+
+### Files
+- React components: Kebab case (`button.tsx`, `user-card.tsx`)
+- Utility functions: Kebab case (`format-date.ts`, `use-debounce.ts`)
+- Page components: `page.tsx`
+- Layout components: `layout.tsx`
+- Route handlers: `route.ts`
+- Constants: Kebab case for filenames, uppercase for constants within files
+
+### Component Files
+- UI components: `component-name.tsx`
+- Component variants: `component-name.variant.tsx`
+- Component types: `component-name.types.ts`
+- Component utils: `component-name.utils.ts`
+- Component tests: `component-name.test.tsx`
+
+### Database Files
+- Schema definitions: `schema.ts`
+- Migrations: Timestamped names (`0001_initial.sql`)
+- Queries: Descriptive kebab-case names (`get-user-by-id.ts`)
+
+### Utility Files
+- Hooks: `use-name.ts` (`use-auth.ts`, `use-form.ts`)
+- Context: `name-context.tsx` (`auth-context.tsx`)
+- Constants: `name-constants.ts` (`auth-constants.ts`)
+- Types: `name-types.ts` (`user-types.ts`)
+
+## Import Guidelines
+
+- Use absolute imports for project modules
+- Organize imports in the following order:
+  1. React and Next.js imports
+  2. External dependencies
+  3. Project imports
+  4. Component-specific imports
+  5. CSS/style imports
+- Use barrel exports (`index.ts`) for related components
+
+## Component Structure
+
+- Use functional components with TypeScript
+- Use kebab-case for component filenames, but PascalCase for the exported component names
+- Organize component code in this order:
+  1. Import statements
+  2. Type definitions
+  3. Constants
+  4. Helper functions
+  5. Component definition
+  6. Export statement
+
+## Next.js App Router Conventions
+
+- Use server components by default
+- Add `"use client"` directive only when needed
+- Keep client bundle size small
+- Use appropriate data fetching methods
+- Leverage React Server Components for data fetching
+- Follow the metadata API for SEO
