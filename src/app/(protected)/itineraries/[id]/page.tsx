@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { PlusCircle } from "lucide-react";
 
@@ -21,10 +21,8 @@ export default async function ItineraryViewPage({
 }: ItineraryViewPageProps) {
   const itineraryId = (await params).id;
   const itinerary = await api.itinerary.getById(itineraryId);
-  // If no itinerary is found, redirect to home
-  if (!itinerary) {
-    return redirect("/itineraries/create");
-  }
+
+  if (!itinerary) notFound();
 
   return (
     <div className="min-h-screen">

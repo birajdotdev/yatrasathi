@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { format } from "date-fns";
 import { Calendar, ImageIcon, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,13 +16,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { splitTitle } from "@/lib/utils";
+import { api } from "@/trpc/react";
 import { type Itinerary } from "@/types/itinerary";
+
+import CoverImageDialog from "./cover-image-dialog";
 
 interface ItineraryHeaderProps {
   itinerary: Itinerary;
 }
 
 export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
+  const router = useRouter();
+  const utils = api.useUtils();
   const [text, highlight] = splitTitle(itinerary.title);
 
   // Format dates
@@ -32,8 +41,32 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const tripDurationMs = endDateObj
     ? endDateObj.getTime() - startDateObj.getTime()
     : 0;
-  const tripDurationDays = Math.ceil(tripDurationMs / (1000 * 60 * 60 * 24));
+  // Add 1 to include both start and end dates (inclusive count)
+  const tripDurationDays =
+    Math.ceil(tripDurationMs / (1000 * 60 * 60 * 24)) + 1;
   const durationText = `${tripDurationDays} ${tripDurationDays === 1 ? "day" : "days"} trip`;
+
+  const { mutateAsync: updateCoverImage, isPending } =
+    api.itinerary.updateCoverImage.useMutation({
+      onSuccess: async () => {
+        // Update the cover image in the itinerary state
+        await utils.itinerary.getById.invalidate(itinerary.id);
+        toast.success("Cover image updated successfully!");
+
+        // Refresh the page to update server-rendered content
+        router.refresh();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const handleCoverImageUpdate = async (imageUrl: string) => {
+    await updateCoverImage({
+      itineraryId: itinerary.id,
+      imageUrl,
+    });
+  };
 
   return (
     <div className="relative mb-8 lg:mb-12 -m-6 lg:-m-8">
@@ -105,15 +138,21 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                className="bg-white/15 backdrop-blur-md hover:bg-white/25 cursor-pointer rounded-full border-none transition-all duration-200 shadow-md"
-                aria-label="Edit cover image"
-                type="button"
-                size="icon"
-                variant="outline"
+              <CoverImageDialog
+                onImageSelected={handleCoverImageUpdate}
+                isSubmitting={isPending}
+                defaultSearchQuery={itinerary.destination.name}
               >
-                <ImageIcon className="h-4 w-4 text-white" />
-              </Button>
+                <Button
+                  className="bg-white/15 backdrop-blur-md hover:bg-white/25 cursor-pointer rounded-full border-none transition-all duration-200 shadow-md"
+                  aria-label="Edit cover image"
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                >
+                  <ImageIcon className="h-4 w-4 text-white" />
+                </Button>
+              </CoverImageDialog>
             </TooltipTrigger>
             <TooltipContent>
               <p>Change cover image</p>
