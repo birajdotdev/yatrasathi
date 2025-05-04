@@ -1,8 +1,12 @@
+"use client";
+
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { format } from "date-fns";
-import { ChevronDownIcon, MapPin } from "lucide-react";
+import { CalendarX, ChevronDownIcon, MapPin, PlusCircle } from "lucide-react";
 
 import { AccordionContent, AccordionItem } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Timeline,
   TimelineContent,
@@ -14,6 +18,7 @@ import {
 import { type ItineraryDay } from "@/types/itinerary";
 
 import ActivityCard from "./activity-card";
+import ActivityDialogForm from "./activity-dialog-form";
 
 interface DayTimelineProps {
   day: ItineraryDay;
@@ -60,29 +65,48 @@ export default function DayTimeline({ day, itineraryDates }: DayTimelineProps) {
         </AccordionPrimitive.Trigger>
       </AccordionPrimitive.Header>
       <AccordionContent>
-        <Timeline defaultValue={day.activities.length} className="mt-3">
-          {day.activities.map((activity, index) => (
-            <TimelineItem
-              key={activity.id}
-              step={index + 1}
-              className="group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:not-last:pb-6"
-            >
-              <TimelineHeader>
-                <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
-                <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
-                  <MapPin size={14} />
-                </TimelineIndicator>
-              </TimelineHeader>
-              <TimelineContent className="-mt-0.5">
-                <ActivityCard
-                  activity={activity}
-                  day={day}
-                  itineraryDates={itineraryDates}
-                />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Timeline>
+        {day.activities.length === 0 ? (
+          <EmptyState
+            icon={CalendarX}
+            title="No activities planned"
+            description="Add some activities to make the most of your day."
+            render={
+              <ActivityDialogForm
+                itineraryDates={itineraryDates}
+                selectedDayDate={day.date}
+              >
+                <Button size="sm" className="gap-2 mt-6">
+                  <PlusCircle className="size-4" />
+                  Add Activity
+                </Button>
+              </ActivityDialogForm>
+            }
+          />
+        ) : (
+          <Timeline defaultValue={day.activities.length} className="mt-3">
+            {day.activities.map((activity, index) => (
+              <TimelineItem
+                key={activity.id}
+                step={index + 1}
+                className="group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:not-last:pb-6"
+              >
+                <TimelineHeader>
+                  <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+                  <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
+                    <MapPin size={14} />
+                  </TimelineIndicator>
+                </TimelineHeader>
+                <TimelineContent className="-mt-0.5">
+                  <ActivityCard
+                    activity={activity}
+                    day={day}
+                    itineraryDates={itineraryDates}
+                  />
+                </TimelineContent>
+              </TimelineItem>
+            ))}
+          </Timeline>
+        )}
       </AccordionContent>
     </AccordionItem>
   );

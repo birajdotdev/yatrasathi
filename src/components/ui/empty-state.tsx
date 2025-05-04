@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import React from "react";
 
 import { type LucideIcon } from "lucide-react";
 
@@ -16,6 +17,7 @@ interface EmptyStateProps {
     href: string;
     icon?: LucideIcon;
   };
+  render?: React.ReactNode;
   className?: string;
 }
 
@@ -25,6 +27,7 @@ export function EmptyState({
   description,
   action,
   className,
+  render,
 }: EmptyStateProps) {
   return (
     <div
@@ -46,6 +49,7 @@ export function EmptyState({
           </Button>
         </Link>
       )}
+      {render}
     </div>
   );
 }

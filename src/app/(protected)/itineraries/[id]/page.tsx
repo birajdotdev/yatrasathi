@@ -44,6 +44,7 @@ export default async function ItineraryViewPage({
 }: ItineraryViewPageProps) {
   const itineraryId = (await params).id;
   const itinerary = await api.itinerary.getById(itineraryId);
+  void api.itinerary.getById.prefetch(itineraryId);
 
   const itineraryDates = {
     startDate: itinerary.startDate,
