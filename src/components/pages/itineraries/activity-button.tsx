@@ -7,7 +7,7 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
-import ActivityForm from "./activity-form";
+import ActivityForm from "./activity-dialog-form";
 
 export default function ActivityButton() {
   const [isOpen, setIsOpen] = useState(false);

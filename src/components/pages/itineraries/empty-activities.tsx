@@ -1,6 +1,6 @@
 import { Calendar, MapPin } from "lucide-react";
 
-import ActivityForm from "@/components/pages/itineraries/activity-form";
+import ActivityForm from "@/components/pages/itineraries/activity-dialog-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 

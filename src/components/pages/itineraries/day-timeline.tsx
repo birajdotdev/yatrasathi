@@ -17,9 +17,13 @@ import ActivityCard from "./activity-card";
 
 interface DayTimelineProps {
   day: ItineraryDay;
+  itineraryDates: {
+    startDate: Date;
+    endDate: Date | null;
+  };
 }
 
-export default function DayTimeline({ day }: DayTimelineProps) {
+export default function DayTimeline({ day, itineraryDates }: DayTimelineProps) {
   // Parse and format the date
   const dateObj = day.date;
   const dayOfWeek = format(dateObj, "EEEE");
@@ -70,7 +74,11 @@ export default function DayTimeline({ day }: DayTimelineProps) {
                 </TimelineIndicator>
               </TimelineHeader>
               <TimelineContent className="-mt-0.5">
-                <ActivityCard activity={activity} day={day} />
+                <ActivityCard
+                  activity={activity}
+                  day={day}
+                  itineraryDates={itineraryDates}
+                />
               </TimelineContent>
             </TimelineItem>
           ))}

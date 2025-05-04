@@ -19,7 +19,12 @@ interface DatePickerProps {
   maxDate?: Date;
 }
 
-export function DatePicker({ date, setDate }: DatePickerProps) {
+export function DatePicker({
+  date,
+  setDate,
+  minDate,
+  maxDate,
+}: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -40,6 +45,11 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
           selected={date}
           onSelect={setDate}
           initialFocus
+          defaultMonth={minDate}
+          disabled={(date) =>
+            (minDate ? date < minDate : false) ||
+            (maxDate ? date > maxDate : false)
+          }
         />
       </PopoverContent>
     </Popover>

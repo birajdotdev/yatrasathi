@@ -48,15 +48,20 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
 
   const { mutateAsync: updateCoverImage, isPending } =
     api.itinerary.updateCoverImage.useMutation({
+      onMutate: () => {
+        toast.loading("Updating cover image...");
+      },
       onSuccess: async () => {
         // Update the cover image in the itinerary state
         await utils.itinerary.getById.invalidate(itinerary.id);
-        toast.success("Cover image updated successfully!");
 
         // Refresh the page to update server-rendered content
         router.refresh();
+        toast.dismiss(); // Dismiss the loading toast
+        toast.success("Cover image updated successfully!");
       },
       onError: (error) => {
+        toast.dismiss(); // Dismiss the loading toast
         toast.error(error.message);
       },
     });

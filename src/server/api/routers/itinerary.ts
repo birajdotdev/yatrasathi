@@ -476,6 +476,53 @@ export const itineraryRouter = createTRPCRouter({
       return { success: true };
     }),
 
+  // Update itinerary activity image
+  updateActivityImage: protectedProcedure
+    .input(z.object({ activityId: z.string(), imageUrl: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if the activity exists
+      const activity = await ctx.db.query.activities.findFirst({
+        where: eq(activities.id, input.activityId),
+        with: {
+          day: {
+            with: {
+              itinerary: true,
+            },
+          },
+        },
+      });
+
+      if (!activity) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Activity not found",
+        });
+      }
+
+      // Check if the user owns this itinerary
+      if (activity.day.itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update this activity",
+        });
+      }
+
+      // Update the activity image
+      const updatedActivity = await ctx.db
+        .update(activities)
+        .set({ image: input.imageUrl })
+        .where(eq(activities.id, input.activityId))
+        .returning();
+
+      if (!updatedActivity) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update activity image",
+        });
+      }
+      return updatedActivity;
+    }),
+
   // Update itinerary cover image
   updateCoverImage: protectedProcedure
     .input(z.object({ itineraryId: z.string(), imageUrl: z.string() }))

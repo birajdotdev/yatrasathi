@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { cn, splitTitle } from "@/lib/utils";
 import { type ImageResult } from "@/server/api/routers/unsplash";
 import { api } from "@/trpc/react";
 import { UploadDropzone } from "@/utils/uploadthing";
@@ -50,6 +50,10 @@ export default function CoverImageDialog({
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("unsplash");
   const [open, setOpen] = useState(false);
+
+  const title = splitTitle(dialogTitle, {
+    lastWordCount: 2,
+  });
 
   // Use the Unsplash API through tRPC
   const { data: images = [], isLoading } = api.unsplash.getImages.useQuery({
@@ -104,7 +108,9 @@ export default function CoverImageDialog({
       <DialogTrigger asChild={asChild}>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogTitle>
+            {title[0]} <span className="text-primary">{title[1]}</span>
+          </DialogTitle>
           <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="unsplash" onValueChange={setActiveTab}>
@@ -148,6 +154,7 @@ export default function CoverImageDialog({
                           fill
                           className="object-cover"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          fetchPriority="high"
                         />
                         {selectedImage?.url === image.url && (
                           <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
@@ -176,6 +183,7 @@ export default function CoverImageDialog({
                     alt="Uploaded image"
                     fill
                     className="object-cover"
+                    fetchPriority="high"
                   />
                   <button
                     onClick={() => setUploadedImageUrl(null)}
@@ -216,14 +224,7 @@ export default function CoverImageDialog({
               isSubmitting
             }
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>
