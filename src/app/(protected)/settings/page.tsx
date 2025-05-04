@@ -3,6 +3,7 @@ import { type Metadata } from "next";
 import { Settings } from "lucide-react";
 
 import Notifications from "@/components/settings/notifications";
+import { ReminderPreferences } from "@/components/settings/reminder-preferences";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,21 +17,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Settings",
   description: "Manage your account settings and preferences",
 };
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  // Fetch reminder preferences for the current user - note we use query() in client components
+  // but for server components, we directly await the procedure
+  const reminderPreferences = await api.user.getReminderPreferences();
+
   return (
     <main className="space-y-6 lg:space-y-8">
-      {/* <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Manage your account settings and preferences.
-        </p>
-      </div> */}
       <Banner
         badgeText="Account Settings"
         title="Your Settings"
@@ -42,6 +42,7 @@ export default function SettingsPage() {
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="reminders">Reminders</TabsTrigger>
         </TabsList>
         <TabsContent value="account">
           <div>
@@ -72,6 +73,19 @@ export default function SettingsPage() {
         </TabsContent>
         <TabsContent value="notifications">
           <Notifications />
+        </TabsContent>
+        <TabsContent value="reminders">
+          <Card>
+            <CardHeader>
+              <CardTitle>Itinerary Reminders</CardTitle>
+              <CardDescription>
+                Manage your email reminder preferences for upcoming trips
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ReminderPreferences initialData={reminderPreferences} />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </main>
