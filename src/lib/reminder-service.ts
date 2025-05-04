@@ -1,7 +1,7 @@
 import { and, eq, gt, inArray, lt, not, sql } from "drizzle-orm";
 import { Resend } from "resend";
 
-import { ItineraryReminderEmail } from "@/emails/templates/itinerary-reminder-email";
+import ItineraryReminderEmail from "@/emails/templates/itinerary-reminder-email";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import {

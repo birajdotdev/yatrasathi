@@ -4,11 +4,15 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
+  Img,
+  Link,
   Preview,
   Section,
   Text,
 } from "@react-email/components";
+import { Tailwind } from "@react-email/tailwind";
 
 interface ItineraryReminderEmailProps {
   username: string;
@@ -18,13 +22,13 @@ interface ItineraryReminderEmailProps {
   itineraryLink: string;
 }
 
-export const ItineraryReminderEmail = ({
+export default function ItineraryReminderEmail({
   username,
   itineraryTitle,
   destination,
   startDate,
   itineraryLink,
-}: ItineraryReminderEmailProps) => {
+}: ItineraryReminderEmailProps) {
   const formattedStartDate = new Date(startDate).toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -36,126 +40,62 @@ export const ItineraryReminderEmail = ({
     <Html>
       <Head />
       <Preview>Your trip to {destination} is coming up soon!</Preview>
-      <Body
-        style={{
-          fontFamily: "system-ui",
-          margin: "0",
-          padding: "0",
-          backgroundColor: "#f4f4f5",
-        }}
-      >
-        <Container
-          style={{ padding: "20px", margin: "0 auto", maxWidth: "600px" }}
-        >
-          <Section
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "8px",
-              padding: "40px 20px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <Heading
-              as="h1"
-              style={{
-                color: "#18181b",
-                fontSize: "24px",
-                fontWeight: "bold",
-                textAlign: "center",
-                margin: "0 0 24px",
-              }}
-            >
-              Trip Reminder: {itineraryTitle}
-            </Heading>
-
-            <Section>
-              <Text
-                style={{
-                  color: "#3f3f46",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                }}
-              >
-                Hello {username},
-              </Text>
-              <Text
-                style={{
-                  color: "#3f3f46",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                }}
-              >
-                Your trip to <strong>{destination}</strong> is coming up on{" "}
-                <strong>{formattedStartDate}</strong>!
-              </Text>
-              <Text
-                style={{
-                  color: "#3f3f46",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                }}
-              >
-                We wanted to remind you to check your itinerary and make any
-                final preparations before your journey.
-              </Text>
+      <Tailwind>
+        <Body className="bg-white font-sans">
+          <Container className="mx-auto my-[40px] max-w-[580px] px-4">
+            <Section className="mb-14">
+              <Img
+                src="https://www.yatrasathi.tech/logo.png"
+                width="126"
+                height="24"
+                alt="YatraSathi"
+              />
             </Section>
-
-            <Section style={{ textAlign: "center", margin: "32px 0" }}>
+            <Heading className="text-3xl font-bold text-black">
+              Trip Reminder
+            </Heading>
+            <Text className="text-[14px] leading-[24px] text-black">
+              Hello {username},
+            </Text>
+            <Text className="text-[14px] leading-[24px] text-black">
+              Your trip to <strong>{destination}</strong> ({itineraryTitle}) is
+              coming up on <strong>{formattedStartDate}</strong>!
+            </Text>
+            <Text className="text-[14px] leading-[24px] text-black">
+              We wanted to remind you to check your itinerary and make any final
+              preparations before your journey.
+            </Text>
+            <Section className="my-[32px]">
               <Button
                 href={itineraryLink}
-                style={{
-                  backgroundColor: "#06b6d4",
-                  borderRadius: "6px",
-                  color: "#ffffff",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  padding: "12px 24px",
-                  textDecoration: "none",
-                  textTransform: "none",
-                }}
+                className="rounded bg-[#e11d48] py-[12px] px-[24px] text-center text-[14px] font-medium text-white no-underline"
               >
                 View Your Itinerary
               </Button>
             </Section>
-
-            <Section>
-              <Text
-                style={{
-                  color: "#3f3f46",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                }}
+            <Text className="text-[14px] leading-[24px] text-black">
+              If you didn&apos;t create this itinerary or need help, please
+              contact our support team.
+            </Text>
+            <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
+              This email was sent to you because you have an upcoming trip
+              planned on YatraSathi. If you believe this is an error, you can
+              update your{" "}
+              <Link
+                href="https://www.yatrasathi.tech/settings"
+                className="text-[#e11d48] no-underline"
               >
-                Safe travels!
-              </Text>
-              <Text
-                style={{
-                  color: "#3f3f46",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  marginBottom: "0",
-                }}
-              >
-                The YatraSathi Team
-              </Text>
-            </Section>
-          </Section>
-
-          <Text
-            style={{
-              color: "#71717a",
-              fontSize: "12px",
-              lineHeight: "16px",
-              textAlign: "center",
-              margin: "16px 0",
-            }}
-          >
-            © {new Date().getFullYear()} YatraSathi. All rights reserved.
-          </Text>
-        </Container>
-      </Body>
+                notification preferences
+              </Link>{" "}
+              at any time.
+            </Text>
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
+              © {new Date().getFullYear()} YatraSathi. All rights reserved.
+            </Text>
+          </Container>
+        </Body>
+      </Tailwind>
     </Html>
   );
-};
-
-export default ItineraryReminderEmail;
+}
