@@ -34,16 +34,20 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const startDateObj = itinerary.startDate;
   const endDateObj = itinerary.endDate;
   const formattedStartDate = format(startDateObj, "MMM d");
+  // If there's an end date, format it and create a range, otherwise just show the start date with year
   const formattedEndDate = endDateObj ? format(endDateObj, "MMM d, yyyy") : "";
-  const dateRange = `${formattedStartDate} - ${formattedEndDate}`;
+  const dateRange = endDateObj
+    ? `${formattedStartDate} - ${formattedEndDate}`
+    : format(startDateObj, "MMM d, yyyy");
 
   // Calculate trip duration in days
   const tripDurationMs = endDateObj
     ? endDateObj.getTime() - startDateObj.getTime()
     : 0;
   // Add 1 to include both start and end dates (inclusive count)
-  const tripDurationDays =
-    Math.ceil(tripDurationMs / (1000 * 60 * 60 * 24)) + 1;
+  const tripDurationDays = endDateObj
+    ? Math.ceil(tripDurationMs / (1000 * 60 * 60 * 24)) + 1
+    : 1; // If no end date, it's a one-day trip
   const durationText = `${tripDurationDays} ${tripDurationDays === 1 ? "day" : "days"} trip`;
 
   const { mutateAsync: updateCoverImage, isPending } =
@@ -106,9 +110,9 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
               </h1>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                    <MapPin className="h-5 w-5 text-primary" />
+                <div className="flex items-start gap-2 text-muted-foreground">
+                  <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 mt-1">
+                    <MapPin className="size-5 text-primary" />
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground font-medium">
@@ -121,13 +125,13 @@ export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                    <Calendar className="h-5 w-5 text-primary" />
+                <div className="flex items-start gap-2 text-muted-foreground">
+                  <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 mt-1">
+                    <Calendar className="size-5 text-primary" />
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground font-medium">
-                      Dates
+                      {endDateObj ? "Dates" : "Date"}
                     </div>
                     <div className="text-foreground">{dateRange}</div>
                   </div>
