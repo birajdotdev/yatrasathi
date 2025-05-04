@@ -5,28 +5,32 @@ import AppSidebar from "@/components/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/server/auth";
+import { HydrateClient, api } from "@/trpc/server";
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  void api.user.getReminderPreferences.prefetch();
   const { userId, redirectToSignIn } = await auth();
   if (!userId) return redirectToSignIn();
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <DashboardNav />
-        <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-[calc(100vh-5rem)]">
-            <section className="p-6 lg:p-8 max-w-7xl mx-auto">
-              {children}
-            </section>
-          </ScrollArea>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <HydrateClient>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <DashboardNav />
+          <main className="flex-1 overflow-hidden">
+            <ScrollArea className="h-[calc(100vh-5rem)]">
+              <section className="p-6 lg:p-8 max-w-7xl mx-auto">
+                {children}
+              </section>
+            </ScrollArea>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </HydrateClient>
   );
 }
