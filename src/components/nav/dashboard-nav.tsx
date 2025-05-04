@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import React from "react";
 
 import NotificationButton from "@/components/nav/notification-button";
@@ -16,11 +16,48 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { api } from "@/trpc/react";
 
 import QuickActionButton from "./quick-action-button";
 
 export default function DashboardNav() {
   const pathname = usePathname();
+  const params = useParams();
+
+  const { id } = params as { id: string };
+
+  // Move the query to the component level
+  const { data: itinerary } = api.itinerary.getById.useQuery(id, {
+    enabled: !!id && pathname.includes("itineraries"),
+    // Disable query if there's no ID or we're not in itineraries path
+  });
+
+  const getLabel = (segment: string) => {
+    // Check if this segment is the ID parameter
+    if (segment === id) {
+      // Use a more precise path detection with pathname.split("/")
+      const pathParts = pathname.split("/");
+      const contentType = pathParts[1]; // The content type is usually the first segment
+
+      // Handle different content types with a switch for better readability and extensibility
+      switch (contentType) {
+        case "itineraries":
+          // Return the actual title if the itinerary data is available
+          return itinerary?.title ?? "Itinerary";
+        case "blogs":
+          return "Blog";
+        default:
+          return "Item";
+      }
+    } else {
+      // Transform kebab-case to Title Case for regular segments
+      return segment
+        .replace(/-/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+  };
 
   // Create breadcrumb items from the full path
   const breadcrumbs = pathname
@@ -28,11 +65,7 @@ export default function DashboardNav() {
     .filter(Boolean)
     .map((segment) => ({
       href: `/${segment}`,
-      label: segment
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
+      label: getLabel(segment),
     }));
 
   return (

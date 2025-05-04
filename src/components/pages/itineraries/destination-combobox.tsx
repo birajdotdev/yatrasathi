@@ -87,17 +87,22 @@ export function DestinationCombobox({
 
   // Memoize the handleSelect callback
   const handleSelect = useCallback(
-    (selectedName: string) => {
-      // Find the place object that matches the selected name
-      const selectedPlace = places.find((place) => place.name === selectedName);
+    (selectedValue: string) => {
+      // Parse the composite value - format is "name:::id"
+      const parts = selectedValue.split(":::");
+      const placeId = parts[1];
 
-      if (selectedPlace) {
-        onChange(selectedPlace);
-        setSearch(selectedPlace.name);
-        setOpen(false);
+      if (placeId) {
+        const selectedPlace = places.find((place) => place.id === placeId);
+
+        if (selectedPlace) {
+          onChange(selectedPlace);
+          setSearch(selectedPlace.name);
+          setOpen(false);
+        }
       }
     },
-    [onChange, places]
+    [onChange, places, setOpen]
   );
 
   // Memoize the error message
@@ -187,7 +192,7 @@ export function DestinationCombobox({
               {places.map((place) => (
                 <CommandItem
                   key={place.id}
-                  value={place.name}
+                  value={`${place.name}:::${place.id}`}
                   onSelect={handleSelect}
                   className="rounded-lg group"
                 >

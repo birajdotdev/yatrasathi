@@ -1,0 +1,149 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# YatraSathi Web Development Standards
+
+## Tech Stack Overview
+
+This project is a modern Next.js 15 web application with the following core technologies:
+- Next.js 15+ with App Router and Server Components
+- React 19 for UI components
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Clerk for authentication
+- tRPC for type-safe APIs
+- Drizzle ORM with PostgreSQL
+- Zod for schema validation
+- Radix UI for accessible component primitives
+- Uploadthing for file uploads
+- AI SDK for AI features
+
+## Architecture Guidelines
+
+### Next.js App Router
+- Follow Next.js 15 App Router conventions
+- Use server components by default when no client-side state is needed
+- Group components by feature in the app directory
+- Use Next.js data fetching patterns (server components, fetch with proper caching)
+- Utilize routes groups for organizing related pages
+
+### State Management
+- Use React Query (TanStack Query) for server state
+- Prefer React's built-in state hooks for client state
+- Apply proper caching strategies with TanStack Query
+
+### Component Structure
+- Follow Atomic Design principles (atoms, molecules, organisms)
+- Maintain a clear separation between UI components and page/feature components
+- Use the shadcn/ui pattern for component customization
+- Use kebab-case for file names and PascalCase for component names
+
+### Styling
+- Use Tailwind CSS with consistent naming conventions
+- Follow the project's established class ordering
+- Utilize the class-variance-authority (CVA) for component variants
+- Use clsx/tailwind-merge for conditional classes
+- Use kebab-case for CSS class names
+
+### Forms
+- Use react-hook-form for form state management
+- Use zod with @hookform/resolvers for form validation
+- Create reusable form components
+- Follow kebab-case for form component file names
+
+### Authentication & Authorization
+- Use Clerk for authentication
+- Follow principle of least privilege for authorization
+- Always check permissions on both client and server
+
+### API Design
+- Use tRPC for type-safe APIs
+- Create procedures grouped by domain/feature
+- Validate all inputs using zod schemas
+- Maintain consistent error handling
+- Use kebab-case for API file names
+
+### Database
+- Use Drizzle ORM with PostgreSQL
+- Follow database schema best practices
+- Use migrations for database changes
+- Apply proper indexing for performance
+- Use transactions when needed
+- Use snake_case for database table and column names
+
+### Error Handling
+- Use react-error-boundary for client-side error boundaries
+- Implement consistent error handling patterns
+- Provide helpful error messages to users
+
+### Performance
+- Use Next.js Image component for images
+- Implement proper code splitting
+- Use Next.js suspense boundaries
+- Minimize client-side JavaScript
+- Apply proper caching strategies
+
+### Accessibility
+- Ensure all UI components meet WCAG standards
+- Use Radix UI for accessible primitives
+- Test with keyboard navigation
+- Maintain proper contrast ratios
+- Use semantic HTML
+
+### Testing
+- Write unit tests for critical business logic
+- Implement component testing for UI components
+- Use end-to-end tests for critical user flows
+- Follow kebab-case for test file names (e.g., `component-name.test.tsx`)
+
+## Package-Specific Best Practices
+
+### Next.js
+- Use Next.js server components where appropriate
+- Leverage built-in optimizations like Image, Link, and Font components
+- Utilize metadata API for SEO
+- Implement proper caching strategies
+
+### Clerk
+- Use clerk components for authentication flows
+- Protect routes with proper middleware
+- Handle sign-in, sign-up, and user profiles consistently
+
+### tRPC
+- Create well-organized router procedures
+- Define input validation with Zod
+- Handle errors gracefully
+- Use proper middleware for authorization
+
+### Radix UI
+- Follow component composition patterns
+- Maintain consistent styling across components
+- Extend components using the project's design system
+
+### Drizzle ORM
+- Define schemas in dedicated files
+- Use relations properly
+- Implement migrations for schema changes
+- Use prepared statements for queries
+- Use snake_case for database columns
+
+### Tailwind CSS
+- Follow consistent class ordering
+- Use design tokens for colors, spacing, etc.
+- Utilize responsive design patterns
+- Apply component variants with CVA
+- Use kebab-case for custom class names
+
+### React Hook Form
+- Create reusable form components
+- Implement proper validation with Zod
+- Handle form submission states properly
+- Use controlled inputs when necessary
+
+### Uploadthing
+- Implement proper file upload flows
+- Handle upload progress and errors
+- Validate file types and sizes
+- Secure uploads with proper permissions

@@ -1,0 +1,243 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# YatraSathi Quick Reference
+
+## Project Commands
+
+- `npm run dev`: Start development server with Turbopack
+- `npm run build`: Build for production with Turbopack
+- `npm run preview`: Build and start production server
+- `npm run lint`: Run ESLint
+- `npm run typecheck`: Run TypeScript type checking
+- `npm run format:check`: Check code formatting with Prettier
+- `npm run format:write`: Format code with Prettier
+- `npm run db:generate`: Generate Drizzle migration files
+- `npm run db:push`: Push Drizzle migrations to database
+- `npm run db:studio`: Launch Drizzle Studio for database management
+
+## Tech Stack Summary
+
+- **Framework**: Next.js 15 with App Router
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS + RadixUI
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Clerk
+- **API**: tRPC
+- **Form Handling**: react-hook-form + zod
+- **Data Fetching**: TanStack Query
+- **File Uploads**: Uploadthing
+- **AI Integration**: AI SDK with Google AI
+
+## Common Component Patterns
+
+### Basic Component Structure
+```tsx
+// Import statements
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+// Types
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
+}
+
+// Component
+export function Button({
+  variant = "default",
+  size = "md",
+  className,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        "rounded-md font-medium transition-colors",
+        // Variant styles
+        {
+          "bg-primary text-primary-foreground hover:bg-primary/90": variant === "default",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground": variant === "outline",
+          "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
+        },
+        // Size styles
+        {
+          "h-8 px-3 text-sm": size === "sm",
+          "h-10 px-4 text-base": size === "md",
+          "h-12 px-6 text-lg": size === "lg",
+        },
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Form Component Pattern
+```tsx
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export function LoginForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Handle form submission
+    console.log(values);
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="your@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Login</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### Server Component Pattern
+```tsx
+import { db } from "@/server/db";
+import { posts } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+
+import { PostCard } from "@/components/post-card";
+
+interface PostPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function PostPage({ params }: PostPageProps) {
+  const post = await db.query.posts.findFirst({
+    where: eq(posts.id, params.id),
+    with: {
+      author: true,
+      comments: true,
+    },
+  });
+
+  if (!post) {
+    return <div>Post not found</div>;
+  }
+
+  return (
+    <div className="container mx-auto py-8">
+      <PostCard post={post} />
+    </div>
+  );
+}
+```
+
+### tRPC Router Pattern
+```ts
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "@/server/trpc";
+import { posts } from "@/server/db/schema";
+
+export const postRouter = createTRPCRouter({
+  getAll: publicProcedure
+    .query(async ({ ctx }) => {
+      return ctx.db.query.posts.findMany({
+        orderBy: [posts.createdAt, "desc"],
+        limit: 10,
+      });
+    }),
+  
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.query.posts.findFirst({
+        where: eq(posts.id, input.id),
+      });
+    }),
+  
+  create: protectedProcedure
+    .input(z.object({
+      title: z.string().min(1).max(100),
+      content: z.string().min(1),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.insert(posts).values({
+        title: input.title,
+        content: input.content,
+        authorId: ctx.auth.userId,
+      });
+    }),
+});
+```
+
+## Common File Locations
+
+- UI Components: `src/components/ui/button.tsx`
+- Page Components: `src/app/**/page.tsx`
+- Layouts: `src/app/**/layout.tsx`
+- Database Schema: `src/server/db/schema.ts`
+- API Routes: `src/app/api/**/route.ts`
+- tRPC Routers: `src/server/trpc/routers/user.ts`
+- Utilities: `src/lib/utils.ts`
+- Hooks: `src/hooks/use-auth.ts`
+- Types: `src/types/user.ts`
+
+## Code Style Guidelines
+
+- Use TypeScript for type safety
+- Use functional components with hooks
+- Use kebab-case for file names (e.g., `user-profile.tsx`)
+- Use PascalCase for component names (e.g., `export function UserProfile()`)
+- Use kebab-case for CSS class names
+- Follow ESLint and Prettier configurations
+- Use meaningful variable and function names
+- Keep components small and focused
+- Use comments for complex logic
+- Prefer composition over inheritance
+- Use destructuring for props and state

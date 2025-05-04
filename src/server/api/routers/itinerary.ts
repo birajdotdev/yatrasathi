@@ -415,15 +415,11 @@ export const itineraryRouter = createTRPCRouter({
 
           // Delete activities for each day
           for (const day of daysResult) {
-            await tx
-              .delete(activities)
-              .where(eq(activities.dayId, day.id));
+            await tx.delete(activities).where(eq(activities.dayId, day.id));
           }
 
           // Delete all days
-          await tx
-            .delete(days)
-            .where(eq(days.itineraryId, input.id));
+          await tx.delete(days).where(eq(days.itineraryId, input.id));
 
           // Delete destinations
           await tx
@@ -431,9 +427,7 @@ export const itineraryRouter = createTRPCRouter({
             .where(eq(destinations.itineraryId, input.id));
 
           // Delete the itinerary
-          await tx
-            .delete(itineraries)
-            .where(eq(itineraries.id, input.id));
+          await tx.delete(itineraries).where(eq(itineraries.id, input.id));
 
           return { success: true };
         } catch (error) {
@@ -480,6 +474,106 @@ export const itineraryRouter = createTRPCRouter({
       await ctx.db.delete(activities).where(eq(activities.id, input));
 
       return { success: true };
+    }),
+
+  // Update itinerary activity image
+  updateActivityImage: protectedProcedure
+    .input(z.object({ activityId: z.string(), imageUrl: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if the activity exists
+      const activity = await ctx.db.query.activities.findFirst({
+        where: eq(activities.id, input.activityId),
+        with: {
+          day: {
+            with: {
+              itinerary: true,
+            },
+          },
+        },
+      });
+
+      if (!activity) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Activity not found",
+        });
+      }
+
+      // Check if the user owns this itinerary
+      if (activity.day.itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update this activity",
+        });
+      }
+
+      // Update the activity image
+      const updatedActivity = await ctx.db
+        .update(activities)
+        .set({ image: input.imageUrl })
+        .where(eq(activities.id, input.activityId))
+        .returning();
+
+      if (!updatedActivity) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update activity image",
+        });
+      }
+      return updatedActivity;
+    }),
+
+  // Update itinerary cover image
+  updateCoverImage: protectedProcedure
+    .input(z.object({ itineraryId: z.string(), imageUrl: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if the itinerary exists and belongs to the user
+      const itinerary = await ctx.db.query.itineraries.findFirst({
+        where: eq(itineraries.id, input.itineraryId),
+        with: {
+          destination: true,
+        },
+      });
+      if (!itinerary) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Itinerary not found",
+        });
+      }
+      if (itinerary.createdById !== ctx.session.user.dbId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update this itinerary",
+        });
+      }
+
+      // Check if the destination exists
+      if (!itinerary.destination?.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Destination not found for this itinerary",
+        });
+      }
+
+      // Update the destination image - now we know the ID exists
+      const updatedDestination = await ctx.db
+        .update(destinations)
+        .set({ image: input.imageUrl })
+        .where(
+          and(
+            eq(destinations.itineraryId, itinerary.id),
+            eq(destinations.id, itinerary.destination.id)
+          )
+        )
+        .returning();
+
+      if (!updatedDestination) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update cover image",
+        });
+      }
+      return updatedDestination;
     }),
 
   // Generate itinerary with AI

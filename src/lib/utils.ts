@@ -12,9 +12,15 @@ export function getInitials(name: string) {
     .join("");
 }
 
-export function splitTitle(text: string): [string, string] {
+export function splitTitle(
+  text: string,
+  options?: {
+    lastWordCount?: number;
+  }
+): [string, string] {
+  const { lastWordCount = 1 } = options ?? {};
   const words = text.split(" ");
-  const lastWord = words.pop() ?? "";
+  const lastWords = words.splice(-lastWordCount).join(" ");
   const firstPart = words.join(" ");
-  return [firstPart, lastWord];
+  return [firstPart, lastWords];
 }

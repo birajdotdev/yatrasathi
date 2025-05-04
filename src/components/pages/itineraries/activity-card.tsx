@@ -3,50 +3,92 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 
-import { Edit, Trash } from "lucide-react";
+import { Edit, ImageIcon, Trash } from "lucide-react";
 import { toast } from "sonner";
 
-import ActivityForm from "@/components/pages/itineraries/activity-form";
+import ActivityDialogForm from "@/components/pages/itineraries/activity-dialog-form";
 import LocationPin from "@/components/pages/itineraries/location-pin";
 import TimeIndicator from "@/components/pages/itineraries/time-indicator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
 import { type Activity, type ItineraryDay } from "@/types/itinerary";
+
+import CoverImageDialog from "./cover-image-dialog";
 
 interface ActivityCardProps {
   activity: Activity;
   day: ItineraryDay;
+  itineraryDates: {
+    startDate: Date;
+    endDate: Date | null;
+  };
 }
 
-export default function ActivityCard({ activity, day }: ActivityCardProps) {
-  const router = useRouter();
+export default function ActivityCard({
+  activity,
+  day,
+  itineraryDates,
+}: ActivityCardProps) {
   const utils = api.useUtils();
   const params = useParams();
+  const router = useRouter();
   const itineraryId = params.id as string;
 
+  const updateActivityImageMutation =
+    api.itinerary.updateActivityImage.useMutation({
+      onMutate: () => {
+        toast.loading("Updating activity image...");
+      },
+      onSuccess: () => {
+        // Invalidate the specific itinerary data
+        void utils.itinerary.getById.invalidate(itineraryId);
+
+        router.refresh();
+        toast.dismiss(); // Dismiss the loading toast
+        toast.success("Activity image updated successfully");
+      },
+      onError: (error) => {
+        toast.dismiss(); // Dismiss the loading toast
+        toast.error("Failed to update activity image", {
+          description: error.message || "An unknown error occurred",
+        });
+      },
+    });
+
   const deleteActivityMutation = api.itinerary.deleteActivity.useMutation({
+    onMutate: () => {
+      toast.loading("Deleting activity...");
+    },
     onSuccess: () => {
-      toast.success("Activity deleted", {
-        description: "The activity has been removed from your itinerary",
-      });
       // Invalidate the specific itinerary data
       void utils.itinerary.getById.invalidate(itineraryId);
+
+      router.refresh();
+      toast.dismiss(); // Dismiss the loading toast
+      toast.success("Activity deleted successfully");
     },
     onError: (error) => {
+      toast.dismiss(); // Dismiss the loading toast
       toast.error("Failed to delete activity", {
         description: error.message || "An unknown error occurred",
       });
     },
   });
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    if (window.confirm("Are you sure you want to delete this activity?")) {
-      await deleteActivityMutation.mutateAsync(activity.id);
-    }
+  const handleDelete = async () => {
+    await deleteActivityMutation.mutateAsync(activity.id);
   };
 
   return (
@@ -74,29 +116,72 @@ export default function ActivityCard({ activity, day }: ActivityCardProps) {
               {activity.title}
             </h3>
             <div className="flex">
-              <Dialog>
-                <DialogTrigger asChild>
+              <ActivityDialogForm
+                activity={activity}
+                selectedDayDate={day.date}
+                itineraryDates={itineraryDates}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                  <span className="sr-only">Edit activity</span>
+                </Button>
+              </ActivityDialogForm>
+
+              <CoverImageDialog
+                defaultSearchQuery={activity.location}
+                onImageSelected={async (imageUrl) => {
+                  await updateActivityImageMutation.mutateAsync({
+                    activityId: activity.id,
+                    imageUrl,
+                  });
+                }}
+                asChild
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
+                >
+                  <ImageIcon className="h-3.5 w-3.5" />
+                  <span className="sr-only">Change cover image</span>
+                </Button>
+              </CoverImageDialog>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
+                    className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
                   >
-                    <Edit className="h-3.5 w-3.5" />
-                    <span className="sr-only">Edit activity</span>
+                    <Trash className="h-3.5 w-3.5" />
+                    <span className="sr-only">Delete activity</span>
                   </Button>
-                </DialogTrigger>
-                <ActivityForm activity={activity} selectedDayDate={day.date} />
-              </Dialog>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
-                onClick={handleDelete}
-                disabled={deleteActivityMutation.isPending}
-              >
-                <Trash className="h-3.5 w-3.5" />
-                <span className="sr-only">Delete activity</span>
-              </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you sure you want to delete this activity?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. All data related to this
+                      activity will be permanently deleted.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      disabled={deleteActivityMutation.isPending}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
 
