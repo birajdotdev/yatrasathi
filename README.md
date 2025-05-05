@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.svg" alt="YatraSathi Logo" width="200"/>
+  <img src="public/logo-dark.svg" alt="YatraSathi Logo" width="200"/>
   <p>Your Journey, Simplified</p>
 </div>
 
