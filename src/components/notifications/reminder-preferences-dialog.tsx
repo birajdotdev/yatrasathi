@@ -80,7 +80,6 @@ export default function ReminderPreferencesDialog({
       optOut: false,
       daysBefore: 7,
     },
-    values: initialData ?? undefined,
   });
 
   // Check if form is dirty (has changed)
