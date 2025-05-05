@@ -8,10 +8,10 @@ This project is built with the [T3 Stack](https://create.t3.gg/), providing a mo
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="public/screenshots/home.png" alt="Home Page" width="400"/>
+  <img src="public/screenshots/home.png" alt="Home Page" style="width: 100%; max-width: 800px;"/>
   <p><em>Home Page</em></p>
 
-  <img src="public/screenshots/dashboard.png" alt="Dashboard" width="400"/>
+  <img src="public/screenshots/dashboard.png" alt="Dashboard" style="width: 100%; max-width: 800px;"/>
   <p><em>User Dashboard</em></p>
 
   <!-- Add more screenshots as needed -->
