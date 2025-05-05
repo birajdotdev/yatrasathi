@@ -33,8 +33,7 @@ export async function sendReminderEmail({
   destination,
   startDate,
 }: SendReminderEmailParams) {
-  const BASE_URL = process.env.VERCEL_URL ?? "http://localhost:3000";
-  const itineraryLink = `${BASE_URL}/itineraries/${itineraryId}`;
+  const itineraryLink = `${env.NEXT_PUBLIC_BASE_URL}/itineraries/${itineraryId}`;
 
   // Pass the React component directly to Resend instead of pre-rendering to HTML
   const { data, error } = await resend.emails.send({
