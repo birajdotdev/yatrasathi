@@ -4,7 +4,7 @@ import { env } from "@/env";
 import { processUpcomingItineraryReminders } from "@/lib/reminder-service";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300; // Set max duration to 5 minutes (300 seconds)
+export const maxDuration = 60;
 
 export async function GET(request: Request) {
   // Optional: Check for a secret to ensure only authorized calls can trigger this endpoint
