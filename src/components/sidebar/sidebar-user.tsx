@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { Bell, ChevronsUpDown, CreditCard, Sparkles } from "lucide-react";
 
+import ReminderPreferencesDialog from "@/components/notifications/reminder-preferences-dialog";
 import AccountButton from "@/components/sidebar/account-button";
 import LogoutButton from "@/components/sidebar/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -88,14 +90,22 @@ export function SidebarUser({ user }: SidebarUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <AccountButton />
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <Link href="/credits">
+                  <CreditCard />
+                  Billing
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
+              <ReminderPreferencesDialog>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  <Bell />
+                  Reminders
+                </DropdownMenuItem>
+              </ReminderPreferencesDialog>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <LogoutButton setIsOpen={setIsOpen} />

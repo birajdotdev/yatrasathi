@@ -10,6 +10,7 @@ import {
 
 import { createdAt, id, updatedAt } from "@/server/db/schema-helpers";
 
+import { reminderLogs } from "./reminder";
 import { users } from "./user";
 
 // Main itinerary table
@@ -89,6 +90,7 @@ export const itineraryRelations = relations(itineraries, ({ many, one }) => ({
     fields: [itineraries.createdById],
     references: [users.id],
   }),
+  reminderLogs: many(reminderLogs),
 }));
 
 export const destinationRelations = relations(destinations, ({ one }) => ({

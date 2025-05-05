@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/send-itinerary-reminders",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

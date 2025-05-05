@@ -1,6 +1,9 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, text } from "drizzle-orm/pg-core";
 
 import { createdAt, id, updatedAt } from "@/server/db/schema-helpers";
+
+import { reminderLogs, reminderPreferences } from "./reminder";
 
 export const userRoles = ["admin", "user"] as const;
 export type UserRole = (typeof userRoles)[number];
@@ -16,3 +19,8 @@ export const users = pgTable("user", {
   createdAt,
   updatedAt,
 });
+
+export const userRelations = relations(users, ({ one, many }) => ({
+  reminderPreference: one(reminderPreferences),
+  reminderLogs: many(reminderLogs),
+}));

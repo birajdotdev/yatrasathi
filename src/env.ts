@@ -15,6 +15,8 @@ export const env = createEnv({
     LOCATIONIQ_API_KEY: z.string(),
     UNSPLASH_ACCESS_KEY: z.string(),
     GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
+    RESEND_API_KEY: z.string(),
+    CRON_SECRET: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -22,6 +24,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string(),
     NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string(),
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_BASE_URL: z.string().url(),
   },
   runtimeEnv: {
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
@@ -36,12 +39,15 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NGROK_DOMAIN: process.env.NGROK_DOMAIN,
     NGROK_AUTHTOKEN: process.env.NGROK_AUTHTOKEN,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
     UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    CRON_SECRET: process.env.CRON_SECRET,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
