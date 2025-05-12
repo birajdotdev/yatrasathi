@@ -142,3 +142,13 @@
   background-size: 800px;
   background-position: center;
 }
+
+.bn-editor {
+  background: transparent !important;
+}
+
+.editor-content {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
