@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function ExplorePage() {
   return (
-    <main className="space-y-6 lg:space-y-8">
+    <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
       <Banner
         title="Explore Destinations"
         description="Discover new places and plan your next adventure."

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <main className="space-y-6 lg:space-y-8">
+    <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
       <Banner
         badgeText="Travel Blogs"
         title="Your Blogs"

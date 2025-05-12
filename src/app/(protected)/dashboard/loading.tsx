@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserDashboardSkeletonLoading() {
   return (
-    <main className="space-y-6 lg:space-y-8">
+    <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
       {/* Welcome Banner Skeleton */}
       <div className="rounded-3xl bg-linear-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background">
         <div className="p-6 sm:p-8 lg:p-12">
