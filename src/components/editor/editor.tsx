@@ -7,6 +7,8 @@ import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useTheme } from "next-themes";
 
+import { uploadFiles } from "@/utils/uploadthing";
+
 interface EditorProps {
   initialContent?: string;
   onChange?: () => void;
@@ -23,6 +25,10 @@ export default function Editor({
     initialContent: initialContent
       ? (JSON.parse(initialContent) as PartialBlock[])
       : undefined,
+    uploadFile: async (file: File) => {
+      const [res] = await uploadFiles("imageUploader", { files: [file] });
+      return res?.ufsUrl ?? "";
+    },
   });
 
   return (
