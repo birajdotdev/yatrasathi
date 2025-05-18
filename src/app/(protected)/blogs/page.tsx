@@ -1,54 +1,61 @@
 import { type Metadata } from "next";
+import { Suspense } from "react";
 
 import { PenTool } from "lucide-react";
 
-import BlogCard from "@/components/pages/blogs/blog-card";
+import { BlogsClient, BlogsSkeleton } from "@/components/pages/blogs";
 import { Banner } from "@/components/ui/banner";
+import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { blogs } from "@/data/blogs";
+import { HydrateClient, api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Blog",
   description: "Share your adventures and read about others' experiences",
 };
 
-export default function BlogPage() {
-  return (
-    <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
-      <Banner
-        badgeText="Travel Blogs"
-        title="Your Blogs"
-        description="Share your adventures and read about others' experiences"
-        icon={PenTool}
-      />
+export default async function BlogsPage() {
+  await Promise.all([
+    api.blog.getUserPosts.prefetch({ status: "published" }),
+    api.blog.getUserPosts.prefetch({ status: "draft" }),
+  ]);
 
-      <Tabs defaultValue="all" className="mb-8">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="recent">Recent</TabsTrigger>
-          <TabsTrigger value="popular">Popular</TabsTrigger>
-        </TabsList>
-        <TabsContent value="all">
-          <div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {blogs.map((blog, index) => (
-                <BlogCard key={index} post={blog} />
-              ))}
-            </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="recent">
-          <p className="text-muted-foreground">Recent blog posts go here...</p>
-        </TabsContent>
-        <TabsContent value="popular">
-          <p className="text-muted-foreground">Popular blog posts go here...</p>
-        </TabsContent>
-        <TabsContent value="following">
-          <p className="text-muted-foreground">
-            Blog posts from authors you&apos;re following go here...
-          </p>
-        </TabsContent>
-      </Tabs>
-    </main>
+  const tabOptions = [
+    { value: "published", label: "Published" },
+    { value: "draft", label: "Draft" },
+  ] as const;
+
+  return (
+    <HydrateClient>
+      <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+        <Banner
+          badgeText="Travel Blogs"
+          title="Your Blogs"
+          description="Share your adventures and read about others' experiences"
+          icon={PenTool}
+        />
+
+        <Tabs defaultValue="published">
+          <TabsList>
+            {tabOptions.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {tabOptions.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value}>
+              <Suspense fallback={<BlogsSkeleton />}>
+                <ErrorBoundaryWrapper
+                  fallbackMessage={`Error loading ${tab.label} blogs`}
+                >
+                  <BlogsClient status={tab.value} />
+                </ErrorBoundaryWrapper>
+              </Suspense>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </main>
+    </HydrateClient>
   );
 }

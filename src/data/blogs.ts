@@ -1,6 +1,7 @@
 export const blogs = [
   {
     title: "Ultimate Guide to Bali",
+    slug: "ultimate-guide-to-bali",
     excerpt:
       "Discover hidden gems and local secrets in this comprehensive guide to Bali's most enchanting locations...",
     image:
@@ -18,6 +19,7 @@ export const blogs = [
   },
   {
     title: "Santorini: A Photographer's Paradise",
+    slug: "santorini-a-photographers-paradise",
     excerpt:
       "Learn the best spots and times to capture breathtaking photos in the iconic Greek islands...",
     image:
@@ -35,6 +37,7 @@ export const blogs = [
   },
   {
     title: "Traditional Gardens of Kyoto",
+    slug: "traditional-gardens-of-kyoto",
     excerpt:
       "Explore the serene beauty and hidden meanings behind Kyoto's most famous traditional gardens...",
     image:
@@ -52,6 +55,7 @@ export const blogs = [
   },
   {
     title: "Hiking the Inca Trail to Machu Picchu",
+    slug: "hiking-the-inca-trail-to-machu-picchu",
     excerpt:
       "A complete trekking guide to one of the world's most iconic archaeological sites...",
     image: "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg",
@@ -68,6 +72,7 @@ export const blogs = [
   },
   {
     title: "Winter Magic in Banff National Park",
+    slug: "winter-magic-in-banff-national-park",
     excerpt:
       "Your ultimate guide to experiencing the best of Banff's winter wonderland...",
     image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg",
@@ -84,6 +89,7 @@ export const blogs = [
   },
   {
     title: "Colors of Marrakech: A Market Guide",
+    slug: "colors-of-marrakech-a-market-guide",
     excerpt:
       "Navigate the vibrant souks and discover the best bargains in Marrakech's maze-like medina...",
     image: "https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg",

@@ -1,16 +1,16 @@
-"use client";
-
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { Plus } from "lucide-react";
 
-import { ItineraryCard } from "@/components/pages/itineraries";
+import {
+  ItinerariesClient,
+  ItinerariesSkeleton,
+} from "@/components/pages/itineraries";
 import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
+import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 
 export function ItinerariesSection() {
-  const [itineraries] = api.itinerary.getAll.useSuspenseQuery();
-
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
@@ -36,11 +36,11 @@ export function ItinerariesSection() {
           </Link>
         </Button>
       </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {itineraries.slice(0, 3).map((itinerary) => (
-          <ItineraryCard key={itinerary.id} itinerary={itinerary} />
-        ))}
-      </div>
+      <Suspense fallback={<ItinerariesSkeleton />}>
+        <ErrorBoundaryWrapper fallbackMessage="Failed to load itineraries. Please try again later.">
+          <ItinerariesClient filter="upcoming" />
+        </ErrorBoundaryWrapper>
+      </Suspense>
     </section>
   );
 }

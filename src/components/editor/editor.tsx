@@ -10,10 +10,12 @@ import { useTheme } from "next-themes";
 import { uploadFiles } from "@/utils/uploadthing";
 
 interface EditorProps {
-  initialContent?: string;
-  onChange?: () => void;
+  initialContent?: PartialBlock[];
+  onChange?: (content: PartialBlock[]) => void;
   editable?: boolean;
 }
+
+const DEFAULT_BLOCK: PartialBlock[] = [{ type: "paragraph", content: "" }];
 
 export default function Editor({
   initialContent,
@@ -22,21 +24,29 @@ export default function Editor({
 }: EditorProps) {
   const { theme } = useTheme();
   const editor = useCreateBlockNote({
-    initialContent: initialContent
-      ? (JSON.parse(initialContent) as PartialBlock[])
-      : undefined,
+    initialContent:
+      initialContent && initialContent.length > 0
+        ? initialContent
+        : DEFAULT_BLOCK,
     uploadFile: async (file: File) => {
       const [res] = await uploadFiles("imageUploader", { files: [file] });
       return res?.ufsUrl ?? "";
     },
   });
 
+  // Handler to bridge BlockNoteView's onChange (no args) to our prop (with content)
+  const handleChange = () => {
+    if (onChange) {
+      onChange(editor.document);
+    }
+  };
+
   return (
     <div className="-mx-[54px] my-4">
       <BlockNoteView
         editor={editor}
         theme={theme === "dark" ? "dark" : "light"}
-        onChange={onChange}
+        onChange={handleChange}
         editable={editable}
         className="editor-content"
       />

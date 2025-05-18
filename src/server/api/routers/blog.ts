@@ -3,12 +3,20 @@ import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
+import { postInsertSchema, postUpdateSchema } from "@/lib/schemas/post";
+import { generateExcerpt } from "@/lib/utils";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { categoryValues, comments, likes, posts } from "@/server/db/schema";
+import {
+  categoryValues,
+  comments,
+  likes,
+  posts,
+  users,
+} from "@/server/db/schema";
 
 // Helper function to generate a slug from a title
 const generateSlug = (title: string) => {
@@ -44,13 +52,13 @@ export const blogRouter = createTRPCRouter({
   // Post Routes
   createPost: protectedProcedure
     .input(
-      z.object({
-        title: z.string().min(1),
-        content: z.string().min(1),
-        excerpt: z.string().optional(),
-        featuredImage: z.string().optional(),
-        category: z.enum(categoryValues).default("other"),
-        status: z.enum(["draft", "published"]).default("draft"),
+      postInsertSchema.pick({
+        title: true,
+        content: true,
+        excerpt: true,
+        category: true,
+        status: true,
+        featuredImage: true,
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -58,20 +66,37 @@ export const blogRouter = createTRPCRouter({
         const userId = ctx.session.user.dbId;
         const slug = generateSlug(input.title);
 
+        // Auto-generate excerpt if not provided
+        const excerpt =
+          typeof input.excerpt === "string" && input.excerpt.trim() !== ""
+            ? input.excerpt
+            : generateExcerpt(input.content);
+
+        // Only set featuredImage if provided, otherwise let DB default apply
+        const values: typeof posts.$inferInsert = {
+          title: input.title,
+          slug,
+          content: input.content,
+          excerpt,
+          category: input.category,
+          status: input.status,
+          authorId: userId,
+          featuredImage:
+            typeof input.featuredImage === "string" &&
+            input.featuredImage.trim() !== ""
+              ? input.featuredImage
+              : undefined,
+        };
+
         // Insert post
-        const [newPost] = await ctx.db
-          .insert(posts)
-          .values({
-            title: input.title,
-            slug,
-            content: input.content,
-            excerpt: input.excerpt,
-            featuredImage: input.featuredImage,
-            category: input.category,
-            status: input.status,
-            authorId: userId,
-          })
-          .returning();
+        const [newPost] = await ctx.db.insert(posts).values(values).returning();
+
+        if (!newPost) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create post",
+          });
+        }
 
         return newPost;
       } catch (error) {
@@ -86,14 +111,8 @@ export const blogRouter = createTRPCRouter({
 
   updatePost: protectedProcedure
     .input(
-      z.object({
+      postUpdateSchema.extend({
         id: z.string().uuid(),
-        title: z.string().min(1).optional(),
-        content: z.string().min(1).optional(),
-        excerpt: z.string().optional(),
-        featuredImage: z.string().optional(),
-        category: z.enum(categoryValues).optional(),
-        status: z.enum(["draft", "published"]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -130,9 +149,18 @@ export const blogRouter = createTRPCRouter({
           updateValues.slug = generateSlug(input.title);
         }
         if (input.content !== undefined) updateValues.content = input.content;
-        if (input.excerpt !== undefined) updateValues.excerpt = input.excerpt;
-        if (input.featuredImage !== undefined)
+        if (typeof input.excerpt === "string" && input.excerpt.trim() !== "") {
+          updateValues.excerpt = input.excerpt;
+        } else if (input.content !== undefined) {
+          // If excerpt is empty and content is provided, auto-generate
+          updateValues.excerpt = generateExcerpt(input.content);
+        }
+        if (
+          typeof input.featuredImage === "string" &&
+          input.featuredImage.trim() !== ""
+        ) {
           updateValues.featuredImage = input.featuredImage;
+        }
         if (input.category !== undefined)
           updateValues.category = input.category;
         if (input.status !== undefined) updateValues.status = input.status;
@@ -143,6 +171,13 @@ export const blogRouter = createTRPCRouter({
           .set(updateValues)
           .where(eq(posts.id, input.id))
           .returning();
+
+        if (!updatedPost) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to update post",
+          });
+        }
 
         return updatedPost;
       } catch (error) {
@@ -325,12 +360,18 @@ export const blogRouter = createTRPCRouter({
             post: posts,
             likesCount: count(likes.id).as("likes_count"),
             commentsCount: count(comments.id).as("comments_count"),
+            author: {
+              id: users.id,
+              name: users.name,
+              image: users.image,
+            },
           })
           .from(posts)
           .leftJoin(likes, eq(posts.id, likes.postId))
           .leftJoin(comments, eq(posts.id, comments.postId))
+          .leftJoin(users, eq(posts.authorId, users.id))
           .where(and(...whereConditions))
-          .groupBy(posts.id)
+          .groupBy(posts.id, users.id)
           .orderBy(desc(posts.createdAt))
           .limit(limit + 1);
 
@@ -392,12 +433,18 @@ export const blogRouter = createTRPCRouter({
             post: posts,
             likesCount: count(likes.id).as("likes_count"),
             commentsCount: count(comments.id).as("comments_count"),
+            author: {
+              id: users.id,
+              name: users.name,
+              image: users.image,
+            },
           })
           .from(posts)
           .leftJoin(likes, eq(posts.id, likes.postId))
           .leftJoin(comments, eq(posts.id, comments.postId))
+          .leftJoin(users, eq(posts.authorId, users.id))
           .where(and(...whereConditions))
-          .groupBy(posts.id)
+          .groupBy(posts.id, users.id)
           .orderBy(desc(posts.createdAt))
           .limit(limit + 1);
 

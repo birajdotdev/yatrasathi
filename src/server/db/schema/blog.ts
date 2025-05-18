@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   index,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -39,9 +40,11 @@ export const posts = pgTable(
     id,
     title: text("title").notNull(),
     slug: text("slug").notNull().unique(),
-    content: text("content").notNull(),
+    content: jsonb("content").notNull(),
     excerpt: text("excerpt"),
-    featuredImage: text("featured_image"),
+    featuredImage: text("featured_image").default(
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+    ),
     status: postStatusEnum("status").notNull().default("draft"),
     category: categoryEnum("category").default("other"),
     authorId: uuid("author_id")
