@@ -22,7 +22,7 @@ const quickActions = [
     icon: PenTool,
     title: "Blog",
     description: "Write blog post",
-    href: "/blog/create",
+    href: "/blogs/create",
   },
 ];
 

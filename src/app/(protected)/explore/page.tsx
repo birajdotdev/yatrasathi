@@ -1,59 +1,58 @@
 import { type Metadata } from "next";
+import { Suspense } from "react";
 
 import { GlobeIcon } from "lucide-react";
 
-import BlogCard from "@/components/pages/blogs/blog-card";
+import { BlogsSkeleton, ExploreClient } from "@/components/pages/blogs";
 import { Banner } from "@/components/ui/banner";
+import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { blogs } from "@/data/blogs";
+import { HydrateClient, api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Explore",
   description: "Discover new places and plan your next adventure",
 };
 
-export default function ExplorePage() {
-  return (
-    <main className="space-y-6 lg:space-y-8">
-      <Banner
-        title="Explore Destinations"
-        description="Discover new places and plan your next adventure."
-        badgeText="Discover More"
-        icon={GlobeIcon}
-      />
+export default async function ExplorePage() {
+  const categories = await api.blog.getCategories();
+  await Promise.all(
+    categories.map((category) =>
+      api.blog.getPostsByCategory.prefetch({ category: category.value })
+    )
+  );
 
-      <Tabs defaultValue="all" className="mb-8">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="popular">Popular</TabsTrigger>
-          <TabsTrigger value="trending">Trending</TabsTrigger>
-          <TabsTrigger value="recommended">Recommended</TabsTrigger>
-        </TabsList>
-        <TabsContent value="all">
-          <div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {blogs.map((blog, index) => (
-                <BlogCard key={index} post={blog} />
-              ))}
-            </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="popular">
-          <p className="text-muted-foreground">
-            Popular destinations content goes here.
-          </p>
-        </TabsContent>
-        <TabsContent value="trending">
-          <p className="text-muted-foreground">
-            Trending destinations content goes here.
-          </p>
-        </TabsContent>
-        <TabsContent value="recommended">
-          <p className="text-muted-foreground">
-            Recommended destinations content goes here.
-          </p>
-        </TabsContent>
-      </Tabs>
-    </main>
+  return (
+    <HydrateClient>
+      <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+        <Banner
+          title="Explore Destinations"
+          description="Discover new places and plan your next adventure."
+          badgeText="Discover More"
+          icon={GlobeIcon}
+        />
+
+        <Tabs defaultValue="travel_tips">
+          <TabsList>
+            {categories.map((category) => (
+              <TabsTrigger key={category.id} value={category.value}>
+                {category.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.id}>
+              <Suspense fallback={<BlogsSkeleton />}>
+                <ErrorBoundaryWrapper
+                  fallbackMessage={`Error loading ${category.name} blogs`}
+                >
+                  <ExploreClient category={category.value} />
+                </ErrorBoundaryWrapper>
+              </Suspense>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </main>
+    </HydrateClient>
   );
 }

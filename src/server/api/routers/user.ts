@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -153,6 +154,24 @@ export const userRouter = createTRPCRouter({
           .returning();
 
         return created;
+      }
+    }),
+
+  // Get user by id
+  getUserById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const user = await ctx.db.query.users.findFirst({
+          where: eq(users.id, input.id),
+        });
+        return user;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get user by id",
+          cause: error,
+        });
       }
     }),
 });

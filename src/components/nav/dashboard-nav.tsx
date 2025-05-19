@@ -44,11 +44,16 @@ export default function DashboardNav() {
         case "itineraries":
           // Return the actual title if the itinerary data is available
           return itinerary?.title ?? "Itinerary";
-        case "blogs":
-          return "Blog";
         default:
           return "Item";
       }
+    } else if (pathname.includes("blogs")) {
+      return segment
+        .replace(/-/g, " ")
+        .split(" ")
+        .slice(0, -1) // Remove the last word
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
     } else {
       // Transform kebab-case to Title Case for regular segments
       return segment

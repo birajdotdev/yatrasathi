@@ -4,6 +4,7 @@
 @source "../../node_modules/@uploadthing/react/dist";
 
 @plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -141,4 +142,14 @@
   background-image: url(/bg-dark.svg);
   background-size: 800px;
   background-position: center;
+}
+
+.bn-editor {
+  background: transparent !important;
+}
+
+.editor-content {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }

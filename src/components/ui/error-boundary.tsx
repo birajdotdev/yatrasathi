@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, RefreshCcw } from "lucide-react";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
 
 import { ErrorState } from "@/components/ui/error-state";
@@ -31,6 +31,7 @@ export function ErrorBoundaryWrapper({
             title="Something went wrong"
             description={errorMessage}
             action={{
+              icon: RefreshCcw,
               label: "Try again",
               onClick: resetErrorBoundary,
             }}
