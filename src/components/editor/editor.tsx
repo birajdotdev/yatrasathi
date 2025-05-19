@@ -22,7 +22,7 @@ export default function Editor({
   onChange,
   editable = true,
 }: EditorProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const editor = useCreateBlockNote({
     initialContent:
       initialContent && initialContent.length > 0
@@ -45,7 +45,7 @@ export default function Editor({
     <div className="-mx-[54px] my-4">
       <BlockNoteView
         editor={editor}
-        theme={theme === "dark" ? "dark" : "light"}
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
         onChange={handleChange}
         editable={editable}
         className="editor-content"

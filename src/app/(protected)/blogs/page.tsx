@@ -16,11 +16,13 @@ export const metadata: Metadata = {
 
 export default async function BlogsPage() {
   await Promise.all([
+    api.blog.getUserPosts.prefetch({}),
     api.blog.getUserPosts.prefetch({ status: "published" }),
     api.blog.getUserPosts.prefetch({ status: "draft" }),
   ]);
 
   const tabOptions = [
+    { value: "all", label: "All" },
     { value: "published", label: "Published" },
     { value: "draft", label: "Draft" },
   ] as const;
@@ -35,7 +37,7 @@ export default async function BlogsPage() {
           icon={PenTool}
         />
 
-        <Tabs defaultValue="published">
+        <Tabs defaultValue="all">
           <TabsList>
             {tabOptions.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>
@@ -49,7 +51,9 @@ export default async function BlogsPage() {
                 <ErrorBoundaryWrapper
                   fallbackMessage={`Error loading ${tab.label} blogs`}
                 >
-                  <BlogsClient status={tab.value} />
+                  <BlogsClient
+                    status={tab.value !== "all" ? tab.value : undefined}
+                  />
                 </ErrorBoundaryWrapper>
               </Suspense>
             </TabsContent>

@@ -90,3 +90,14 @@ function getTimeAgoString(date: Date): string {
   }
   return "Just now";
 }
+
+export function splitStringByWords(text: string): [string, string] {
+  const words = text.trim().split(/\s+/);
+  if (words.length === 1) {
+    return [words[0] ?? "", ""];
+  }
+  const mid = Math.ceil(words.length / 2);
+  const firstPart = words.slice(0, mid).join(" ");
+  const secondPart = words.slice(mid).join(" ");
+  return [firstPart, secondPart];
+}

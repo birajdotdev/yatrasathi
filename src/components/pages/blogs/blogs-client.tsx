@@ -8,12 +8,10 @@ import { api } from "@/trpc/react";
 import BlogCard from "./blog-card";
 
 interface BlogsClientProps {
-  status: "published" | "draft";
+  status?: "published" | "draft";
 }
 
-export default function BlogsClient({
-  status = "published",
-}: BlogsClientProps) {
+export default function BlogsClient({ status }: BlogsClientProps) {
   const [blogs] = api.blog.getUserPosts.useSuspenseQuery({
     status,
   });

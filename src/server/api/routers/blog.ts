@@ -263,12 +263,18 @@ export const blogRouter = createTRPCRouter({
             post: posts,
             likesCount: count(likes.id).as("likes_count"),
             commentsCount: count(comments.id).as("comments_count"),
+            author: {
+              id: users.id,
+              name: users.name,
+              image: users.image,
+            },
           })
           .from(posts)
           .leftJoin(likes, eq(posts.id, likes.postId))
           .leftJoin(comments, eq(posts.id, comments.postId))
+          .leftJoin(users, eq(posts.authorId, users.id))
           .where(and(...whereConditions))
-          .groupBy(posts.id)
+          .groupBy(posts.id, users.id)
           .orderBy(desc(posts.createdAt))
           .limit(limit + 1);
 
@@ -305,12 +311,19 @@ export const blogRouter = createTRPCRouter({
             post: posts,
             likesCount: count(likes.id).as("likes_count"),
             commentsCount: count(comments.id).as("comments_count"),
+            author: {
+              id: users.id,
+              name: users.name,
+              image: users.image,
+              email: users.email,
+            },
           })
           .from(posts)
           .leftJoin(likes, eq(posts.id, likes.postId))
           .leftJoin(comments, eq(posts.id, comments.postId))
+          .leftJoin(users, eq(posts.authorId, users.id))
           .where(eq(posts.slug, input.slug))
-          .groupBy(posts.id)
+          .groupBy(posts.id, users.id)
           .limit(1);
 
         if (!post.length) {

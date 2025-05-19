@@ -2,11 +2,10 @@
 
 import { CirclePlus, OctagonXIcon } from "lucide-react";
 
+import { BlogCard } from "@/components/pages/blogs";
 import { EmptyState } from "@/components/ui/empty-state";
 import { type CategoryType } from "@/server/db/schema";
 import { api } from "@/trpc/react";
-
-import { BlogCard } from ".";
 
 interface ExploreClientProps {
   category: CategoryType;
