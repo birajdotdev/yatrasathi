@@ -9,11 +9,15 @@ import { api } from "@/trpc/react";
 
 interface ReactionButtonsProps {
   postId: string;
+  onCommentClick?: () => void;
 }
 
 type LikeStatus = { liked: boolean };
 
-export default function ReactionButtons({ postId }: ReactionButtonsProps) {
+export default function ReactionButtons({
+  postId,
+  onCommentClick,
+}: ReactionButtonsProps) {
   const utils = api.useUtils();
   const [{ liked }] = api.blog.checkLikeStatus.useSuspenseQuery({ postId });
   const [optimisticLiked, setOptimisticLiked] = useOptimistic(liked);
@@ -71,6 +75,7 @@ export default function ReactionButtons({ postId }: ReactionButtonsProps) {
           variant="ghost"
           size="icon"
           className="rounded-full h-12 w-12 border"
+          onClick={onCommentClick}
         >
           <MessageSquare className="h-5 w-5" />
         </Button>

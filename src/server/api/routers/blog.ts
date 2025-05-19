@@ -553,10 +553,18 @@ export const blogRouter = createTRPCRouter({
           whereConditions.push(sql`${comments.createdAt} < ${cursor}`);
         }
 
-        // Execute query with limit and order
+        // Execute query with limit and order, joining users for author info
         const result = await ctx.db
-          .select()
+          .select({
+            comment: comments,
+            author: {
+              id: users.id,
+              name: users.name,
+              image: users.image,
+            },
+          })
           .from(comments)
+          .leftJoin(users, eq(comments.authorId, users.id))
           .where(and(...whereConditions))
           .orderBy(desc(comments.createdAt))
           .limit(limit + 1);
@@ -568,8 +576,9 @@ export const blogRouter = createTRPCRouter({
         // Get the next cursor
         const nextCursor =
           hasNextPage && commentList.length > 0
-            ? (commentList[commentList.length - 1]?.createdAt?.toISOString() ??
-              null)
+            ? (commentList[
+                commentList.length - 1
+              ]?.comment?.createdAt?.toISOString() ?? null)
             : null;
 
         return {

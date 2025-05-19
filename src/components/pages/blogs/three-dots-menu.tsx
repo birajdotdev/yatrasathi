@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { Edit, MoreHorizontal, Send, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -24,10 +26,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/trpc/react";
 
 export default function ThreeDotsMenu() {
   const params: { slug: string } = useParams();
+  const { sessionClaims } = useAuth();
+  const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
+
+  const [blogPost] = api.blog.getPostBySlug.useSuspenseQuery({
+    slug: params.slug,
+  });
+
+  const { mutate: deletePost } = api.blog.deletePost.useMutation({
+    onSuccess: () => {
+      router.push("/blogs");
+      toast.success("Post deleted successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to delete post");
+      console.error(error);
+    },
+  });
+
+  const { mutate: publishPost } = api.blog.updatePost.useMutation({
+    onSuccess: () => {
+      toast.success("Post published successfully");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error("Failed to publish post");
+      console.error(error);
+    },
+  });
+
+  const isDraft = blogPost!.post.status === "draft";
+  const isAuthor = blogPost!.post.authorId === sessionClaims?.dbId;
 
   return (
     <>
@@ -39,6 +73,22 @@ export default function ThreeDotsMenu() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {isDraft && isAuthor && (
+            <>
+              <DropdownMenuItem
+                onClick={() =>
+                  publishPost({
+                    id: blogPost!.post.id,
+                    status: "published",
+                  })
+                }
+              >
+                <Send />
+                Publish Post
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem asChild>
             <Link href={`/blogs/${params.slug}/edit`}>
               <Edit />
@@ -71,12 +121,7 @@ export default function ThreeDotsMenu() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => {
-                // In a real app, this would call an API to delete the post
-                console.log("Deleting post:", params.slug);
-                // Then redirect to the dashboard
-                window.location.href = "/blogs";
-              }}
+              onClick={() => deletePost({ id: blogPost!.post.id })}
             >
               Delete
             </AlertDialogAction>
