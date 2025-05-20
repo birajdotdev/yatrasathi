@@ -1,9 +1,15 @@
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { type PartialBlock } from "@blocknote/core";
 
 import { BlogForm } from "@/components/pages/blogs";
 import { api } from "@/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Edit Blog Post",
+  description: "Edit your blog post to share with the community",
+};
 
 interface UpdateBlogPageProps {
   params: Promise<{ slug: string }>;
@@ -26,8 +32,10 @@ export default async function UpdateBlogPage({ params }: UpdateBlogPageProps) {
           id: post.id,
           title: post.title,
           content: post.content as PartialBlock[],
+          category: post.category,
           excerpt: post.excerpt,
           featuredImage: post.featuredImage,
+          status: post.status,
         }}
       />
     </section>

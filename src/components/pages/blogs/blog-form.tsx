@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { type z } from "zod";
 
 import { Editor } from "@/components/editor";
 import CoverImageDialog from "@/components/pages/itineraries/cover-image-dialog";
@@ -47,18 +47,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { postInsertSchema } from "@/lib/schemas/post";
 import { api } from "@/trpc/react";
 
-const blogFormSchema = postInsertSchema
-  .pick({
-    title: true,
-    content: true,
-    featuredImage: true,
-    category: true,
-    excerpt: true,
-    status: true,
-  })
-  .extend({
-    id: z.string().optional(),
-  });
+const blogFormSchema = postInsertSchema.pick({
+  id: true,
+  title: true,
+  content: true,
+  featuredImage: true,
+  category: true,
+  excerpt: true,
+  status: true,
+});
 
 type BlogFormSchema = z.infer<typeof blogFormSchema>;
 
@@ -67,37 +64,60 @@ interface BlogFormProps {
 }
 
 export default function BlogForm({ initialValues }: BlogFormProps) {
+  const utils = api.useUtils();
   const router = useRouter();
-  const isEdit = Boolean(initialValues?.id);
+  const isEdit = Boolean(initialValues?.id); // Check if editing an existing post
 
+  // Fetch categories
   const [categories] = api.blog.getCategories.useSuspenseQuery();
+
+  // Create post mutation
   const createPost = api.blog.createPost.useMutation({
     onMutate: () => {
-      toast.loading("Creating blog post...");
+      toast.loading("Creating blog post..."); // Show loading toast
     },
-    onSuccess(data) {
-      toast.dismiss();
-      toast.success("Blog post created successfully");
-      router.push(`/blogs/${data.slug}`);
+    onSuccess: async (data) => {
+      toast.dismiss(); // Dismiss loading toast
+      toast.success("Blog post created successfully"); // Show success toast
+      router.push(`/blogs/${data.slug}`); // Redirect to the new post
+      await Promise.all([
+        void utils.blog.getUserPosts.invalidate(),
+        void utils.blog.getPostsByCategory.invalidate(),
+      ]);
     },
     onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message);
+      toast.dismiss(); // Dismiss loading toast
+      toast.error("Failed to create blog post"); // Show error toast
+      console.error(error.message); // Log error message
     },
   });
+
+  // Update post mutation
   const updatePost = api.blog.updatePost.useMutation({
-    onSuccess: (data) => {
-      toast.success("Blog post updated successfully");
-      router.push(`/blogs/${data.slug}`);
+    onMutate: () => {
+      toast.loading("Updating blog post..."); // Show loading toast
+    },
+    onSuccess: async (data) => {
+      toast.dismiss(); // Dismiss loading toast
+      toast.success("Blog post updated successfully"); // Show success toast
+      router.push(`/blogs/${data.slug}`); // Redirect to the updated post
+      await Promise.all([
+        void utils.blog.getUserPosts.invalidate(),
+        void utils.blog.getPostBySlug.invalidate({ slug: data.slug }),
+        void utils.blog.getPostsByCategory.invalidate(),
+      ]);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.dismiss(); // Dismiss loading toast
+      toast.error("Failed to update blog post"); // Show error toast
+      console.error(error.message); // Log error message
     },
   });
 
   const form = useForm<BlogFormSchema>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
+      id: initialValues?.id ?? undefined,
       featuredImage: initialValues?.featuredImage ?? "",
       title: initialValues?.title ?? "",
       content: Array.isArray(initialValues?.content)
@@ -115,6 +135,7 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
     if (!valid) return;
     const values = form.getValues();
     const data = {
+      id: values.id,
       title: values.title,
       content: values.content,
       category: values.category ?? "other",
@@ -122,19 +143,21 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
       featuredImage: values.featuredImage ?? undefined,
       excerpt: values.excerpt ?? undefined,
     };
-    console.log(data);
     if (isEdit) {
       await updatePost.mutateAsync({ ...data, id: values.id! });
-      toast.success("Blog post updated successfully");
     } else {
       await createPost.mutateAsync(data as typeof postInsertSchema._type);
-      toast.success(
-        status === "draft" ? "Draft saved!" : "Blog post published!"
-      );
     }
   };
 
+  // Handle form submission
   const onSubmit = form.handleSubmit(() => handleSubmit("published"));
+
+  const isPublished = initialValues?.status === "published";
+  const isButtonDisabled =
+    !form.formState.isValid ||
+    form.formState.isSubmitting ||
+    (isEdit && !form.formState.isDirty);
 
   return (
     <Form {...form}>
@@ -164,25 +187,20 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            {initialValues?.status !== "published" && (
+            {!isPublished && (
               <Button
                 variant="outline"
                 type="button"
                 onClick={() => handleSubmit("draft")}
-                disabled={
-                  !form.formState.isValid || form.formState.isSubmitting
-                }
+                disabled={isButtonDisabled}
               >
                 <Save />
-                Save Draft
+                {isEdit ? "Update Draft" : "Save Draft"}
               </Button>
             )}
-            <Button
-              type="submit"
-              disabled={!form.formState.isValid || form.formState.isSubmitting}
-            >
+            <Button type="submit" disabled={isButtonDisabled}>
               <Send />
-              {isEdit ? "Update" : "Publish"}
+              {isEdit ? (isPublished ? "Update" : "Publish") : "Publish"}
             </Button>
           </div>
         </div>

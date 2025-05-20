@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Blogs",
   description: "Share your adventures and read about others' experiences",
 };
 
