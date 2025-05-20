@@ -174,4 +174,19 @@ export const userRouter = createTRPCRouter({
         });
       }
     }),
+
+  getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.id, ctx.session.user.dbId),
+      });
+      return user;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get current user",
+        cause: error,
+      });
+    }
+  }),
 });

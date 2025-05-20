@@ -24,7 +24,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { env } from "@/env";
 import { getInitials } from "@/lib/utils";
+import { api } from "@/trpc/react";
 
 interface SidebarUserProps {
   user: {
@@ -37,6 +39,9 @@ interface SidebarUserProps {
 export function SidebarUser({ user }: SidebarUserProps) {
   const { isMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { data: userData } = api.user.getCurrentUser.useQuery();
+
+  console.log(userData);
 
   return (
     <SidebarMenu>
@@ -82,16 +87,20 @@ export function SidebarUser({ user }: SidebarUserProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/api/checkout?products=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}`}
+                >
+                  <Sparkles />
+                  Upgrade to Pro
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <AccountButton />
               <DropdownMenuItem asChild>
-                <Link href="/credits">
+                <Link href="/api/portal">
                   <CreditCard />
                   Billing
                 </Link>

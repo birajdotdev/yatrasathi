@@ -19,6 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { env } from "@/env";
 import {
   type ItineraryFormSchema,
   itineraryFormSchema,
@@ -62,9 +63,23 @@ export default function CreateItineraryForm() {
       });
     },
     onError: (error) => {
-      toast.error("Error generating itinerary with AI", {
-        description: error.message,
-      });
+      // If the error is a usage limit (FORBIDDEN), show upgrade toast
+      if (error.data?.code === "FORBIDDEN") {
+        toast.error("Daily AI usage limit reached", {
+          description: "Upgrade to Pro for unlimited access.",
+          action: {
+            label: "Upgrade",
+            onClick: () =>
+              router.push(
+                `/api/checkout?productId=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}`
+              ),
+          },
+        });
+      } else {
+        toast.error("Error generating itinerary with AI", {
+          description: error.message,
+        });
+      }
     },
   });
 
