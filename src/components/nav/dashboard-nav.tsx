@@ -48,6 +48,15 @@ export default function DashboardNav() {
           return "Item";
       }
     } else if (pathname.includes("blogs")) {
+      if (segment === "blogs") {
+        return "Blogs";
+      }
+      if (segment === "create") {
+        return "Create";
+      }
+      if (segment === "edit") {
+        return "Edit";
+      }
       return segment
         .replace(/-/g, " ")
         .split(" ")
@@ -64,21 +73,23 @@ export default function DashboardNav() {
     }
   };
 
-  // Create breadcrumb items from the full path
-  const breadcrumbs = pathname
-    .split("/")
-    .filter(Boolean)
-    .map((segment) => ({
-      href: `/${segment}`,
+  // Create breadcrumb items from the full path with cumulative hrefs
+  const pathSegments = pathname.split("/").filter(Boolean);
+  let accumulatedPath = "";
+  const breadcrumbs = pathSegments.map((segment) => {
+    accumulatedPath += `/${segment}`;
+    return {
+      href: accumulatedPath,
       label: getLabel(segment),
-    }));
+    };
+  });
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 justify-between px-6 border-b">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb>
+        <Breadcrumb className="hidden md:block">
           <BreadcrumbList>
             {breadcrumbs.map((breadcrumb, index) => (
               <React.Fragment key={breadcrumb.href}>

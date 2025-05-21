@@ -29,6 +29,7 @@ import {
 import { api } from "@/trpc/react";
 
 export default function ThreeDotsMenu() {
+  const utils = api.useUtils();
   const params: { slug: string } = useParams();
   const { sessionClaims } = useAuth();
   const router = useRouter();
@@ -39,9 +40,13 @@ export default function ThreeDotsMenu() {
   });
 
   const { mutate: deletePost } = api.blog.deletePost.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       router.push("/blogs");
       toast.success("Post deleted successfully");
+      await Promise.all([
+        void utils.blog.getUserPosts.invalidate(),
+        void utils.blog.getPostsByCategory.invalidate(),
+      ]);
     },
     onError: (error) => {
       toast.error("Failed to delete post");
@@ -50,8 +55,13 @@ export default function ThreeDotsMenu() {
   });
 
   const { mutate: publishPost } = api.blog.updatePost.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Post published successfully");
+      await Promise.all([
+        void utils.blog.getPostBySlug.invalidate({ slug: params.slug }),
+        void utils.blog.getUserPosts.invalidate(),
+        void utils.blog.getPostsByCategory.invalidate(),
+      ]);
       router.refresh();
     },
     onError: (error) => {
