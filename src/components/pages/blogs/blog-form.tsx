@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 
 import { type PartialBlock } from "@blocknote/core";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import { type z } from "zod";
 
@@ -59,14 +60,20 @@ const blogFormSchema = postInsertSchema.pick({
 
 type BlogFormSchema = z.infer<typeof blogFormSchema>;
 
-interface BlogFormProps {
-  initialValues?: Partial<BlogFormSchema>;
-}
+type BlogFormProps =
+  | {
+      mode?: "create";
+      slug?: string;
+    }
+  | {
+      mode: "edit";
+      slug: string;
+    };
 
-export default function BlogForm({ initialValues }: BlogFormProps) {
+export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
   const utils = api.useUtils();
   const router = useRouter();
-  const isEdit = Boolean(initialValues?.id); // Check if editing an existing post
+  const isEdit = mode === "edit"; // Check if editing an existing post
 
   // Fetch categories
   const [categories] = api.blog.getCategories.useSuspenseQuery();
@@ -79,16 +86,15 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
     onSuccess: async (data) => {
       toast.dismiss(); // Dismiss loading toast
       toast.success("Blog post created successfully"); // Show success toast
-      router.push(`/blogs/${data.slug}`); // Redirect to the new post
       await Promise.all([
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostsByCategory.invalidate(),
       ]);
+      router.push(`/blogs/${data.slug}`); // Redirect to the new post
     },
     onError: (error) => {
       toast.dismiss(); // Dismiss loading toast
-      toast.error("Failed to create blog post"); // Show error toast
-      console.error(error.message); // Log error message
+      toast.error(error.message); // Show error toast
     },
   });
 
@@ -100,19 +106,27 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
     onSuccess: async (data) => {
       toast.dismiss(); // Dismiss loading toast
       toast.success("Blog post updated successfully"); // Show success toast
-      router.push(`/blogs/${data.slug}`); // Redirect to the updated post
       await Promise.all([
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostBySlug.invalidate({ slug: data.slug }),
         void utils.blog.getPostsByCategory.invalidate(),
       ]);
+      router.push(`/blogs/${data.slug}`); // Redirect to the updated post
     },
     onError: (error) => {
       toast.dismiss(); // Dismiss loading toast
-      toast.error("Failed to update blog post"); // Show error toast
-      console.error(error.message); // Log error message
+      toast.error(error.message); // Show error toast
     },
   });
+
+  const { data: blogPost } = api.blog.getPostBySlug.useQuery(
+    { slug: slug! },
+    { enabled: isEdit }
+  );
+
+  if (isEdit && !blogPost) notFound();
+
+  const initialValues = blogPost?.post;
 
   const form = useForm<BlogFormSchema>({
     resolver: zodResolver(blogFormSchema),
@@ -124,7 +138,7 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
         ? initialValues.content
         : ([] as PartialBlock[]),
       category: initialValues?.category ?? undefined,
-      excerpt: initialValues?.excerpt ?? undefined,
+      excerpt: initialValues?.excerpt ?? "",
       status: initialValues?.status ?? "draft",
     },
     mode: "onChange",
@@ -141,7 +155,7 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
       category: values.category ?? "other",
       status,
       featuredImage: values.featuredImage ?? undefined,
-      excerpt: values.excerpt ?? undefined,
+      excerpt: values.excerpt ?? "",
     };
     if (isEdit) {
       await updatePost.mutateAsync({ ...data, id: values.id! });
@@ -216,9 +230,9 @@ export default function BlogForm({ initialValues }: BlogFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <input
+                      <TextareaAutosize
                         placeholder="Untitled"
-                        className="text-5xl font-bold resize-none appearance-none overflow-hidden bg-transparent border-none focus:outline-none focus:ring-0"
+                        className="text-5xl font-bold resize-none appearance-none overflow-hidden bg-transparent border-none focus:outline-none focus:ring-0 w-full leading-tight"
                         {...field}
                       />
                     </FormControl>
