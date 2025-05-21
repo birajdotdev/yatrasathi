@@ -5,6 +5,7 @@ import { Webhook } from "svix";
 
 import { env } from "@/env";
 import { syncClerkUserMetadata } from "@/server/auth";
+import { polar } from "@/server/polar";
 import { api } from "@/trpc/server";
 
 export const dynamic = "force-dynamic";
@@ -58,29 +59,49 @@ export async function POST(req: Request) {
         return new Response("Error: No name found", { status: 400 });
 
       if (evt.type === "user.created") {
+        const result = await polar.customers.create({
+          email,
+          name,
+        });
+
         const user = await api.user.create({
+          clerkUserId: evt.data.id,
+          email,
+          name,
+          image: evt.data.image_url,
+          plan: "free",
+          polarCustomerId: result.id,
+          subscriptionId: null,
+        });
+
+        await syncClerkUserMetadata(user);
+      } else {
+        // Update user in database
+        const user = await api.user.update({
           clerkUserId: evt.data.id,
           email,
           name,
           image: evt.data.image_url,
         });
 
-        await syncClerkUserMetadata(user);
-      } else {
-        // Update user in database
-        await api.user.update({
-          clerkUserId: evt.data.id,
-          email,
-          name,
-          image: evt.data.image_url,
-        });
+        if (user.polarCustomerId) {
+          await polar.customers.update({
+            id: user.polarCustomerId,
+            customerUpdate: { email, name },
+          });
+        }
       }
       break;
     }
     case "user.deleted": {
       if (evt.data.id !== null) {
         // Delete user from database
-        await api.user.delete({ clerkUserId: evt.data.id! });
+        const result = await api.user.delete({ clerkUserId: evt.data.id! });
+        if (result.polarCustomerId) {
+          await polar.customers.delete({
+            id: result.polarCustomerId,
+          });
+        }
       }
       break;
     }

@@ -8,12 +8,14 @@ import { fetchImageFromUnsplash } from "@/lib/image-utils";
 import { aiGeneratedItinerarySchema } from "@/lib/schemas/ai-itinerary";
 import { itineraryFormSchema } from "@/lib/schemas/itinerary";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { aiUsage } from "@/server/db/schema/ai-usage";
 import {
   activities,
   days,
   destinations,
   itineraries,
 } from "@/server/db/schema/itinerary";
+import { users } from "@/server/db/schema/user";
 
 // Activity schema for validation
 const activityInputSchema = z.object({
@@ -580,6 +582,42 @@ export const itineraryRouter = createTRPCRouter({
   generateWithAI: protectedProcedure
     .input(itineraryFormSchema)
     .mutation(async ({ ctx, input }) => {
+      // --- AI USAGE LIMIT LOGIC ---
+      // Get the user
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.id, ctx.session.user.dbId),
+      });
+      if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
+      // Only limit free users
+      if (user.plan === "free") {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().slice(0, 10); // YYYY-MM-DD
+        // Find today's usage
+        const usage = await ctx.db.query.aiUsage.findFirst({
+          where: and(eq(aiUsage.userId, user.id), eq(aiUsage.date, todayStr)),
+        });
+        if (usage && usage.count >= 3) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "Daily AI usage limit reached. Upgrade to Pro for unlimited access.",
+          });
+        }
+        // Increment usage
+        if (usage) {
+          await ctx.db
+            .update(aiUsage)
+            .set({ count: usage.count + 1 })
+            .where(
+              and(eq(aiUsage.userId, user.id), eq(aiUsage.date, todayStr))
+            );
+        } else {
+          await ctx.db
+            .insert(aiUsage)
+            .values({ userId: user.id, date: todayStr, count: 1 });
+        }
+      }
       try {
         // Calculate number of days
         const startDate = input.dateRange.from;

@@ -1,8 +1,6 @@
 import Link from "next/link";
 import React from "react";
 
-import { currentUser } from "@clerk/nextjs/server";
-
 import SidebarMain from "@/components/sidebar/sidebar-main";
 import SidebarSecondary from "@/components/sidebar/sidebar-secondary";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
@@ -20,13 +18,6 @@ import {
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const userData = await currentUser();
-  const user = {
-    name: userData?.fullName ?? "",
-    email: userData?.emailAddresses[0]?.emailAddress ?? "",
-    avatar: userData?.imageUrl ?? "",
-  };
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -45,7 +36,7 @@ export default async function AppSidebar({
         <SidebarSecondary className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUser user={user} />
+        <SidebarUser />
       </SidebarFooter>
     </Sidebar>
   );

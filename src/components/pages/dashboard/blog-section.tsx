@@ -16,10 +16,10 @@ export function BlogSection() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">
           <span className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Your
+            Recent
           </span>{" "}
           <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Recent Posts
+            Blog Posts
           </span>
         </h2>
         <Button

@@ -12,7 +12,10 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  void api.user.getReminderPreferences.prefetch();
+  await Promise.all([
+    void api.user.getCurrentUser.prefetch(),
+    void api.user.getReminderPreferences.prefetch(),
+  ]);
   const { userId, redirectToSignIn } = await auth();
   if (!userId) return redirectToSignIn();
 

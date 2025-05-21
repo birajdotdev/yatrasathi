@@ -17,6 +17,9 @@ export const env = createEnv({
     GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
     RESEND_API_KEY: z.string(),
     CRON_SECRET: z.string().optional(),
+    POLAR_ACCESS_TOKEN: z.string(),
+    POLAR_SUCCESS_URL: z.string(),
+    POLAR_WEBHOOK_SECRET: z.string(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -25,6 +28,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string(),
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
     NEXT_PUBLIC_BASE_URL: z.string().url(),
+    NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID: z.string(),
   },
   runtimeEnv: {
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
@@ -48,6 +52,11 @@ export const env = createEnv({
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     CRON_SECRET: process.env.CRON_SECRET,
+    POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
+    POLAR_SUCCESS_URL: process.env.POLAR_SUCCESS_URL,
+    POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
+    NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID:
+      process.env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

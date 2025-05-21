@@ -15,7 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { splitTitle } from "@/lib/utils";
+import { splitStringByWords } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { type Itinerary } from "@/types/itinerary";
 
@@ -28,7 +28,7 @@ interface ItineraryHeaderProps {
 export default function ItineraryHeader({ itinerary }: ItineraryHeaderProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [text, highlight] = splitTitle(itinerary.title);
+  const [text, highlight] = splitStringByWords(itinerary.title);
 
   // Format dates
   const startDateObj = itinerary.startDate;
