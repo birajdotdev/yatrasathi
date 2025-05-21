@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getDaysAgoString, splitStringByWords } from "@/lib/utils";
-import { type RouterOutputs } from "@/trpc/react";
+import { type RouterOutputs, api } from "@/trpc/react";
 
 interface PostClientProps {
   blog: RouterOutputs["blog"]["getPostBySlug"];
@@ -35,7 +35,8 @@ export default function PostClient({ blog }: PostClientProps) {
   };
 
   const [title, subtitle] = splitStringByWords(post.title);
-
+  const [user] = api.user.getCurrentUser.useSuspenseQuery();
+  const isAuthor = author?.id === user?.id;
   return (
     <main className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-6">
@@ -80,7 +81,7 @@ export default function PostClient({ blog }: PostClientProps) {
                 day: "numeric",
               })}
             </div>
-            <ThreeDotsMenu />
+            {isAuthor && <ThreeDotsMenu />}
           </div>
         </div>
 

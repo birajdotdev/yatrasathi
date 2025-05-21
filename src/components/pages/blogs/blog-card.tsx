@@ -32,7 +32,7 @@ export default function BlogCard({
         {/* Category badge */}
         <div className="absolute left-4 top-4">
           <div className="inline-flex rounded-full bg-background/80 px-3 py-1 text-xs font-medium backdrop-blur-xs transition-colors capitalize">
-            {post.category}
+            {post.category?.split("_").join(" ")}
           </div>
         </div>
       </div>

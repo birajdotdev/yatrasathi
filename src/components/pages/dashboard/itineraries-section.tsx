@@ -38,7 +38,7 @@ export function ItinerariesSection() {
       </div>
       <Suspense fallback={<ItinerariesSkeleton />}>
         <ErrorBoundaryWrapper fallbackMessage="Failed to load itineraries. Please try again later.">
-          <ItinerariesClient filter="upcoming" />
+          <ItinerariesClient filter="upcoming" limit={3} />
         </ErrorBoundaryWrapper>
       </Suspense>
     </section>

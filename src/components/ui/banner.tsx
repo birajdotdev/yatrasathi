@@ -7,7 +7,11 @@ interface BannerProps {
   title: string;
   description: string;
   icon: LucideIcon;
-  quickStats?: boolean;
+  quickStats?: {
+    upcomingTrips: number;
+    blogPosts: number;
+    nextTripDays: string;
+  };
 }
 
 export function Banner({
@@ -60,15 +64,21 @@ export function Banner({
               <div className="text-sm text-muted-foreground">
                 Upcoming Trips
               </div>
-              <div className="mt-1 text-2xl font-semibold">3</div>
+              <div className="mt-1 text-2xl font-semibold">
+                {quickStats.upcomingTrips}
+              </div>
             </div>
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="text-sm text-muted-foreground">Blog Posts</div>
-              <div className="mt-1 text-2xl font-semibold">7</div>
+              <div className="mt-1 text-2xl font-semibold">
+                {quickStats.blogPosts}
+              </div>
             </div>
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="text-sm text-muted-foreground">Next Trip</div>
-              <div className="mt-1 text-2xl font-semibold">15d</div>
+              <div className="mt-1 text-2xl font-semibold">
+                {quickStats.nextTripDays}
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,5 @@
 import { type Metadata } from "next";
 
-import { RedirectToSignIn } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import { Home } from "lucide-react";
 
 import { BlogSection } from "@/components/pages/dashboard/blog-section";
@@ -15,20 +13,30 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const user = await currentUser();
-  if (!user) return <RedirectToSignIn />;
+  const userStats = await api.user.getUserStats();
 
-  void api.itinerary.getAll.prefetch("upcoming");
+  await Promise.all([
+    void api.itinerary.getAll.prefetch({ type: "upcoming", limit: 3 }),
+    void api.blog.getUserPosts.prefetch({ status: "published", limit: 3 }),
+  ]);
+
+  const welcomeMessage = userStats.isFirstLogIn
+    ? `Welcome, ${userStats.firstName}!`
+    : `Welcome back, ${userStats.firstName}!`;
 
   return (
     <HydrateClient>
       <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
         <Banner
           badgeText="Dashboard Overview"
-          title={`Welcome back, ${user.firstName}!`}
+          title={welcomeMessage}
           description="Here's an overview of your travel plans and activities."
           icon={Home}
-          quickStats
+          quickStats={{
+            upcomingTrips: userStats.upcomingTripsCount,
+            blogPosts: userStats.blogPostsCount,
+            nextTripDays: userStats.nextTripDays ?? "--",
+          }}
         />
         <ItinerariesSection />
         <BlogSection />
