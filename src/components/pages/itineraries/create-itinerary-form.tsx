@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -41,38 +41,52 @@ export default function CreateItineraryForm() {
 
   // Create itinerary mutation
   const createItinerary = api.itinerary.create.useMutation({
+    onMutate: () => {
+      toast.loading("Creating your itinerary", {
+        description: "You'll be redirected to your itinerary shortly...",
+      });
+    },
     onSuccess: (data) => {
-      router.push(`/itineraries/${data.id}`);
+      toast.dismiss();
       toast.success("Itinerary created", {
         description: "Your itinerary has been created",
       });
+      router.push(`/itineraries/${data.id}`);
     },
     onError: (error) => {
+      toast.dismiss();
       toast.error("Error creating itinerary", {
         description: error.message,
       });
     },
   });
 
+  const [user] = api.user.getCurrentUser.useSuspenseQuery();
+  const CHECKOUT_URL = `/api/checkout?products=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}&customerId=${user?.polarCustomerId}`;
+
   // Generate with AI mutation
   const generateWithAI = api.itinerary.generateWithAI.useMutation({
+    onMutate: () => {
+      toast.loading("Generating your itinerary", {
+        description: "This may take up to a minute...",
+      });
+    },
     onSuccess: (data) => {
-      router.push(`/itineraries/${data.id}`);
+      toast.dismiss();
       toast.success("AI Itinerary generated", {
         description: "Your AI-powered itinerary has been created",
       });
+      router.push(`/itineraries/${data.id}`);
     },
     onError: (error) => {
+      toast.dismiss();
       // If the error is a usage limit (FORBIDDEN), show upgrade toast
       if (error.data?.code === "FORBIDDEN") {
         toast.error("Daily AI usage limit reached", {
           description: "Upgrade to Pro for unlimited access.",
           action: {
             label: "Upgrade",
-            onClick: () =>
-              router.push(
-                `/api/checkout?productId=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}`
-              ),
+            onClick: () => router.push(CHECKOUT_URL),
           },
         });
       } else {
@@ -99,9 +113,13 @@ export default function CreateItineraryForm() {
       dateRange: data.dateRange,
     };
 
-    console.log("Submitting to itinerary.createSimple:", formData);
     createItinerary.mutate(formData);
   };
+
+  const isButtonDisabled =
+    createItinerary.isPending ||
+    generateWithAI.isPending ||
+    !form.formState.isValid;
 
   return (
     <Form {...form}>
@@ -161,9 +179,9 @@ export default function CreateItineraryForm() {
             type="submit"
             size="lg"
             className="rounded-full group w-full sm:w-auto"
-            disabled={createItinerary.isPending || generateWithAI.isPending}
+            disabled={isButtonDisabled}
           >
-            {createItinerary.isPending ? "Creating..." : "Start planning"}
+            Start planning
             <ArrowRight className="transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
           </Button>
 
@@ -172,30 +190,15 @@ export default function CreateItineraryForm() {
             size="lg"
             variant="outline"
             className="rounded-full w-full sm:w-auto"
-            disabled={generateWithAI.isPending || !form.formState.isValid}
+            disabled={isButtonDisabled}
             onClick={() => {
               // Get form data
               const formData = form.getValues();
-
-              // Submit to generate with AI
-              toast.info("Generating your itinerary", {
-                description: "This may take up to a minute...",
-              });
-
               generateWithAI.mutate(formData as ItineraryFormData);
             }}
           >
-            {generateWithAI.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Generate with AI
-              </>
-            )}
+            <Sparkles />
+            Generate with AI
           </Button>
         </div>
       </form>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { Plus } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import {
   ItinerariesClient,
@@ -16,10 +16,10 @@ export function ItinerariesSection() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">
           <span className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Your
+            Upcoming
           </span>{" "}
           <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Itineraries
+            Trips
           </span>
         </h2>
         <Button
@@ -28,10 +28,10 @@ export function ItinerariesSection() {
           className="group relative overflow-hidden rounded-full border-primary/50 px-6 transition-all hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10"
           asChild
         >
-          <Link href="/itineraries/create">
+          <Link href="/itineraries">
             <span className="relative z-10 flex items-center gap-2">
-              <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
-              <span>Create New</span>
+              <span>View More</span>
+              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </span>
           </Link>
         </Button>

@@ -3,39 +3,15 @@ import { Webhooks } from "@polar-sh/nextjs";
 import { eq } from "drizzle-orm";
 
 import { env } from "@/env";
-import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema";
 
 export const POST = Webhooks({
   webhookSecret: env.POLAR_WEBHOOK_SECRET,
   onSubscriptionCreated: async (subscription) => {
-    const { userId } = await auth();
-
-    if (!userId) {
-      throw new Error("Unauthorized");
-    }
-
     const customerId = subscription.data.customerId;
     const email = subscription.data.customer.email;
     const subId = subscription.data.id;
-
-    // Check if the customer id exists in the database
-    const user = await db.query.users.findFirst({
-      where: eq(users.polarCustomerId, customerId),
-    });
-
-    if (!user) {
-      // add customer id to the database
-      await db
-        .update(users)
-        .set({
-          polarCustomerId: customerId,
-          plan: "pro",
-          subscriptionId: subId,
-        })
-        .where(eq(users.clerkUserId, userId));
-    }
 
     if (customerId && subId) {
       await db
