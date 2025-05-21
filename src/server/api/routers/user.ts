@@ -1,3 +1,4 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
@@ -188,5 +189,63 @@ export const userRouter = createTRPCRouter({
         cause: error,
       });
     }
+  }),
+
+  getUserStats: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.dbId;
+    const clerkUser = await currentUser();
+
+    // Get user info
+    const user = await ctx.db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    if (!user)
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+    // Get first name only
+    const firstName = user.name.split(" ")[0];
+
+    // Count upcoming trips (startDate strictly in the future)
+    const now = new Date();
+    const upcomingTrips = await ctx.db.query.itineraries.findMany({
+      where: (itinerary, { and, gt }) =>
+        and(eq(itinerary.createdById, userId), gt(itinerary.startDate, now)),
+    });
+    const upcomingTripsCount = upcomingTrips.length;
+
+    // Find next trip (soonest startDate in the future)
+    let nextTripDays: string | null = null;
+    if (upcomingTrips.length > 0) {
+      const nextTrip = upcomingTrips.reduce((min, curr) =>
+        curr.startDate < min.startDate ? curr : min
+      );
+      const diffDays = Math.ceil(
+        (nextTrip.startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      nextTripDays = `${diffDays}d`;
+    }
+
+    // Count blog posts
+    const blogPosts = await ctx.db.query.posts.findMany({
+      where: (post) => eq(post.authorId, userId),
+    });
+    const blogPostsCount = blogPosts.length;
+
+    // Clerk first login logic
+    const isFirstLogIn =
+      !!clerkUser?.createdAt &&
+      !!clerkUser?.lastSignInAt &&
+      Math.abs(
+        new Date(clerkUser.createdAt).getTime() -
+          new Date(clerkUser.lastSignInAt).getTime()
+      ) <
+        60 * 1000;
+    return {
+      firstName,
+      isFirstLogIn,
+      upcomingTripsCount,
+      blogPostsCount,
+      nextTripDays,
+    };
   }),
 });

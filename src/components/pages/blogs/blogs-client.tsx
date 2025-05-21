@@ -9,11 +9,13 @@ import BlogCard from "./blog-card";
 
 interface BlogsClientProps {
   status?: "published" | "draft";
+  limit?: number;
 }
 
-export default function BlogsClient({ status }: BlogsClientProps) {
+export default function BlogsClient({ status, limit }: BlogsClientProps) {
   const [blogs] = api.blog.getUserPosts.useSuspenseQuery({
     status,
+    limit,
   });
 
   // If no blogs are found, show an empty state

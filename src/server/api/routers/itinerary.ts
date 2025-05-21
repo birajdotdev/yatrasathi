@@ -188,20 +188,28 @@ export const itineraryRouter = createTRPCRouter({
 
   // Get all itineraries for the current user
   getAll: protectedProcedure
-    .input(z.enum(["all", "upcoming", "past"]).default("all"))
+    .input(
+      z.object({
+        type: z.enum(["all", "upcoming", "past"]).default("all"),
+        limit: z.number().int().positive().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const baseQuery = {
         where: eq(itineraries.createdById, ctx.session.user.dbId),
       };
 
       let itinerariesResult;
+      const limit = input.limit;
+      const type = input.type ?? "all";
 
-      switch (input) {
+      switch (type) {
         case "upcoming":
           itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
             where: and(baseQuery.where, gt(itineraries.startDate, new Date())),
             orderBy: (itineraries, { asc }) => [asc(itineraries.startDate)],
+            ...(limit ? { limit } : {}),
           });
           break;
         case "past":
@@ -209,12 +217,14 @@ export const itineraryRouter = createTRPCRouter({
             ...baseQuery,
             where: and(baseQuery.where, lt(itineraries.endDate, new Date())),
             orderBy: (itineraries, { desc }) => [desc(itineraries.endDate)],
+            ...(limit ? { limit } : {}),
           });
           break;
         default: // 'all'
           itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
             orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
+            ...(limit ? { limit } : {}),
           });
       }
 

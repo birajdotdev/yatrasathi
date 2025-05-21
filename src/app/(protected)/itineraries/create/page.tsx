@@ -1,4 +1,11 @@
+import { type Metadata } from "next";
+
 import CreateItineraryForm from "@/components/pages/itineraries/create-itinerary-form";
+
+export const metadata: Metadata = {
+  title: "Create Itinerary",
+  description: "Create a new itinerary to plan your perfect trip.",
+};
 
 export default function CreateItineraryPage() {
   return (

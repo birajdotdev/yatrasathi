@@ -38,7 +38,7 @@ export function BlogSection() {
       </div>
       <Suspense fallback={<BlogsSkeleton />}>
         <ErrorBoundaryWrapper fallbackMessage="Failed to load blogs. Please try again later.">
-          <BlogsClient status="published" />
+          <BlogsClient status="published" limit={3} />
         </ErrorBoundaryWrapper>
       </Suspense>
     </section>

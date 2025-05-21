@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarX, Plus } from "lucide-react";
+import { CalendarX, PlusCircle } from "lucide-react";
 
 import { ItineraryCard } from "@/components/pages/itineraries";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -8,12 +8,17 @@ import { api } from "@/trpc/react";
 
 interface ItinerariesClientProps {
   filter?: "upcoming" | "past" | "all";
+  limit?: number;
 }
 
 export default function ItinerariesClient({
   filter = "all",
+  limit,
 }: ItinerariesClientProps) {
-  const [itineraries] = api.itinerary.getAll.useSuspenseQuery(filter);
+  const [itineraries] = api.itinerary.getAll.useSuspenseQuery({
+    type: filter,
+    limit,
+  });
 
   if (itineraries.length === 0) {
     return (
@@ -30,7 +35,7 @@ export default function ItinerariesClient({
         action={{
           label: "Create Itinerary",
           href: "/itineraries/create",
-          icon: Plus,
+          icon: PlusCircle,
         }}
       />
     );

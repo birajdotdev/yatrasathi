@@ -1,3 +1,4 @@
+import { type Metadata } from "next";
 import { Suspense } from "react";
 
 import { CalendarDays } from "lucide-react";
@@ -11,12 +12,17 @@ import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
+export const metadata: Metadata = {
+  title: "Itineraries",
+  description: "Manage and organize all your upcoming adventures in one place.",
+};
+
 export default async function ItinerariesPage() {
   // Prefetch all data in parallel
   await Promise.all([
-    api.itinerary.getAll.prefetch("all"),
-    api.itinerary.getAll.prefetch("upcoming"),
-    api.itinerary.getAll.prefetch("past"),
+    api.itinerary.getAll.prefetch({ type: "all" }),
+    api.itinerary.getAll.prefetch({ type: "upcoming" }),
+    api.itinerary.getAll.prefetch({ type: "past" }),
   ]);
 
   const tabOptions = [
@@ -47,9 +53,7 @@ export default async function ItinerariesPage() {
             <TabsContent key={tab.value} value={tab.value}>
               <Suspense fallback={<ItinerariesSkeleton />}>
                 <ErrorBoundaryWrapper fallbackMessage="Failed to load itineraries. Please try again later.">
-                  <ItinerariesClient
-                    filter={tab.value === "all" ? "all" : tab.value}
-                  />
+                  <ItinerariesClient filter={tab.value} />
                 </ErrorBoundaryWrapper>
               </Suspense>
             </TabsContent>
