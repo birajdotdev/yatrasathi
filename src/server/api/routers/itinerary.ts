@@ -1,13 +1,17 @@
 import { google } from "@ai-sdk/google";
 import { TRPCError } from "@trpc/server";
 import { generateObject } from "ai";
-import { and, eq, gt, lt } from "drizzle-orm";
+import { and, eq, gt, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { fetchImageFromUnsplash } from "@/lib/image-utils";
 import { aiGeneratedItinerarySchema } from "@/lib/schemas/ai-itinerary";
 import { itineraryFormSchema } from "@/lib/schemas/itinerary";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { aiUsage } from "@/server/db/schema/ai-usage";
 import {
   activities,
@@ -769,5 +773,37 @@ ${systemPrompt}`,
               : "Failed to generate itinerary with AI",
         });
       }
+    }),
+
+  searchItineraries: publicProcedure
+    .input(
+      z.object({
+        query: z.string().min(1),
+        limit: z.number().int().positive().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 10;
+      const query = input.query.trim();
+      if (!query) return [];
+      const results = await ctx.db.query.itineraries.findMany({
+        where: sql`${itineraries.title} ILIKE ${`%${query}%`}`,
+        orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
+        limit,
+      });
+      // Fetch destinations for each itinerary to get the image
+      const itinerariesWithCover = await Promise.all(
+        results.map(async (itinerary) => {
+          const destination = await ctx.db.query.destinations.findFirst({
+            where: eq(destinations.itineraryId, itinerary.id),
+            columns: { image: true },
+          });
+          return {
+            ...itinerary,
+            coverImage: destination?.image ?? null,
+          };
+        })
+      );
+      return itinerariesWithCover;
     }),
 });
