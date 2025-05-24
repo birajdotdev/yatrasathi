@@ -792,4 +792,41 @@ export const blogRouter = createTRPCRouter({
         });
       }
     }),
+
+  searchBlogs: publicProcedure
+    .input(
+      z.object({
+        query: z.string().min(1),
+        limit: z.number().int().positive().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 10;
+      const query = input.query.trim();
+      if (!query) return [];
+      const whereConditions = [
+        eq(posts.status, "published"),
+        sql`${posts.title} ILIKE ${`%${query}%`}`,
+      ];
+      const results = await ctx.db
+        .select({
+          post: posts,
+          likesCount: count(likes.id).as("likes_count"),
+          commentsCount: count(comments.id).as("comments_count"),
+          author: {
+            id: users.id,
+            name: users.name,
+            image: users.image,
+          },
+        })
+        .from(posts)
+        .leftJoin(likes, eq(posts.id, likes.postId))
+        .leftJoin(comments, eq(posts.id, comments.postId))
+        .leftJoin(users, eq(posts.authorId, users.id))
+        .where(and(...whereConditions))
+        .groupBy(posts.id, users.id)
+        .orderBy(desc(posts.createdAt))
+        .limit(limit);
+      return results;
+    }),
 });
