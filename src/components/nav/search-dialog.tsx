@@ -73,6 +73,42 @@ const settingsActions = [
   },
 ];
 
+// Extracted reusable CommandActionItem component
+function CommandActionItem({
+  icon: Icon,
+  label,
+  onSelect,
+}: {
+  icon: React.ElementType;
+  label: string;
+  onSelect: () => void;
+}) {
+  return (
+    <CommandItem
+      value={label}
+      className="rounded-lg group !p-2"
+      onSelect={onSelect}
+    >
+      <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
+        <Icon className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
+      </div>
+      <span>{label}</span>
+    </CommandItem>
+  );
+}
+
+// Helper to render a group
+function renderGroup({
+  heading,
+  items,
+}: {
+  heading: string;
+  items: React.ReactNode[];
+}) {
+  if (!items.length) return null;
+  return <CommandGroup heading={heading}>{items}</CommandGroup>;
+}
+
 export default function SearchDialog() {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -181,102 +217,84 @@ export default function SearchDialog() {
                 )}
               </CommandEmpty>
               {/* Quick Actions group */}
-              <CommandGroup heading="Quick Actions">
-                {quickActions.map((action) => (
-                  <CommandItem
+              {renderGroup({
+                heading: "Quick Actions",
+                items: quickActions.map((action) => (
+                  <CommandActionItem
                     key={action.href}
-                    value={action.label}
-                    className="rounded-lg group !p-2"
+                    icon={action.icon}
+                    label={action.label}
                     onSelect={() => {
                       setOpen(false);
                       router.push(action.href);
                     }}
-                  >
-                    <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-                      <action.icon className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
-                    </div>
-                    <span>{action.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+                  />
+                )),
+              })}
               {/* Navigation group */}
-              <CommandGroup heading="Navigation">
-                {staticRoutes.map((route) => (
-                  <CommandItem
+              {renderGroup({
+                heading: "Navigation",
+                items: staticRoutes.map((route) => (
+                  <CommandActionItem
                     key={route.href}
-                    value={route.label}
-                    className="rounded-lg group !p-2"
+                    icon={route.icon}
+                    label={route.label}
                     onSelect={() => {
                       setOpen(false);
                       router.push(route.href);
                     }}
-                  >
-                    <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-                      <route.icon className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
-                    </div>
-                    <span>{route.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-
+                  />
+                )),
+              })}
               {/* Itineraries group (only show if results and not loading/error) */}
               {open &&
                 debouncedSearch &&
                 !itinerariesLoading &&
                 !itinerariesError &&
                 itineraries &&
-                itineraries.length > 0 && (
-                  <CommandGroup heading="Itineraries">
-                    {itineraries.map((itinerary) => (
-                      <CommandItem
-                        key={itinerary.id}
-                        value={itinerary.title}
-                        className="rounded-lg group !p-2"
-                        onSelect={() => {
-                          setOpen(false);
-                          router.push(`/itineraries/${itinerary.id}`);
-                        }}
-                      >
-                        <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-                          <CalendarDays className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
-                        </div>
-                        <span>{itinerary.title}</span>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
+                itineraries.length > 0 &&
+                renderGroup({
+                  heading: "Itineraries",
+                  items: itineraries.map((itinerary) => (
+                    <CommandActionItem
+                      key={itinerary.id}
+                      icon={CalendarDays}
+                      label={itinerary.title}
+                      onSelect={() => {
+                        setOpen(false);
+                        router.push(`/itineraries/${itinerary.id}`);
+                      }}
+                    />
+                  )),
+                })}
               {/* Blogs group (only show if results and not loading/error) */}
               {open &&
                 debouncedSearch &&
                 !blogsLoading &&
                 !blogsError &&
-                blogPosts.length > 0 && (
-                  <CommandGroup heading="Blogs">
-                    {blogPosts.map((blog) => (
-                      <CommandItem
-                        key={blog.post.slug}
-                        value={blog.post.title}
-                        className="rounded-lg group !p-2"
-                        onSelect={() => {
-                          setOpen(false);
-                          router.push(`/blogs/${blog.post.slug}`);
-                        }}
-                      >
-                        <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-                          <PenTool className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
-                        </div>
-                        <span>{blog.post.title}</span>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
+                blogPosts.length > 0 &&
+                renderGroup({
+                  heading: "Blogs",
+                  items: blogPosts.map((blog) => (
+                    <CommandActionItem
+                      key={blog.post.slug}
+                      icon={PenTool}
+                      label={blog.post.title}
+                      onSelect={() => {
+                        setOpen(false);
+                        router.push(`/blogs/${blog.post.slug}`);
+                      }}
+                    />
+                  )),
+                })}
               {/* Settings group */}
-              <CommandGroup heading="Settings">
-                {settingsActions.map((action) => (
-                  <CommandItem
+              {renderGroup({
+                heading: "Settings",
+                items: settingsActions.map((action) => (
+                  <CommandActionItem
                     key={action.href}
-                    value={action.label}
-                    className="rounded-lg group !p-2"
+                    icon={action.icon}
+                    label={action.label}
                     onSelect={() => {
                       setOpen(false);
                       if (action.label === "Account") {
@@ -285,14 +303,9 @@ export default function SearchDialog() {
                         router.push(action.href);
                       }
                     }}
-                  >
-                    <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-                      <action.icon className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
-                    </div>
-                    <span>{action.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+                  />
+                )),
+              })}
             </CommandList>
           </ScrollArea>
         </Command>
