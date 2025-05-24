@@ -26,6 +26,29 @@ export function splitTitle(
   return [firstPart, lastWords];
 }
 
+function extractTextFromContent(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content.map(extractTextFromContent).join(" ");
+  }
+  if (typeof content === "object" && content !== null) {
+    // If it's a text node
+    if (
+      Object.prototype.hasOwnProperty.call(content, "text") &&
+      typeof (content as { text: unknown }).text === "string"
+    ) {
+      return (content as { text: string }).text;
+    }
+    // If it's a link or other inline node with content
+    if (Object.prototype.hasOwnProperty.call(content, "content")) {
+      return extractTextFromContent((content as { content: unknown }).content);
+    }
+    // Recursively extract from all values (for robustness)
+    return Object.values(content).map(extractTextFromContent).join(" ");
+  }
+  return "";
+}
+
 export function generateExcerpt(
   blocks: PartialBlock[],
   maxLength = 160
@@ -34,15 +57,15 @@ export function generateExcerpt(
   const firstParagraph = blocks.find(
     (block) =>
       block.type === "paragraph" &&
-      typeof block.content === "string" &&
-      block.content.trim() !== ""
+      block.content &&
+      extractTextFromContent(block.content).trim() !== ""
   );
-  if (firstParagraph && typeof firstParagraph.content === "string") {
-    return firstParagraph.content.slice(0, maxLength);
+  if (firstParagraph) {
+    return extractTextFromContent(firstParagraph.content).slice(0, maxLength);
   }
   // Fallback: join all block contents
   return blocks
-    .map((b) => (typeof b.content === "string" ? b.content : ""))
+    .map((b) => extractTextFromContent(b.content))
     .join(" ")
     .slice(0, maxLength);
 }

@@ -70,6 +70,29 @@ type BlogFormProps =
       slug: string;
     };
 
+// Helper to show toast messages for blog post actions
+function showBlogToast({
+  action,
+  status,
+}: {
+  action: "create" | "edit";
+  status: "published" | "draft";
+}) {
+  if (action === "create") {
+    toast.success(
+      status === "published"
+        ? "Blog post published successfully"
+        : "Blog post saved as draft"
+    );
+  } else {
+    toast.success(
+      status === "published"
+        ? "Blog post updated successfully"
+        : "Draft updated successfully"
+    );
+  }
+}
+
 export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
   const utils = api.useUtils();
   const router = useRouter();
@@ -85,7 +108,7 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
     },
     onSuccess: async (data) => {
       toast.dismiss(); // Dismiss loading toast
-      toast.success("Blog post created successfully"); // Show success toast
+      showBlogToast({ action: "create", status: data.status });
       await Promise.all([
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostsByCategory.invalidate(),
@@ -105,7 +128,7 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
     },
     onSuccess: async (data) => {
       toast.dismiss(); // Dismiss loading toast
-      toast.success("Blog post updated successfully"); // Show success toast
+      showBlogToast({ action: "edit", status: data.status });
       await Promise.all([
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostBySlug.invalidate({ slug: data.slug }),

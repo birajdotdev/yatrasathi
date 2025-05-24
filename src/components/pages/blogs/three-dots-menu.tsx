@@ -40,31 +40,41 @@ export default function ThreeDotsMenu() {
   });
 
   const { mutate: deletePost } = api.blog.deletePost.useMutation({
+    onMutate: () => {
+      toast.loading("Deleting post...");
+    },
     onSuccess: async () => {
-      router.push("/blogs");
-      toast.success("Post deleted successfully");
       await Promise.all([
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostsByCategory.invalidate(),
       ]);
+      router.push("/blogs");
+      toast.dismiss();
+      toast.success("Post deleted successfully");
     },
     onError: (error) => {
+      toast.dismiss();
       toast.error("Failed to delete post");
       console.error(error);
     },
   });
 
   const { mutate: publishPost } = api.blog.updatePost.useMutation({
+    onMutate: () => {
+      toast.loading("Publishing post...");
+    },
     onSuccess: async () => {
-      toast.success("Post published successfully");
       await Promise.all([
         void utils.blog.getPostBySlug.invalidate({ slug: params.slug }),
         void utils.blog.getUserPosts.invalidate(),
         void utils.blog.getPostsByCategory.invalidate(),
       ]);
       router.refresh();
+      toast.dismiss();
+      toast.success("Post published successfully");
     },
     onError: (error) => {
+      toast.dismiss();
       toast.error("Failed to publish post");
       console.error(error);
     },

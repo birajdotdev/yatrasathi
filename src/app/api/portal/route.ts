@@ -3,6 +3,8 @@ import { CustomerPortal } from "@polar-sh/nextjs";
 import { env } from "@/env";
 import { api } from "@/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export const GET = CustomerPortal({
   accessToken: env.POLAR_ACCESS_TOKEN,
   getCustomerId: async () => {
