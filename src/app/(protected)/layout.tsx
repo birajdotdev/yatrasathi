@@ -15,6 +15,7 @@ export default async function ProtectedLayout({
   await Promise.all([
     void api.user.getCurrentUser.prefetch(),
     void api.user.getReminderPreferences.prefetch(),
+    void api.notification.getNotifications.prefetch(),
   ]);
   const { userId, redirectToSignIn } = await auth();
   if (!userId) return redirectToSignIn();
