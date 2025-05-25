@@ -2,7 +2,6 @@ import Link from "next/link";
 import React from "react";
 
 import SidebarMain from "@/components/sidebar/sidebar-main";
-import SidebarSecondary from "@/components/sidebar/sidebar-secondary";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
 import Logo from "@/components/ui/logo";
 import {
@@ -33,7 +32,7 @@ export default async function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarMain />
-        <SidebarSecondary className="mt-auto" />
+        {/* <SidebarSecondary className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser />

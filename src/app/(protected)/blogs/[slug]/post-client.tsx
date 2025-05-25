@@ -14,6 +14,7 @@ import ThreeDotsMenu from "@/components/pages/blogs/three-dots-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { env } from "@/env";
 import { getDaysAgoString, splitStringByWords } from "@/lib/utils";
 import { type RouterOutputs, api } from "@/trpc/react";
 
@@ -98,7 +99,11 @@ export default function PostClient({ blog }: PostClientProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <ReactionButtons postId={post.id} onCommentClick={handleCommentClick} />
+        <ReactionButtons
+          postId={post.id}
+          onCommentClick={handleCommentClick}
+          postUrl={`${env.NEXT_PUBLIC_BASE_URL}/blogs/${post.slug}`}
+        />
         <div className="md:col-span-11 order-1 md:order-2">
           <Editor
             initialContent={post.content as PartialBlock[]}
