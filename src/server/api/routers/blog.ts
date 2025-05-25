@@ -14,6 +14,7 @@ import {
   categoryValues,
   comments,
   likes,
+  notifications,
   posts,
   users,
 } from "@/server/db/schema";
@@ -505,7 +506,7 @@ export const blogRouter = createTRPCRouter({
           .where(eq(posts.id, input.postId))
           .limit(1);
 
-        if (!post.length) {
+        if (!post.length || !post[0]) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Post not found",
@@ -650,12 +651,13 @@ export const blogRouter = createTRPCRouter({
           .where(eq(posts.id, input.postId))
           .limit(1);
 
-        if (!post.length) {
+        if (!post.length || !post[0]) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Post not found",
           });
         }
+        const postAuthorId = post[0].authorId;
 
         // Check if user already liked the post
         const existingLike = await ctx.db
@@ -680,6 +682,16 @@ export const blogRouter = createTRPCRouter({
           postId: input.postId,
           userId: userId,
         });
+
+        // Create notification for the post author (if not self)
+        if (postAuthorId !== userId) {
+          await ctx.db.insert(notifications).values({
+            userId: postAuthorId,
+            type: "like",
+            postId: input.postId,
+            fromUserId: userId,
+          });
+        }
 
         return { liked: true };
       } catch (error) {

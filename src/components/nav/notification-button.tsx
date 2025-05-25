@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo } from "react";
 
 import { Bell } from "lucide-react";
 
@@ -12,63 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-const initialNotifications = [
-  {
-    id: 1,
-    image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    user: "Chris Tompson",
-    action: "liked your travel guide on",
-    target: "Hidden Gems of Kathmandu",
-    timestamp: "15 minutes ago",
-    unread: true,
-  },
-  {
-    id: 2,
-    image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg",
-    user: "Emma Davis",
-    action: "commented on your post",
-    target: "Best Street Food in Tokyo",
-    timestamp: "45 minutes ago",
-    unread: true,
-  },
-  {
-    id: 3,
-    image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
-    user: "James Wilson",
-    action: "saved your itinerary",
-    target: "3 Days in Pokhara",
-    timestamp: "4 hours ago",
-    unread: false,
-  },
-  {
-    id: 4,
-    image: "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg",
-    user: "Alex Morgan",
-    action: "asked about your experience at",
-    target: "Annapurna Base Camp",
-    timestamp: "12 hours ago",
-    unread: false,
-  },
-  {
-    id: 5,
-    image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg",
-    user: "Sarah Chen",
-    action: "is planning to visit",
-    target: "Bhaktapur Durbar Square",
-    timestamp: "2 days ago",
-    unread: false,
-  },
-  {
-    id: 6,
-    image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg",
-    user: "Miky Derya",
-    action: "recommended your guide about",
-    target: "Trekking in Nepal",
-    timestamp: "2 weeks ago",
-    unread: false,
-  },
-];
+import { api } from "@/trpc/react";
 
 function Dot({ className }: { className?: string }) {
   return (
@@ -87,26 +31,30 @@ function Dot({ className }: { className?: string }) {
 }
 
 export default function NotificationButton() {
-  const [notifications, setNotifications] = useState(initialNotifications);
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  // Fetch notifications, polling every 10 seconds
+  const { data: notifications = [], refetch } =
+    api.notification.getNotifications.useQuery(undefined, {
+      refetchInterval: 10000,
+      refetchOnWindowFocus: true,
+    });
+  const markAllAsRead = api.notification.markAllAsRead.useMutation({
+    onSuccess: () => refetch(),
+  });
+  const markAsRead = api.notification.markAsRead.useMutation({
+    onSuccess: () => refetch(),
+  });
+
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.read).length,
+    [notifications]
+  );
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        unread: false,
-      }))
-    );
+    markAllAsRead.mutate();
   };
 
-  const handleNotificationClick = (id: number) => {
-    setNotifications(
-      notifications.map((notification) =>
-        notification.id === id
-          ? { ...notification, unread: false }
-          : notification
-      )
-    );
+  const handleNotificationClick = (id: string) => {
+    markAsRead.mutate({ id });
   };
 
   return (
@@ -133,6 +81,7 @@ export default function NotificationButton() {
             <button
               className="text-xs font-medium hover:underline"
               onClick={handleMarkAllAsRead}
+              disabled={markAllAsRead.isPending}
             >
               Mark all as read
             </button>
@@ -143,45 +92,59 @@ export default function NotificationButton() {
           aria-orientation="horizontal"
           className="-mx-1 my-1 h-px bg-border"
         ></div>
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className="rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
-          >
-            <div className="relative flex items-start gap-3 pe-3">
-              <Image
-                className="size-9 rounded-md object-cover"
-                src={notification.image}
-                width={36}
-                height={36}
-                alt={notification.user}
-              />
-              <div className="flex-1 space-y-1">
-                <button
-                  className="text-left text-foreground/80 after:absolute after:inset-0"
-                  onClick={() => handleNotificationClick(notification.id)}
-                >
-                  <span className="font-medium text-foreground hover:underline">
-                    {notification.user}
-                  </span>{" "}
-                  {notification.action}{" "}
-                  <span className="font-medium text-foreground hover:underline">
-                    {notification.target}
-                  </span>
-                  .
-                </button>
-                <div className="text-xs text-muted-foreground">
-                  {notification.timestamp}
-                </div>
-              </div>
-              {notification.unread && (
-                <div className="absolute end-0 self-center">
-                  <Dot />
-                </div>
-              )}
-            </div>
+        {notifications.length === 0 ? (
+          <div className="px-3 py-4 text-center text-muted-foreground text-sm">
+            No notifications
           </div>
-        ))}
+        ) : (
+          notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className="rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
+            >
+              <div className="relative flex items-start gap-3 pe-3">
+                <Image
+                  className="size-9 rounded-md object-cover"
+                  src={notification.fromUser?.image ?? "/default-user.png"}
+                  width={36}
+                  height={36}
+                  alt={notification.fromUser?.name ?? "User"}
+                />
+                <div className="flex-1 space-y-1">
+                  <button
+                    className="text-left text-foreground/80 after:absolute after:inset-0"
+                    onClick={() => handleNotificationClick(notification.id)}
+                    disabled={markAsRead.isPending}
+                  >
+                    <span className="font-medium text-foreground hover:underline">
+                      {notification.fromUser?.name}
+                    </span>{" "}
+                    {notification.type === "like"
+                      ? "liked your post"
+                      : notification.type === "comment"
+                        ? "commented on your post"
+                        : notification.type}
+                    {notification.target && (
+                      <span className="font-medium text-foreground hover:underline">
+                        {" "}
+                        {notification.target}
+                      </span>
+                    )}
+                    .
+                  </button>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </div>
+                </div>
+                {!notification.read && (
+                  <div className="absolute end-0 self-center">
+                    <Dot />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </PopoverContent>
     </Popover>
   );

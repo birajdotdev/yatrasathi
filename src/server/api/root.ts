@@ -1,5 +1,6 @@
 import { blogRouter } from "@/server/api/routers/blog";
 import { itineraryRouter } from "@/server/api/routers/itinerary";
+import { notificationRouter } from "@/server/api/routers/notification";
 import { placesRouter } from "@/server/api/routers/places";
 import { unsplashRouter } from "@/server/api/routers/unsplash";
 import { userRouter } from "@/server/api/routers/user";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   places: placesRouter,
   unsplash: unsplashRouter,
   blog: blogRouter,
+  notification: notificationRouter,
 });
 
 // export type definition of API
