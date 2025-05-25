@@ -9,7 +9,7 @@ import { users } from "@/server/db/schema/user";
 export const notificationRouter = createTRPCRouter({
   getNotifications: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.dbId;
-    // Join notifications with fromUser and post
+    // Join notifications with fromUser and post, include postSlug
     const result = await ctx.db
       .select({
         id: notifications.id,
@@ -21,6 +21,7 @@ export const notificationRouter = createTRPCRouter({
           image: users.image,
         },
         target: posts.title,
+        postSlug: posts.slug,
       })
       .from(notifications)
       .leftJoin(users, eq(notifications.fromUserId, users.id))

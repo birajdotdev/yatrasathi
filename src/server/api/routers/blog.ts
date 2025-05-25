@@ -523,6 +523,25 @@ export const blogRouter = createTRPCRouter({
           })
           .returning();
 
+        if (!newComment) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create comment",
+          });
+        }
+
+        // Create notification for the post author (if not self)
+        const postAuthorId = post[0].authorId;
+        if (postAuthorId !== userId) {
+          await ctx.db.insert(notifications).values({
+            userId: postAuthorId,
+            type: "comment",
+            postId: input.postId,
+            commentId: newComment.id,
+            fromUserId: userId,
+          });
+        }
+
         return newComment;
       } catch (error) {
         if (error instanceof TRPCError) throw error;

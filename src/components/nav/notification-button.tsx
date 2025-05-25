@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 
 import { Bell } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +14,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getDaysAgoString } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
 function Dot({ className }: { className?: string }) {
@@ -30,18 +34,36 @@ function Dot({ className }: { className?: string }) {
   );
 }
 
+function NotificationSkeletonList() {
+  return (
+    <div>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="rounded-md px-3 py-2 flex items-center gap-3">
+          <Skeleton className="size-9 rounded-md" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function NotificationButton() {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
   // Fetch notifications, polling every 10 seconds
-  const { data: notifications = [], refetch } =
-    api.notification.getNotifications.useQuery(undefined, {
+  const [notifications, query] =
+    api.notification.getNotifications.useSuspenseQuery(undefined, {
       refetchInterval: 10000,
       refetchOnWindowFocus: true,
     });
   const markAllAsRead = api.notification.markAllAsRead.useMutation({
-    onSuccess: () => refetch(),
+    onSuccess: () => query.refetch(),
   });
   const markAsRead = api.notification.markAsRead.useMutation({
-    onSuccess: () => refetch(),
+    onSuccess: () => query.refetch(),
   });
 
   const unreadCount = useMemo(
@@ -53,12 +75,16 @@ export default function NotificationButton() {
     markAllAsRead.mutate();
   };
 
-  const handleNotificationClick = (id: string) => {
-    markAsRead.mutate({ id });
+  const handleNotificationClick = async (id: string, postSlug?: string) => {
+    await markAsRead.mutateAsync({ id });
+    if (postSlug) {
+      router.push(`/blogs/${postSlug}`);
+      setOpen(false);
+    }
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           size="icon"
@@ -76,7 +102,9 @@ export default function NotificationButton() {
       </PopoverTrigger>
       <PopoverContent className="w-80 p-1 rounded-lg" align="end">
         <div className="flex items-baseline justify-between gap-4 px-3 py-2">
-          <div className="text-sm font-semibold">Notifications</div>
+          <div className="text-sm font-semibold">
+            Your <span className="text-primary">Notifications</span>
+          </div>
           {unreadCount > 0 && (
             <button
               className="text-xs font-medium hover:underline"
@@ -91,60 +119,76 @@ export default function NotificationButton() {
           role="separator"
           aria-orientation="horizontal"
           className="-mx-1 my-1 h-px bg-border"
-        ></div>
-        {notifications.length === 0 ? (
-          <div className="px-3 py-4 text-center text-muted-foreground text-sm">
-            No notifications
-          </div>
-        ) : (
-          notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className="rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
-            >
-              <div className="relative flex items-start gap-3 pe-3">
-                <Image
-                  className="size-9 rounded-md object-cover"
-                  src={notification.fromUser?.image ?? "/default-user.png"}
-                  width={36}
-                  height={36}
-                  alt={notification.fromUser?.name ?? "User"}
-                />
-                <div className="flex-1 space-y-1">
-                  <button
-                    className="text-left text-foreground/80 after:absolute after:inset-0"
-                    onClick={() => handleNotificationClick(notification.id)}
-                    disabled={markAsRead.isPending}
-                  >
-                    <span className="font-medium text-foreground hover:underline">
-                      {notification.fromUser?.name}
-                    </span>{" "}
-                    {notification.type === "like"
-                      ? "liked your post"
-                      : notification.type === "comment"
-                        ? "commented on your post"
-                        : notification.type}
-                    {notification.target && (
-                      <span className="font-medium text-foreground hover:underline">
-                        {" "}
-                        {notification.target}
-                      </span>
-                    )}
-                    .
-                  </button>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(notification.createdAt).toLocaleString()}
-                  </div>
-                </div>
-                {!notification.read && (
-                  <div className="absolute end-0 self-center">
-                    <Dot />
-                  </div>
-                )}
-              </div>
+        />
+        <ErrorBoundary
+          fallback={
+            <div className="px-3 py-4 text-center text-destructive text-sm">
+              Failed to load notifications.
+              <br />
+              <span className="text-xs text-muted-foreground">
+                Please try again later.
+              </span>
             </div>
-          ))
-        )}
+          }
+        >
+          <Suspense fallback={<NotificationSkeletonList />}>
+            {notifications.length === 0 ? (
+              <div className="px-3 py-4 text-center text-muted-foreground text-sm">
+                No notifications
+              </div>
+            ) : (
+              notifications.map((notification) => (
+                <button
+                  key={notification.id}
+                  className="w-full text-left rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
+                  onClick={() =>
+                    handleNotificationClick(
+                      notification.id,
+                      notification.postSlug ?? undefined
+                    )
+                  }
+                  disabled={markAsRead.isPending}
+                >
+                  <div className="relative flex items-start gap-3 pe-3">
+                    <Image
+                      className="size-9 rounded-md object-cover bg-muted"
+                      src={notification.fromUser?.image ?? ""}
+                      width={36}
+                      height={36}
+                      alt={notification.fromUser?.name ?? "User"}
+                      priority
+                    />
+                    <div className="flex-1 space-y-1">
+                      <span className="font-medium text-foreground hover:underline">
+                        {notification.fromUser?.name}
+                      </span>{" "}
+                      {notification.type === "like"
+                        ? "liked your post"
+                        : notification.type === "comment"
+                          ? "commented on your post"
+                          : notification.type}
+                      {notification.target && (
+                        <span className="font-medium text-foreground hover:underline">
+                          {" "}
+                          {notification.target}
+                        </span>
+                      )}
+                      .
+                      <div className="text-xs text-muted-foreground">
+                        {getDaysAgoString(notification.createdAt)}
+                      </div>
+                    </div>
+                    {!notification.read && (
+                      <div className="absolute end-0 self-center">
+                        <Dot className="text-primary" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              ))
+            )}
+          </Suspense>
+        </ErrorBoundary>
       </PopoverContent>
     </Popover>
   );
