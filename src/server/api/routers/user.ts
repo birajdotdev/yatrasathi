@@ -10,6 +10,8 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { reminderPreferences, users } from "@/server/db/schema";
+import { comments, likes, posts } from "@/server/db/schema/blog";
+import { itineraries } from "@/server/db/schema/itinerary";
 
 const userSchema = createSelectSchema(users);
 const userCreateSchema = userSchema.omit({
@@ -79,22 +81,38 @@ export const userRouter = createTRPCRouter({
   delete: publicProcedure
     .input(userSchema.pick({ clerkUserId: true }))
     .mutation(async ({ ctx, input }) => {
-      try {
-        const [deletedUser] = await ctx.db
+      // Find the user by clerkUserId to get the internal user id
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.clerkUserId, input.clerkUserId),
+      });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const userId = user.id;
+      // Use a transaction to ensure all deletions succeed or fail together
+      const deletedUser = await ctx.db.transaction(async (trx) => {
+        // Delete likes
+        await trx.delete(likes).where(eq(likes.userId, userId));
+        // Delete comments
+        await trx.delete(comments).where(eq(comments.authorId, userId));
+        // Delete posts
+        await trx.delete(posts).where(eq(posts.authorId, userId));
+        // Delete itineraries
+        await trx
+          .delete(itineraries)
+          .where(eq(itineraries.createdById, userId));
+        // reminderPreferences and reminderLogs are handled by DB cascade
+        // Finally, delete the user
+        const [deleted] = await trx
           .delete(users)
-          .where(eq(users.clerkUserId, input.clerkUserId))
+          .where(eq(users.id, userId))
           .returning();
-
-        if (!deletedUser) {
+        if (!deleted) {
           throw new Error("User not found or already deleted");
         }
-
-        return deletedUser;
-      } catch (error) {
-        throw new Error(
-          `Failed to delete user: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
-      }
+        return deleted;
+      });
+      return deletedUser;
     }),
 
   getReminderPreferences: protectedProcedure.query(async ({ ctx }) => {

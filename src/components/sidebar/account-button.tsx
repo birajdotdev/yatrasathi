@@ -1,7 +1,7 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { BadgeCheck } from "lucide-react";
+import { User } from "lucide-react";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
@@ -10,7 +10,7 @@ export default function AccountButton() {
 
   return (
     <DropdownMenuItem onClick={() => openUserProfile()}>
-      <BadgeCheck />
+      <User />
       Account
     </DropdownMenuItem>
   );
