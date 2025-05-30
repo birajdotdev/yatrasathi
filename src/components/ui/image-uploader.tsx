@@ -7,8 +7,8 @@ import { toast } from "sonner";
 
 import { deleteFiles } from "@/actions/uploadthing";
 import { Button } from "@/components/ui/button";
+import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
-import { UploadDropzone } from "@/utils/uploadthing";
 
 interface ImageUploaderProps {
   value?: string | null;

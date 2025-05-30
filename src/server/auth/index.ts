@@ -9,12 +9,14 @@ const client = await clerkClient();
 export const auth = cache(uncachedAuth);
 
 export const getCurrentUser = cache(async () => {
-  const { userId, sessionClaims, redirectToSignIn } = await auth();
+  const { userId, sessionClaims, redirectToSignIn, has } = await auth();
+  const isProUser = has({ plan: "pro" });
 
   return {
     clerkUserId: userId,
     dbId: sessionClaims?.dbId,
     role: sessionClaims?.role,
+    isProUser,
     redirectToSignIn,
   };
 });

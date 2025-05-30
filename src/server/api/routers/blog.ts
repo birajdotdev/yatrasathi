@@ -3,8 +3,8 @@ import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
-import { postInsertSchema, postUpdateSchema } from "@/lib/schemas/post";
 import { generateExcerpt } from "@/lib/utils";
+import { postInsertSchema, postUpdateSchema } from "@/lib/zod/post";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -64,7 +64,7 @@ export const blogRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
         const slug = generateSlug(input.title);
 
         // Auto-generate excerpt if not provided
@@ -118,7 +118,7 @@ export const blogRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Get the post to check if the user is the author
         const post = await ctx.db
@@ -195,7 +195,7 @@ export const blogRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Get the post to check if the user is the author
         const post = await ctx.db
@@ -424,7 +424,7 @@ export const blogRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         const { limit, cursor, status } = input;
 
@@ -497,7 +497,7 @@ export const blogRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Check if post exists
         const post = await ctx.db
@@ -618,7 +618,7 @@ export const blogRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Get the comment to check if the user is the author
         const comment = await ctx.db
@@ -661,7 +661,7 @@ export const blogRouter = createTRPCRouter({
     .input(z.object({ postId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Check if post exists
         const post = await ctx.db
@@ -727,7 +727,7 @@ export const blogRouter = createTRPCRouter({
     .input(z.object({ postId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         // Check if like exists
         const existingLike = await ctx.db
@@ -756,7 +756,7 @@ export const blogRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const userId = ctx.session.user.dbId;
+        const userId = ctx.user.id;
 
         const { limit, cursor } = input;
 

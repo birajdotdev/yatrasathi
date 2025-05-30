@@ -20,10 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UploadDropzone } from "@/lib/uploadthing";
 import { cn, splitTitle } from "@/lib/utils";
 import { type ImageResult } from "@/server/api/routers/unsplash";
 import { api } from "@/trpc/react";
-import { UploadDropzone } from "@/utils/uploadthing";
 
 interface ChangeCoverImageDialogProps {
   children: ReactNode;

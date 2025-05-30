@@ -6,12 +6,16 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+import { auth } from "@clerk/nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { auth } from "@/server/auth";
+import { ratelimit } from "@/lib/ratelimit";
 import { db } from "@/server/db";
+
+import { users } from "../db/schema";
 
 /**
  * 1. CONTEXT
@@ -26,11 +30,13 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+  const { userId, has } = await auth();
+  const isProUser = has({ plan: "pro" });
 
   return {
     db,
-    session,
+    clerkUserId: userId,
+    isProUser,
     ...opts,
   };
 };
@@ -121,34 +127,39 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
-    // Check for basic authentication first
-    if (!ctx.session?.userId) {
+    if (!ctx.clerkUserId) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "You must be logged in to access this resource",
       });
     }
 
-    // Validate session claims in a single check
-    const { sessionClaims } = ctx.session;
-    if (!sessionClaims?.dbId || !sessionClaims?.role) {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkUserId, ctx.clerkUserId))
+      .limit(1);
+
+    if (!user) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Your session is missing required claims (dbId and role)",
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this resource",
       });
     }
 
-    // Proceed with validated session data
+    const { success } = await ratelimit.limit(user.id);
+
+    if (!success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "You have exceeded the rate limit",
+      });
+    }
+
     return next({
       ctx: {
-        session: {
-          ...ctx.session,
-          user: {
-            clerkUserId: ctx.session.userId,
-            dbId: sessionClaims.dbId,
-            role: sessionClaims.role,
-          },
-        },
+        ...ctx,
+        user,
       },
     });
   });

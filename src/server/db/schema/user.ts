@@ -16,9 +16,6 @@ export const users = pgTable("user", {
   email: text().notNull(),
   role: userRoleEnum().notNull().default("user"),
   image: text(),
-  plan: text().notNull().default("free"),
-  polarCustomerId: text(),
-  subscriptionId: text(),
   createdAt,
   updatedAt,
 });
