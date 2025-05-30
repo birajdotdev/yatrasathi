@@ -68,7 +68,7 @@ const settingsActions = [
   },
   {
     label: "Subscription",
-    href: "/api/portal",
+    href: "/subscription",
     icon: CreditCard,
   },
 ];
