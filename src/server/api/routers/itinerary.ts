@@ -4,9 +4,9 @@ import { generateObject } from "ai";
 import { and, eq, gt, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { fetchImageFromUnsplash } from "@/lib/image-utils";
-import { aiGeneratedItinerarySchema } from "@/lib/schemas/ai-itinerary";
-import { itineraryFormSchema } from "@/lib/schemas/itinerary";
+import { fetchImageFromUnsplash } from "@/lib/unsplash";
+import { aiGeneratedItinerarySchema } from "@/lib/zod/ai-itinerary";
+import { itineraryFormSchema } from "@/lib/zod/itinerary";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -19,7 +19,6 @@ import {
   destinations,
   itineraries,
 } from "@/server/db/schema/itinerary";
-import { users } from "@/server/db/schema/user";
 
 // Activity schema for validation
 const activityInputSchema = z.object({
@@ -61,7 +60,7 @@ export const itineraryRouter = createTRPCRouter({
             title: title,
             startDate: input.dateRange.from,
             endDate: input.dateRange.to ?? null,
-            createdById: ctx.session.user.dbId,
+            createdById: ctx.user.id,
           })
           .returning();
 
@@ -200,7 +199,7 @@ export const itineraryRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const baseQuery = {
-        where: eq(itineraries.createdById, ctx.session.user.dbId),
+        where: eq(itineraries.createdById, ctx.user.id),
       };
 
       let itinerariesResult;
@@ -273,7 +272,7 @@ export const itineraryRouter = createTRPCRouter({
         where: eq(itineraries.id, day.itineraryId),
       });
 
-      if (!itinerary || itinerary.createdById !== ctx.session.user.dbId) {
+      if (!itinerary || itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message:
@@ -346,9 +345,7 @@ export const itineraryRouter = createTRPCRouter({
       }
 
       // Check if user has permission
-      if (
-        existingActivity.day.itinerary.createdById !== ctx.session.user.dbId
-      ) {
+      if (existingActivity.day.itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to update this activity",
@@ -415,7 +412,7 @@ export const itineraryRouter = createTRPCRouter({
       }
 
       // Check if the user owns this itinerary
-      if (itinerary.createdById !== ctx.session.user.dbId) {
+      if (itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You don't have permission to delete this itinerary",
@@ -479,7 +476,7 @@ export const itineraryRouter = createTRPCRouter({
       }
 
       // Check if user has permission
-      if (activity.day.itinerary.createdById !== ctx.session.user.dbId) {
+      if (activity.day.itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to delete this activity",
@@ -516,7 +513,7 @@ export const itineraryRouter = createTRPCRouter({
       }
 
       // Check if the user owns this itinerary
-      if (activity.day.itinerary.createdById !== ctx.session.user.dbId) {
+      if (activity.day.itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to update this activity",
@@ -556,7 +553,7 @@ export const itineraryRouter = createTRPCRouter({
           message: "Itinerary not found",
         });
       }
-      if (itinerary.createdById !== ctx.session.user.dbId) {
+      if (itinerary.createdById !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to update this itinerary",
@@ -597,19 +594,17 @@ export const itineraryRouter = createTRPCRouter({
     .input(itineraryFormSchema)
     .mutation(async ({ ctx, input }) => {
       // --- AI USAGE LIMIT LOGIC ---
-      // Get the user
-      const user = await ctx.db.query.users.findFirst({
-        where: eq(users.id, ctx.session.user.dbId),
-      });
-      if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
       // Only limit free users
-      if (user.plan === "free") {
+      if (!ctx.isProUser) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const todayStr = today.toISOString().slice(0, 10); // YYYY-MM-DD
         // Find today's usage
         const usage = await ctx.db.query.aiUsage.findFirst({
-          where: and(eq(aiUsage.userId, user.id), eq(aiUsage.date, todayStr)),
+          where: and(
+            eq(aiUsage.userId, ctx.user.id),
+            eq(aiUsage.date, todayStr)
+          ),
         });
         if (usage && usage.count >= 3) {
           throw new TRPCError({
@@ -624,12 +619,12 @@ export const itineraryRouter = createTRPCRouter({
             .update(aiUsage)
             .set({ count: usage.count + 1 })
             .where(
-              and(eq(aiUsage.userId, user.id), eq(aiUsage.date, todayStr))
+              and(eq(aiUsage.userId, ctx.user.id), eq(aiUsage.date, todayStr))
             );
         } else {
           await ctx.db
             .insert(aiUsage)
-            .values({ userId: user.id, date: todayStr, count: 1 });
+            .values({ userId: ctx.user.id, date: todayStr, count: 1 });
         }
       }
       try {
@@ -684,7 +679,7 @@ ${systemPrompt}`,
               title: generatedItinerary.title,
               startDate: input.dateRange.from,
               endDate: input.dateRange.to ?? null,
-              createdById: ctx.session.user.dbId,
+              createdById: ctx.user.id,
             })
             .returning();
 

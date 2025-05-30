@@ -7,7 +7,7 @@ import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useTheme } from "next-themes";
 
-import { uploadFiles } from "@/utils/uploadthing";
+import { uploadFiles } from "@/lib/uploadthing";
 
 interface EditorProps {
   initialContent?: PartialBlock[];

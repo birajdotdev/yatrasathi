@@ -8,7 +8,7 @@ import { users } from "@/server/db/schema/user";
 
 export const notificationRouter = createTRPCRouter({
   getNotifications: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.dbId;
+    const userId = ctx.user.id;
     // Join notifications with fromUser and post, include postSlug
     const result = await ctx.db
       .select({
@@ -31,7 +31,7 @@ export const notificationRouter = createTRPCRouter({
     return result;
   }),
   markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
-    const userId = ctx.session.user.dbId;
+    const userId = ctx.user.id;
     await ctx.db
       .update(notifications)
       .set({ read: true })

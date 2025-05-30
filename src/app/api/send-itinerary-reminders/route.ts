@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { env } from "@/env";
-import { processUpcomingItineraryReminders } from "@/lib/reminder-service";
+import { processUpcomingItineraryReminders } from "@/lib/resend";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;

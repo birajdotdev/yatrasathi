@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { postInsertSchema } from "@/lib/schemas/post";
+import { postInsertSchema } from "@/lib/zod/post";
 import { api } from "@/trpc/react";
 
 const blogFormSchema = postInsertSchema.pick({
