@@ -15,11 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogsPage() {
-  await Promise.all([
-    api.blog.getUserPosts.prefetch({}),
-    api.blog.getUserPosts.prefetch({ status: "published" }),
-    api.blog.getUserPosts.prefetch({ status: "draft" }),
-  ]);
+  await api.blog.getUserPosts.prefetch({});
 
   const tabOptions = [
     { value: "all", label: "All" },
