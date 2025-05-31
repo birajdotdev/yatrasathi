@@ -195,40 +195,66 @@ export const itineraryRouter = createTRPCRouter({
       z.object({
         type: z.enum(["all", "upcoming", "past"]).default("all"),
         limit: z.number().int().positive().optional(),
+        cursor: z.string().nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 10;
       const baseQuery = {
         where: eq(itineraries.createdById, ctx.user.id),
       };
 
       let itinerariesResult;
-      const limit = input.limit;
       const type = input.type ?? "all";
 
       switch (type) {
         case "upcoming":
           itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
-            where: and(baseQuery.where, gt(itineraries.startDate, new Date())),
+            where: and(
+              baseQuery.where,
+              gt(itineraries.startDate, new Date()),
+              input.cursor
+                ? lt(itineraries.createdAt, new Date(input.cursor))
+                : undefined
+            ),
             orderBy: (itineraries, { asc }) => [asc(itineraries.startDate)],
-            ...(limit ? { limit } : {}),
+            limit: limit + 1,
           });
           break;
         case "past":
           itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
-            where: and(baseQuery.where, lt(itineraries.endDate, new Date())),
+            where: and(
+              baseQuery.where,
+              lt(itineraries.endDate, new Date()),
+              input.cursor
+                ? lt(itineraries.createdAt, new Date(input.cursor))
+                : undefined
+            ),
             orderBy: (itineraries, { desc }) => [desc(itineraries.endDate)],
-            ...(limit ? { limit } : {}),
+            limit: limit + 1,
           });
           break;
         default: // 'all'
           itinerariesResult = await ctx.db.query.itineraries.findMany({
             ...baseQuery,
+            where: and(
+              baseQuery.where,
+              input.cursor
+                ? lt(itineraries.createdAt, new Date(input.cursor))
+                : undefined
+            ),
             orderBy: (itineraries, { desc }) => [desc(itineraries.createdAt)],
-            ...(limit ? { limit } : {}),
+            limit: limit + 1,
           });
+      }
+
+      let nextCursor: string | undefined = undefined;
+      if (itinerariesResult.length > limit) {
+        // Remove the extra item we used to determine if there's a next page
+        const nextItem = itinerariesResult.pop();
+        nextCursor = nextItem?.createdAt.toISOString();
       }
 
       // Fetch destinations for each itinerary to get the image
@@ -248,7 +274,10 @@ export const itineraryRouter = createTRPCRouter({
         })
       );
 
-      return itinerariesWithCover;
+      return {
+        items: itinerariesWithCover,
+        nextCursor,
+      };
     }),
 
   // Create a new activity

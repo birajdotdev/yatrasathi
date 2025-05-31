@@ -18,7 +18,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ItinerariesPage() {
-  await api.itinerary.getAll.prefetch({ type: "all" });
+  await api.itinerary.getAll.prefetchInfinite({
+    type: "all",
+    limit: 9,
+  });
 
   const tabOptions = [
     { value: "all", label: "All" },
