@@ -7,6 +7,7 @@ import { BlogsSkeleton, ExploreClient } from "@/components/pages/blogs";
 import { Banner } from "@/components/ui/banner";
 import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { type CategoryType } from "@/server/db/schema";
 import { HydrateClient, api } from "@/trpc/server";
 
 export const metadata: Metadata = {
@@ -15,12 +16,18 @@ export const metadata: Metadata = {
 };
 
 export default async function ExplorePage() {
-  const categories = await api.blog.getCategories();
-  await Promise.all(
-    categories.map((category) =>
-      api.blog.getPostsByCategory.prefetch({ category: category.value })
-    )
-  );
+  const [categories] = await Promise.all([
+    api.blog.getCategories(),
+    api.blog.listPosts.prefetch({}),
+  ]);
+
+  const tabOptions = [
+    { value: "all", label: "All" },
+    ...categories.map((category) => ({
+      value: category.value,
+      label: category.name,
+    })),
+  ];
 
   return (
     <HydrateClient>
@@ -32,21 +39,27 @@ export default async function ExplorePage() {
           icon={GlobeIcon}
         />
 
-        <Tabs defaultValue="travel_tips">
+        <Tabs defaultValue="all">
           <TabsList>
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.value}>
-                {category.name}
+            {tabOptions.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
+          {tabOptions.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value}>
               <Suspense fallback={<BlogsSkeleton />}>
                 <ErrorBoundaryWrapper
-                  fallbackMessage={`Error loading ${category.name} blogs`}
+                  fallbackMessage={`Error loading ${tab.label} blogs`}
                 >
-                  <ExploreClient category={category.value} />
+                  <ExploreClient
+                    category={
+                      tab.value === "all"
+                        ? undefined
+                        : (tab.value as CategoryType)
+                    }
+                  />
                 </ErrorBoundaryWrapper>
               </Suspense>
             </TabsContent>
