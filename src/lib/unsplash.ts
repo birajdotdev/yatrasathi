@@ -3,6 +3,10 @@ import type { Basic as UnsplashImage } from "unsplash-js/dist/methods/photos/typ
 
 import { env } from "@/env";
 
+export const unsplash = createApi({
+  accessKey: env.UNSPLASH_ACCESS_KEY,
+});
+
 // Default fallback image if Unsplash API fails
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1605640797058-58b7040a0e61?q=80&w=1633&auto=format&fit=crop";
@@ -54,11 +58,6 @@ export async function fetchImageFromUnsplash(
   }
 
   try {
-    // Initialize the Unsplash API client
-    const unsplash = createApi({
-      accessKey: env.UNSPLASH_ACCESS_KEY,
-    });
-
     // Search for an image with the provided query
     const result = await unsplash.search.getPhotos({
       query,
@@ -108,11 +107,6 @@ export async function fetchImagesFromUnsplash(
   }
 
   try {
-    // Initialize the Unsplash API client
-    const unsplash = createApi({
-      accessKey: env.UNSPLASH_ACCESS_KEY,
-    });
-
     // Search for images with the provided query
     const result = await unsplash.search.getPhotos({
       query,

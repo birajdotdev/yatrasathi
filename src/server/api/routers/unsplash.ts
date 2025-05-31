@@ -1,9 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { createApi } from "unsplash-js";
 import type { Basic as UnsplashImage } from "unsplash-js/dist/methods/photos/types";
 import { z } from "zod";
 
-import { env } from "@/env";
+import { unsplash } from "@/lib/unsplash";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -12,12 +11,13 @@ const DEFAULT_IMAGE =
 
 const optionsSchema = z.object({
   query: z.string(),
-  count: z.number().optional().default(1),
+  count: z.number().optional().default(20),
   orientation: z
     .enum(["landscape", "portrait", "squarish"])
     .optional()
     .default("landscape"),
   fallbackUrl: z.string().optional().default(DEFAULT_IMAGE),
+  cursor: z.number().optional().default(1),
 });
 
 export type ImageResult = {
@@ -33,9 +33,14 @@ export type ImageResult = {
   };
 };
 
+export type ImagesResponse = {
+  images: ImageResult[];
+  nextCursor: number | null;
+};
+
 export const unsplashRouter = createTRPCRouter({
   getImage: protectedProcedure.input(optionsSchema).query(async ({ input }) => {
-    const { query, count, orientation, fallbackUrl } = input;
+    const { query, count = 1, orientation, fallbackUrl } = input;
 
     // Default result with fallback image
     const defaultResult: ImageResult = {
@@ -48,11 +53,6 @@ export const unsplashRouter = createTRPCRouter({
     }
 
     try {
-      // Initialize the Unsplash API client
-      const unsplash = createApi({
-        accessKey: env.UNSPLASH_ACCESS_KEY,
-      });
-
       // Search for an image with the provided query
       const result = await unsplash.search.getPhotos({
         query,
@@ -90,45 +90,56 @@ export const unsplashRouter = createTRPCRouter({
   getImages: protectedProcedure
     .input(optionsSchema)
     .query(async ({ input }) => {
-      const { query, count, orientation } = input;
+      const { query, count, orientation, cursor } = input;
 
       // Skip API call if query is too short
       if (!query || query.trim().length < 2) {
-        return [];
+        return {
+          images: [],
+          nextCursor: null,
+        };
       }
 
       try {
-        // Initialize the Unsplash API client
-        const unsplash = createApi({
-          accessKey: env.UNSPLASH_ACCESS_KEY,
-        });
-
         // Search for images with the provided query
         const result = await unsplash.search.getPhotos({
           query,
           perPage: count,
           orientation,
+          page: cursor,
         });
 
         // Map the response to our ImageResult type
         if (result.response?.results && result.response.results.length > 0) {
-          return result.response.results.map((image: UnsplashImage) => ({
-            url: image.urls.regular,
-            smallUrl: image.urls.small,
-            thumbnailUrl: image.urls.thumb,
-            altDescription: image.alt_description ?? `Image of ${query}`,
-            credit: {
-              name: image.user.name,
-              username: image.user.username,
-              profileUrl: image.user.links.html,
-              attribution: `Photo by ${image.user.name} on Unsplash`,
-            },
-          }));
+          const images = result.response.results.map(
+            (image: UnsplashImage) => ({
+              url: image.urls.regular,
+              smallUrl: image.urls.small,
+              thumbnailUrl: image.urls.thumb,
+              altDescription: image.alt_description ?? `Image of ${query}`,
+              credit: {
+                name: image.user.name,
+                username: image.user.username,
+                profileUrl: image.user.links.html,
+                attribution: `Photo by ${image.user.name} on Unsplash`,
+              },
+            })
+          );
+
+          const totalPages = result.response.total_pages ?? 0;
+          const nextCursor = cursor < totalPages ? cursor + 1 : null;
+
+          return {
+            images,
+            nextCursor,
+          };
         }
 
-        return [];
+        return {
+          images: [],
+          nextCursor: null,
+        };
       } catch (error) {
-        // If there's an error, log it and return an empty array
         console.error("Failed to fetch images from Unsplash:", error);
         throw new TRPCError({
           message: "Failed to fetch images from Unsplash",
