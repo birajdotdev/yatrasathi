@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
 
-import { Check, Loader2, Search, X } from "lucide-react";
+import { Check, Search, X } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 import { useDebounce } from "use-debounce";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ import { UploadDropzone } from "@/lib/uploadthing";
 import { cn, splitTitle } from "@/lib/utils";
 import { type ImageResult } from "@/server/api/routers/unsplash";
 import { api } from "@/trpc/react";
+
+import { ImageGridSkeleton } from "./image-grid-skeleton";
 
 interface ChangeCoverImageDialogProps {
   children: ReactNode;
@@ -51,39 +54,49 @@ export default function CoverImageDialog({
   const [activeTab, setActiveTab] = useState<string>("unsplash");
   const [open, setOpen] = useState(false);
 
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    api.unsplash.getImages.useInfiniteQuery(
+      {
+        query:
+          debouncedSearchQuery.trim() === ""
+            ? defaultSearchQuery
+            : debouncedSearchQuery,
+        count: 20,
+        orientation: "landscape",
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
+
+  const [ref] = useInView({
+    onChange: (inView) => {
+      if (inView && hasNextPage && !isFetchingNextPage) {
+        void fetchNextPage();
+      }
+    },
+  });
+
   const title = splitTitle(dialogTitle, {
     lastWordCount: 2,
   });
 
-  // Use the Unsplash API through tRPC
-  const { data: images = [], isLoading } = api.unsplash.getImages.useQuery({
-    query:
-      debouncedSearchQuery.trim() === ""
-        ? defaultSearchQuery
-        : debouncedSearchQuery,
-    count: 20,
-    orientation: "landscape",
-  });
+  const allImages = data?.pages.flatMap((page) => page.images) ?? [];
 
   const handleSave = async () => {
     try {
-      // Use either the Unsplash image or uploaded image depending on active tab
       if (activeTab === "unsplash" && selectedImage) {
         await onImageSelected(selectedImage.url);
       } else if (activeTab === "upload" && uploadedImageUrl) {
         await onImageSelected(uploadedImageUrl);
       }
-
-      // Close dialog on success - parent component handles toast notification
       setOpen(false);
     } catch (error) {
-      // Error handling is done in parent component
       console.error("Error in cover image dialog:", error);
     }
   };
 
   const handleImageClick = (image: ImageResult) => {
-    // If the image is already selected, deselect it
     if (selectedImage?.url === image.url) {
       setSelectedImage(null);
     } else {
@@ -96,7 +109,6 @@ export default function CoverImageDialog({
       open={open}
       onOpenChange={(newOpen) => {
         setOpen(newOpen);
-        // Reset states when the dialog is closed
         if (!newOpen) {
           setSelectedImage(null);
           setUploadedImageUrl(null);
@@ -129,50 +141,64 @@ export default function CoverImageDialog({
               />
             </div>
 
-            {isLoading ? (
-              <div className="flex h-48 items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : (
-              <ScrollArea className="h-48">
-                <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                  {images.length > 0 ? (
-                    images.map((image, index) => (
-                      <div
-                        key={index}
-                        className={cn(
-                          "relative cursor-pointer rounded-md overflow-hidden aspect-video transition-all border-2",
-                          selectedImage?.url === image.url
-                            ? "border-primary"
-                            : "border-transparent hover:border-muted-foreground"
-                        )}
-                        onClick={() => handleImageClick(image)}
-                      >
-                        <Image
-                          src={image.smallUrl ?? image.url}
-                          alt={image.altDescription ?? "Unsplash image"}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          fetchPriority="high"
-                        />
-                        {selectedImage?.url === image.url && (
-                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                            <div className="bg-primary text-primary-foreground rounded-full p-1">
-                              <Check className="size-4" />
-                            </div>
+            <ScrollArea className="h-48">
+              <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+                {isLoading ? (
+                  <ImageGridSkeleton count={12} className="col-span-full" />
+                ) : (
+                  <>
+                    {allImages.length > 0 ? (
+                      <>
+                        {allImages.map((image: ImageResult, index: number) => (
+                          <div
+                            key={index}
+                            className={cn(
+                              "relative cursor-pointer rounded-md overflow-hidden aspect-video transition-all border-2",
+                              selectedImage?.url === image.url
+                                ? "border-primary"
+                                : "border-transparent hover:border-primary/80"
+                            )}
+                            onClick={() => handleImageClick(image)}
+                          >
+                            <Image
+                              src={image.smallUrl ?? image.url}
+                              alt={image.altDescription ?? "Unsplash image"}
+                              fill
+                              className="object-cover bg-primary/10"
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              fetchPriority="high"
+                            />
+                            {selectedImage?.url === image.url && (
+                              <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                                <div className="bg-primary text-primary-foreground rounded-full p-1">
+                                  <Check className="size-4" />
+                                </div>
+                              </div>
+                            )}
                           </div>
+                        ))}
+                        {(hasNextPage || isFetchingNextPage) && (
+                          <>
+                            {isFetchingNextPage ? (
+                              <ImageGridSkeleton
+                                count={4}
+                                className="col-span-full"
+                              />
+                            ) : (
+                              <div ref={ref} className="h-8" />
+                            )}
+                          </>
                         )}
+                      </>
+                    ) : (
+                      <div className="flex items-center justify-center h-48 col-span-full text-center text-muted-foreground">
+                        No images found. Try a different search term.
                       </div>
-                    ))
-                  ) : (
-                    <div className="flex items-center justify-center h-48 col-span-full text-center text-muted-foreground">
-                      No images found. Try a different search term.
-                    </div>
-                  )}
-                </div>
-              </ScrollArea>
-            )}
+                    )}
+                  </>
+                )}
+              </div>
+            </ScrollArea>
           </TabsContent>
           <TabsContent value="upload" className="mt-2">
             {uploadedImageUrl ? (

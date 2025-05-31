@@ -18,12 +18,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ItinerariesPage() {
-  // Prefetch all data in parallel
-  await Promise.all([
-    api.itinerary.getAll.prefetch({ type: "all" }),
-    api.itinerary.getAll.prefetch({ type: "upcoming" }),
-    api.itinerary.getAll.prefetch({ type: "past" }),
-  ]);
+  await api.itinerary.getAll.prefetchInfinite({
+    type: "all",
+    limit: 9,
+  });
 
   const tabOptions = [
     { value: "all", label: "All" },
