@@ -1,35 +1,23 @@
-import { cache } from "react";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
 
-import { clerkClient, auth as uncachedAuth } from "@clerk/nextjs/server";
+import { env } from "@/env";
+import { db } from "@/server/db";
 
-import { type UserRole } from "@/server/db/schema";
-
-const client = await clerkClient();
-
-export const auth = cache(uncachedAuth);
-
-export const getCurrentUser = cache(async () => {
-  const { userId, sessionClaims, redirectToSignIn, has } = await auth();
-  const isProUser = has({ plan: "pro" });
-
-  return {
-    clerkUserId: userId,
-    dbId: sessionClaims?.dbId,
-    role: sessionClaims?.role,
-    isProUser,
-    redirectToSignIn,
-  };
-});
-
-export function syncClerkUserMetadata(user: {
-  id: string;
-  clerkUserId: string;
-  role: UserRole;
-}) {
-  return client.users.updateUserMetadata(user.clerkUserId, {
-    publicMetadata: {
-      dbId: user.id,
-      role: user.role,
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  socialProviders: {
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
-  });
-}
+    facebook: {
+      clientId: env.FACEBOOK_CLIENT_ID,
+      clientSecret: env.FACEBOOK_CLIENT_SECRET,
+    },
+  },
+  plugins: [nextCookies()],
+});
