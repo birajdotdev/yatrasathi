@@ -13,6 +13,7 @@ export default {
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
+  tailwindStylesheet: "./src/styles/globals.css",
   plugins: [
     "prettier-plugin-tailwindcss",
     "@trivago/prettier-plugin-sort-imports",
