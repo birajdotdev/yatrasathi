@@ -6,12 +6,12 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 const EmptyActivities = () => {
   return (
-    <div className="travel-card p-8 flex flex-col items-center justify-center text-center">
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-4 mb-4">
-        <Calendar className="h-8 w-8 text-travel-accent" />
+    <div className="travel-card flex flex-col items-center justify-center p-8 text-center">
+      <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+        <Calendar className="text-travel-accent h-8 w-8" />
       </div>
-      <h3 className="text-xl font-semibold mb-2">No Activities Planned Yet</h3>
-      <p className="text-travel-muted max-w-md mb-6">
+      <h3 className="mb-2 text-xl font-semibold">No Activities Planned Yet</h3>
+      <p className="text-travel-muted mb-6 max-w-md">
         Start building your perfect itinerary by adding activities for each day
         of your trip.
       </p>

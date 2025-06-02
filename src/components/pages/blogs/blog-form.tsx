@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { postInsertSchema } from "@/lib/schemas/post";
+import { postInsertSchema } from "@/lib/zod/post";
 import { api } from "@/trpc/react";
 
 const blogFormSchema = postInsertSchema.pick({
@@ -200,7 +200,7 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
     <Form {...form}>
       <form onSubmit={onSubmit}>
         <input type="hidden" {...form.register("status")} />
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -242,9 +242,9 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Content Section */}
-          <Card className="lg:col-span-2 min-h-[calc(100vh-10rem)]">
+          <Card className="min-h-[calc(100vh-10rem)] lg:col-span-2">
             <CardContent>
               {/* Title Field */}
               <FormField
@@ -255,7 +255,7 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
                     <FormControl>
                       <TextareaAutosize
                         placeholder="Untitled"
-                        className="text-5xl font-bold resize-none appearance-none overflow-hidden bg-transparent border-none focus:outline-none focus:ring-0 w-full leading-tight"
+                        className="w-full resize-none appearance-none overflow-hidden border-none bg-transparent text-5xl leading-tight font-bold focus:ring-0 focus:outline-none"
                         {...field}
                       />
                     </FormControl>
@@ -359,18 +359,18 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
                     <FormItem>
                       <div className="flex flex-col items-center justify-center gap-4">
                         {field.value ? (
-                          <figure className="relative aspect-video w-full bg-muted rounded-md overflow-hidden">
+                          <figure className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
                             <Image
                               src={field.value}
                               alt="Cover"
                               fill
-                              className="w-full h-full object-cover"
+                              className="h-full w-full object-cover"
                             />
                             <Button
                               type="button"
                               size="icon"
                               variant="secondary"
-                              className="absolute top-2 right-2 z-10 rounded-full size-6"
+                              className="absolute top-2 right-2 z-10 size-6 rounded-full"
                               onClick={() => form.setValue("featuredImage", "")}
                               aria-label="Remove cover image"
                             >
@@ -382,7 +382,7 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
                             icon={ImageIcon}
                             title="No cover image"
                             description="Upload a cover image for your post"
-                            className="w-full aspect-video min-h-0 p-0"
+                            className="aspect-video min-h-0 w-full p-0"
                             iconClassName="size-9 p-2"
                             titleClassName="text-sm mt-2"
                             descriptionClassName="text-xs mb-3 mt-1"

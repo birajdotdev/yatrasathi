@@ -55,7 +55,7 @@ export default function DeleteItineraryButton({
         <Button
           size="icon"
           aria-label="Delete itinerary"
-          className="rounded-full size-8 cursor-pointer"
+          className="size-8 cursor-pointer rounded-full"
           variant="destructive"
           disabled={isPending}
         >

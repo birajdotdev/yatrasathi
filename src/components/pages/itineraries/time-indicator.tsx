@@ -24,8 +24,8 @@ const TimeIndicator = ({
   };
 
   return (
-    <div className={`flex items-center text-travel-muted ${className}`}>
-      <Clock className="w-4 h-4 mr-1 flex-shrink-0" />
+    <div className={`text-travel-muted flex items-center ${className}`}>
+      <Clock className="mr-1 h-4 w-4 flex-shrink-0" />
       <span className="text-sm">
         {formatTime(startTime)} - {formatTime(endTime)}
       </span>

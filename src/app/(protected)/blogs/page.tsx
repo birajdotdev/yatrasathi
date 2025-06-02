@@ -15,11 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogsPage() {
-  await Promise.all([
-    api.blog.getUserPosts.prefetch({}),
-    api.blog.getUserPosts.prefetch({ status: "published" }),
-    api.blog.getUserPosts.prefetch({ status: "draft" }),
-  ]);
+  await api.blog.getUserPosts.prefetch({});
 
   const tabOptions = [
     { value: "all", label: "All" },
@@ -29,7 +25,7 @@ export default async function BlogsPage() {
 
   return (
     <HydrateClient>
-      <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+      <main className="container mx-auto space-y-6 p-6 lg:space-y-8 lg:p-8">
         <Banner
           badgeText="Travel Blogs"
           title="Your Blogs"

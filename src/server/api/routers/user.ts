@@ -117,7 +117,7 @@ export const userRouter = createTRPCRouter({
 
   getReminderPreferences: protectedProcedure.query(async ({ ctx }) => {
     // Get the current user's database ID from the session
-    const userId = ctx.session.user.dbId;
+    const userId = ctx.user.id;
 
     // Look up the user's reminder preferences
     const preferences = await ctx.db.query.reminderPreferences.findFirst({
@@ -141,7 +141,7 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.dbId;
+      const userId = ctx.user.id;
 
       // Check if preferences already exist
       const existing = await ctx.db.query.reminderPreferences.findFirst({
@@ -195,30 +195,12 @@ export const userRouter = createTRPCRouter({
     }),
 
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
-    try {
-      const user = await ctx.db.query.users.findFirst({
-        where: eq(users.id, ctx.session.user.dbId),
-      });
-      return user;
-    } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get current user",
-        cause: error,
-      });
-    }
+    return ctx.user;
   }),
 
   getUserStats: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.dbId;
+    const user = ctx.user;
     const clerkUser = await currentUser();
-
-    // Get user info
-    const user = await ctx.db.query.users.findFirst({
-      where: eq(users.id, userId),
-    });
-    if (!user)
-      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
     // Get first name only
     const firstName = user.name.split(" ")[0];
@@ -227,7 +209,7 @@ export const userRouter = createTRPCRouter({
     const now = new Date();
     const upcomingTrips = await ctx.db.query.itineraries.findMany({
       where: (itinerary, { and, gt }) =>
-        and(eq(itinerary.createdById, userId), gt(itinerary.startDate, now)),
+        and(eq(itinerary.createdById, user.id), gt(itinerary.startDate, now)),
     });
     const upcomingTripsCount = upcomingTrips.length;
 
@@ -245,7 +227,7 @@ export const userRouter = createTRPCRouter({
 
     // Count blog posts
     const blogPosts = await ctx.db.query.posts.findMany({
-      where: (post) => eq(post.authorId, userId),
+      where: (post) => eq(post.authorId, user.id),
     });
     const blogPostsCount = blogPosts.length;
 

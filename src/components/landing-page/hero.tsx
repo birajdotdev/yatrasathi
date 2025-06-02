@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { SignUpButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
@@ -63,7 +64,7 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-[url(/bg-light.svg)] bg-fixed dark:bg-[url(/bg-dark.svg)]">
       <div className="absolute inset-0 bg-linear-to-br from-background/10 via-background/50 to-background/80 backdrop-blur-none" />
-      <div className="container relative z-10 mx-auto px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <div className="relative z-10 container mx-auto px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
         <motion.div
           className="grid items-center gap-12 lg:grid-cols-2"
           variants={containerVariants}
@@ -101,8 +102,8 @@ export default function Hero() {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </SignUpButton>
-              <Button size="lg" variant="outline">
-                Learn More
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/terms-of-service">Learn More</Link>
               </Button>
             </div>
           </motion.div>
@@ -110,7 +111,7 @@ export default function Hero() {
             className="relative hidden lg:block"
             variants={itemVariants}
           >
-            <div className="absolute -right-16 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl" />
+            <div className="absolute top-1/2 -right-16 h-72 w-72 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl" />
             <div className="grid grid-cols-2 gap-6">
               {gridImages.map((image, index) => (
                 <motion.div

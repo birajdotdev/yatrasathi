@@ -85,7 +85,7 @@ export default function DashboardNav() {
   });
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 justify-between px-6 border-b">
+    <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-6">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mr-2 h-4" />

@@ -39,7 +39,7 @@ export default function Comment({ comment, user, postId }: CommentProps) {
   });
   const isAuthor = user && comment.author?.id === sessionClaims?.dbId;
   return (
-    <div className="group flex gap-4 p-4 rounded-lg bg-muted/50 relative">
+    <div className="group relative flex gap-4 rounded-lg bg-muted/50 p-4">
       <Avatar>
         <AvatarImage
           src={comment.author?.image ?? ""}
@@ -48,7 +48,7 @@ export default function Comment({ comment, user, postId }: CommentProps) {
         <AvatarFallback>{comment.author?.name?.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="mb-1 flex items-center gap-2">
           <span className="font-medium">{comment.author?.name}</span>
           <span className="text-xs text-muted-foreground">
             {comment.comment.createdAt.toLocaleDateString("en-US", {
@@ -66,7 +66,7 @@ export default function Comment({ comment, user, postId }: CommentProps) {
             <Button
               size="icon"
               variant="ghost"
-              className="hidden group-hover:flex absolute top-2 right-2 h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-primary"
+              className="absolute top-2 right-2 hidden h-7 w-7 flex-shrink-0 text-muted-foreground group-hover:flex hover:text-primary"
               aria-label="Delete comment"
               disabled={deleteCommentMutation.isPending}
             >
@@ -102,10 +102,10 @@ export default function Comment({ comment, user, postId }: CommentProps) {
 
 export function CommentSkeleton() {
   return (
-    <div className="flex gap-4 p-4 rounded-lg bg-muted/50 relative">
+    <div className="relative flex gap-4 rounded-lg bg-muted/50 p-4">
       <Skeleton className="h-10 w-10 rounded-full" />
       <div className="flex-1">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="mb-1 flex items-center gap-2">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-3 w-20" />
         </div>

@@ -100,22 +100,22 @@ export default function ReactionButtons({
   const whatsappUrl = `https://wa.me/?text=${encodedUrl}`;
 
   return (
-    <div className="md:col-span-1 order-2 md:order-1 z-50">
-      <div className="md:sticky md:top-24 flex md:flex-col gap-4 justify-center">
+    <div className="z-50 order-2 md:order-1 md:col-span-1">
+      <div className="flex justify-center gap-4 md:sticky md:top-24 md:flex-col">
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full h-12 w-12 border"
+          className="h-12 w-12 rounded-full border"
           onClick={handleLike}
         >
           <Heart
-            className={`h-5 w-5 transition-all duration-300 ${optimisticLiked ? "fill-red-500 text-red-500 scale-125" : "scale-100"}`}
+            className={`h-5 w-5 transition-all duration-300 ${optimisticLiked ? "scale-125 fill-red-500 text-red-500" : "scale-100"}`}
           />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full h-12 w-12 border"
+          className="h-12 w-12 rounded-full border"
           onClick={onCommentClick}
         >
           <MessageSquare className="h-5 w-5" />
@@ -124,7 +124,7 @@ export default function ReactionButtons({
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full h-12 w-12 border"
+            className="h-12 w-12 rounded-full border"
             onClick={handleShare}
             aria-label="Share post"
           >
@@ -135,7 +135,7 @@ export default function ReactionButtons({
             <DialogDescription>
               Share this post with others using the options below.
             </DialogDescription>
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="mt-4 flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <Input
                   type="text"
@@ -148,13 +148,13 @@ export default function ReactionButtons({
                   Copy
                 </Button>
               </div>
-              <div className="flex gap-4 justify-center mt-2">
+              <div className="mt-2 flex justify-center gap-4">
                 <a
                   href={twitterUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Share on X"
-                  className="rounded-full bg-black hover:bg-gray-800 p-3 transition-colors focus:outline focus:outline-offset-2 focus:outline-black"
+                  className="rounded-full bg-black p-3 transition-colors hover:bg-gray-800 focus:outline focus:outline-offset-2 focus:outline-black"
                 >
                   <svg
                     width="24"
@@ -170,7 +170,7 @@ export default function ReactionButtons({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Share on Facebook"
-                  className="rounded-full bg-[#1877f2] hover:bg-[#145db2] p-3 transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#1877f2]"
+                  className="rounded-full bg-[#1877f2] p-3 transition-colors hover:bg-[#145db2] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#1877f2]"
                 >
                   <svg
                     width="24"
@@ -186,7 +186,7 @@ export default function ReactionButtons({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Share on WhatsApp"
-                  className="rounded-full bg-[#25d366] hover:bg-[#1da851] p-3 transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#25d366]"
+                  className="rounded-full bg-[#25d366] p-3 transition-colors hover:bg-[#1da851] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#25d366]"
                 >
                   <svg
                     width="24"

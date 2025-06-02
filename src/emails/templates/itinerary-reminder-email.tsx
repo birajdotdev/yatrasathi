@@ -68,7 +68,7 @@ export default function ItineraryReminderEmail({
             <Section className="my-[32px]">
               <Button
                 href={itineraryLink}
-                className="rounded bg-[#e11d48] py-[12px] px-[24px] text-center text-[14px] font-medium text-white no-underline"
+                className="rounded bg-[#e11d48] px-[24px] py-[12px] text-center text-[14px] font-medium text-white no-underline"
               >
                 View Your Itinerary
               </Button>

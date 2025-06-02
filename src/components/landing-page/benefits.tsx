@@ -69,7 +69,7 @@ export default function Benefits() {
       ref={ref}
     >
       <div className="bg-grid-white/[0.02] absolute inset-0 bg-[size:60px_60px]" />
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="space-y-16"
           variants={containerVariants}

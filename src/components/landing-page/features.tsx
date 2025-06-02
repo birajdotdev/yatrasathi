@@ -69,7 +69,7 @@ export default function Features() {
       className="relative overflow-hidden bg-linear-to-br from-background to-background/80 py-24"
       ref={ref}
     >
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="space-y-16"
           variants={containerVariants}

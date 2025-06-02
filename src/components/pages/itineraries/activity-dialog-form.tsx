@@ -171,7 +171,7 @@ export default function ActivityDialogForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] rounded-xl">
+      <DialogContent className="rounded-xl sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {title[0]} <span className="text-primary">{title[1]}</span>
@@ -218,7 +218,7 @@ export default function ActivityDialogForm({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="startTime"
@@ -256,7 +256,7 @@ export default function ActivityDialogForm({
                   <FormLabel>Location</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <MapPin className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                       <Input
                         className="pl-10"
                         placeholder="Address or place name"
@@ -278,7 +278,7 @@ export default function ActivityDialogForm({
                   <FormControl>
                     <Textarea
                       placeholder="Provide details about this activity..."
-                      className="resize-none min-h-[100px]"
+                      className="min-h-[100px] resize-none"
                       {...field}
                     />
                   </FormControl>

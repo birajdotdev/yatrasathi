@@ -24,16 +24,18 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { env } from "@/env";
 import { getInitials } from "@/lib/utils";
-import { api } from "@/trpc/react";
 
-export function SidebarUser() {
+interface SidebarUserProps {
+  name: string;
+  imageUrl: string;
+  isProUser: boolean;
+}
+
+export function SidebarUser({ name, imageUrl, isProUser }: SidebarUserProps) {
   const { isMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [user] = api.user.getCurrentUser.useSuspenseQuery();
 
-  const CHECKOUT_URL = `/api/checkout?products=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}&customerId=${user?.polarCustomerId}`;
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -44,15 +46,15 @@ export function SidebarUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user?.image ?? ""} alt={user?.name} />
+                <AvatarImage src={imageUrl} alt={name} />
                 <AvatarFallback className="rounded-lg">
-                  {getInitials(user?.name ?? "")}
+                  {getInitials(name)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user?.name}</span>
+                <span className="truncate font-semibold">{name}</span>
                 <span className="truncate text-xs capitalize">
-                  {user?.plan}
+                  {isProUser ? "Pro" : "Free"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -67,25 +69,25 @@ export function SidebarUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.image ?? ""} alt={user?.name} />
+                  <AvatarImage src={imageUrl} alt={name} />
                   <AvatarFallback className="rounded-lg">
-                    {getInitials(user?.name ?? "")}
+                    {getInitials(name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user?.name}</span>
+                  <span className="truncate font-semibold">{name}</span>
                   <span className="truncate text-xs capitalize">
-                    {user?.plan}
+                    {isProUser ? "Pro" : "Free"}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {user?.plan === "free" && (
+            {!isProUser && (
               <>
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild>
-                    <Link href={CHECKOUT_URL}>
+                    <Link href="/subscription">
                       <Sparkles />
                       Upgrade to Pro
                     </Link>
@@ -97,7 +99,7 @@ export function SidebarUser() {
             <DropdownMenuGroup>
               <AccountButton />
               <DropdownMenuItem asChild>
-                <Link href="/api/portal">
+                <Link href="/subscription">
                   <CreditCard />
                   Subscription
                 </Link>

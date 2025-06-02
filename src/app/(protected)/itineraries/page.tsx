@@ -18,12 +18,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ItinerariesPage() {
-  // Prefetch all data in parallel
-  await Promise.all([
-    api.itinerary.getAll.prefetch({ type: "all" }),
-    api.itinerary.getAll.prefetch({ type: "upcoming" }),
-    api.itinerary.getAll.prefetch({ type: "past" }),
-  ]);
+  await api.itinerary.getAll.prefetchInfinite({
+    type: "all",
+    limit: 9,
+  });
 
   const tabOptions = [
     { value: "all", label: "All" },
@@ -33,7 +31,7 @@ export default async function ItinerariesPage() {
 
   return (
     <HydrateClient>
-      <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+      <main className="container mx-auto space-y-6 p-6 lg:space-y-8 lg:p-8">
         <Banner
           title="Your Itineraries"
           description="Manage and organize all your upcoming adventures in one place."

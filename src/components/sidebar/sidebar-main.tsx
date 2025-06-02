@@ -30,7 +30,7 @@ export default function SidebarMain({ ...props }: SidebarMainProps) {
             <SidebarMenuButton
               isActive={isActive(item.url)}
               data-active={isActive(item.url)}
-              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-medium transition-all duration-300"
+              className="transition-all duration-300 data-[active=true]:bg-primary/10 data-[active=true]:font-medium data-[active=true]:text-primary"
               asChild
             >
               <Link href={item.url}>

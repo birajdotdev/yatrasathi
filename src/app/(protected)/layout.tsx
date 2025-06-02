@@ -13,7 +13,6 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   await Promise.all([
-    void api.user.getCurrentUser.prefetch(),
     void api.user.getReminderPreferences.prefetch(),
     void api.notification.getNotifications.prefetch(),
   ]);

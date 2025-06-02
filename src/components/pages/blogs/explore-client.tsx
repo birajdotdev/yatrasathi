@@ -8,11 +8,11 @@ import { type CategoryType } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 
 interface ExploreClientProps {
-  category: CategoryType;
+  category?: CategoryType;
 }
 
 export default function ExploreClient({ category }: ExploreClientProps) {
-  const [blogs] = api.blog.getPostsByCategory.useSuspenseQuery({
+  const [blogs] = api.blog.listPosts.useSuspenseQuery({
     category,
   });
 

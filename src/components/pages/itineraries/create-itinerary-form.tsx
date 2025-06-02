@@ -19,11 +19,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { env } from "@/env";
 import {
   type ItineraryFormSchema,
   itineraryFormSchema,
-} from "@/lib/schemas/itinerary";
+} from "@/lib/zod/itinerary";
 import type { Place } from "@/server/api/routers/places";
 import { api } from "@/trpc/react";
 
@@ -61,9 +60,6 @@ export default function CreateItineraryForm() {
     },
   });
 
-  const [user] = api.user.getCurrentUser.useSuspenseQuery();
-  const CHECKOUT_URL = `/api/checkout?products=${env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID}&customerId=${user?.polarCustomerId}`;
-
   // Generate with AI mutation
   const generateWithAI = api.itinerary.generateWithAI.useMutation({
     onMutate: () => {
@@ -86,7 +82,7 @@ export default function CreateItineraryForm() {
           description: "Upgrade to Pro for unlimited access.",
           action: {
             label: "Upgrade",
-            onClick: () => router.push(CHECKOUT_URL),
+            onClick: () => router.push("/subscription"),
           },
         });
       } else {
@@ -124,7 +120,7 @@ export default function CreateItineraryForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-3xl">
-        <Card className="rounded-2xl w-full border p-6 mb-8">
+        <Card className="mb-8 w-full rounded-2xl border p-6">
           {/* Destination Field */}
           <FormField
             control={form.control}
@@ -174,11 +170,11 @@ export default function CreateItineraryForm() {
         </Card>
 
         {/* Form Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Button
             type="submit"
             size="lg"
-            className="rounded-full group w-full sm:w-auto"
+            className="group w-full rounded-full sm:w-auto"
             disabled={isButtonDisabled}
           >
             Start planning
@@ -189,7 +185,7 @@ export default function CreateItineraryForm() {
             type="button"
             size="lg"
             variant="outline"
-            className="rounded-full w-full sm:w-auto"
+            className="w-full rounded-full sm:w-auto"
             disabled={isButtonDisabled}
             onClick={() => {
               // Get form data
