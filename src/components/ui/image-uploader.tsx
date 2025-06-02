@@ -61,14 +61,14 @@ export function ImageUploader({
           }}
         />
       ) : (
-        <div className="relative w-full h-72 rounded-lg overflow-hidden group">
+        <div className="group relative h-72 w-full overflow-hidden rounded-lg">
           <Image src={value} alt="Cover image" fill className="object-cover" />
           <div className="absolute top-2 right-2">
             <Button
               type="button"
               size="icon"
               variant="ghost"
-              className="rounded-full h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-black/50 hover:bg-red-500 hover:scale-110"
+              className="h-8 w-8 rounded-full bg-black/50 opacity-0 transition-all duration-200 group-hover:opacity-100 hover:scale-110 hover:bg-red-500"
               onClick={handleDelete}
             >
               <Trash2 className="h-4 w-4 text-white" />

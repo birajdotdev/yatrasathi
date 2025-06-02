@@ -38,21 +38,21 @@ export default function DayTimeline({ day, itineraryDates }: DayTimelineProps) {
     <AccordionItem
       value={day.date.toISOString()}
       key={day.date.toISOString()}
-      className="bg-card has-focus-visible:border-ring has-focus-visible:ring-ring/50 rounded-xl border px-4 py-1 outline-none last:border-b has-focus-visible:ring-[3px]"
+      className="rounded-xl border bg-card px-4 py-1 outline-none last:border-b has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50"
     >
       <AccordionPrimitive.Header className="flex">
-        <AccordionPrimitive.Trigger className="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-center justify-between rounded-md py-2 text-left text-[15px] leading-6 font-semibold transition-all outline-none focus-visible:ring-[3px] [&[data-state=open]>svg]:rotate-180">
+        <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between rounded-md py-2 text-left text-[15px] leading-6 font-semibold transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [&[data-state=open]>svg]:rotate-180">
           <span className="flex flex-col space-y-1">
             <span className="text-xl">
               {dayOfWeek}, <span className="text-primary">{dayDate}</span>
             </span>
             {day.activities.length > 0 ? (
-              <span className="text-sm text-muted-foreground font-normal">
+              <span className="text-sm font-normal text-muted-foreground">
                 {day.activities.length}{" "}
                 {day.activities.length === 1 ? "activity" : "activities"}
               </span>
             ) : (
-              <span className="text-sm text-muted-foreground font-normal">
+              <span className="text-sm font-normal text-muted-foreground">
                 No activities planned for this day yet.
               </span>
             )}
@@ -75,7 +75,7 @@ export default function DayTimeline({ day, itineraryDates }: DayTimelineProps) {
                 itineraryDates={itineraryDates}
                 selectedDayDate={day.date}
               >
-                <Button size="sm" className="gap-2 mt-6">
+                <Button size="sm" className="mt-6 gap-2">
                   <PlusCircle className="size-4" />
                   Add Activity
                 </Button>
@@ -92,7 +92,7 @@ export default function DayTimeline({ day, itineraryDates }: DayTimelineProps) {
               >
                 <TimelineHeader>
                   <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
-                  <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
+                  <TimelineIndicator className="flex size-6 items-center justify-center border-none bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground group-data-[orientation=vertical]/timeline:-left-7">
                     <MapPin size={14} />
                   </TimelineIndicator>
                 </TimelineHeader>

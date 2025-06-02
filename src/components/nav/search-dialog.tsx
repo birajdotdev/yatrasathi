@@ -86,11 +86,11 @@ function CommandActionItem({
   return (
     <CommandItem
       value={label}
-      className="rounded-lg group !p-2"
+      className="group rounded-lg !p-2"
       onSelect={onSelect}
     >
-      <div className="bg-primary/10 p-2 rounded-lg group-data-[selected=true]:bg-primary transition-colors">
-        <Icon className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
+      <div className="rounded-lg bg-primary/10 p-2 transition-colors group-data-[selected=true]:bg-primary">
+        <Icon className="h-4 w-4 text-primary transition-colors group-data-[selected=true]:text-white" />
       </div>
       <span>{label}</span>
     </CommandItem>
@@ -156,7 +156,7 @@ export default function SearchDialog() {
   return (
     <div>
       <button
-        className="hidden sm:inline-flex h-9 w-56 rounded-lg border border-input bg-background hover:bg-muted transition-colors px-3 py-2 text-sm text-foreground shadow-xs shadow-black/5 placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/20"
+        className="hidden h-9 w-56 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs shadow-black/5 transition-colors placeholder:text-muted-foreground/70 hover:bg-muted focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20 focus-visible:outline-hidden sm:inline-flex"
         onClick={() => setOpen(true)}
       >
         <span className="flex grow items-center">
@@ -170,14 +170,14 @@ export default function SearchDialog() {
             Search...
           </span>
         </span>
-        <kbd className="-me-1 ms-12 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
+        <kbd className="ms-12 -me-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
           ⌘K
         </kbd>
       </button>
       <Button
         variant="outline"
         size="icon"
-        className="sm:hidden rounded-lg"
+        className="rounded-lg sm:hidden"
         onClick={() => setOpen(true)}
         aria-label="Notifications"
       >
@@ -201,7 +201,7 @@ export default function SearchDialog() {
                     {Array.from({ length: 3 }).map((_, i) => (
                       <div
                         key={i}
-                        className="flex items-center rounded-lg p-2 group gap-2"
+                        className="group flex items-center gap-2 rounded-lg p-2"
                       >
                         <Skeleton className="size-8 rounded-lg" />
                         <Skeleton className="h-4 flex-1" />

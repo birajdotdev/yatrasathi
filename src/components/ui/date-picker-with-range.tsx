@@ -87,10 +87,10 @@ export function DatePickerWithRange({
             id="date"
             variant="outline"
             className={cn(
-              "w-full justify-start text-left font-normal h-12 rounded-xl border-input !bg-background hover:!bg-accent",
+              "h-12 w-full justify-start rounded-xl border-input !bg-background text-left font-normal hover:!bg-accent",
               !date && "text-muted-foreground",
               error &&
-                "!border-destructive !text-destructive !bg-destructive/20 hover:!bg-destructive/30 transition-colors"
+                "!border-destructive !bg-destructive/20 !text-destructive transition-colors hover:!bg-destructive/30"
             )}
             disabled={disabled}
             aria-invalid={error}
@@ -117,7 +117,7 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 border-input shadow-lg rounded-xl"
+          className="w-auto rounded-xl border-input p-0 shadow-lg"
           align="start"
         >
           <Calendar

@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 export default function CreateItineraryPage() {
   return (
     <section className="container mx-auto p-6 lg:p-8">
-      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-9rem)]">
+      <main className="flex min-h-[calc(100vh-9rem)] flex-col items-center justify-center">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-3 tracking-tight">
+          <h1 className="mb-3 text-4xl font-bold tracking-tight">
             Create New <span className="text-primary">Itinerary</span>
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto">
+          <p className="mx-auto max-w-md text-muted-foreground">
             Plan your perfect trip step by step.
           </p>
         </div>

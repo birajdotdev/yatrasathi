@@ -15,7 +15,7 @@ export default {
   importOrderSortSpecifiers: true,
   tailwindStylesheet: "./src/styles/globals.css",
   plugins: [
-    "prettier-plugin-tailwindcss",
     "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
   ],
 };

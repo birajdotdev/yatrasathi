@@ -41,10 +41,10 @@ type DestinationComboboxProps = {
 const LOADING_SKELETONS = Array.from({ length: 3 }).map((_, index) => (
   <div
     key={`skeleton-${index}`}
-    className="flex items-center justify-between w-full p-1"
+    className="flex w-full items-center justify-between p-1"
   >
     <div className="flex items-center">
-      <Skeleton className="h-8 w-8 rounded-lg mr-3" />
+      <Skeleton className="mr-3 h-8 w-8 rounded-lg" />
       <div className="space-y-1">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-3 w-32" />
@@ -133,20 +133,20 @@ export function DestinationCombobox({
           aria-expanded={open}
           aria-label="Select destination"
           className={cn(
-            "w-full space-x-1 h-12 rounded-xl !bg-background hover:!bg-muted text-left font-normal",
+            "h-12 w-full space-x-1 rounded-xl !bg-background text-left font-normal hover:!bg-muted",
             className,
             error &&
-              "!border-destructive !text-destructive !bg-destructive/20 hover:!bg-destructive/30 transition-colors"
+              "!border-destructive !bg-destructive/20 !text-destructive transition-colors hover:!bg-destructive/30"
           )}
           disabled={disabled}
         >
           <MapPin
             className={cn(
-              "!size-5 text-muted-foreground pointer-events-none",
+              "pointer-events-none !size-5 text-muted-foreground",
               error && "!text-destructive"
             )}
           />
-          <div className="flex items-center justify-between w-full">
+          <div className="flex w-full items-center justify-between">
             <span
               className={cn(
                 !value && "text-muted-foreground",
@@ -159,7 +159,7 @@ export function DestinationCombobox({
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] rounded-xl overflow-clip p-0">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] overflow-clip rounded-xl p-0">
         <Command className="bg-background">
           <CommandInput
             placeholder="e.g. Paris, Hawaii, Japan"
@@ -174,7 +174,7 @@ export function DestinationCombobox({
             >
               {isLoading ? (
                 <div
-                  className="p-2 space-y-2"
+                  className="space-y-2 p-2"
                   aria-busy="true"
                   aria-live="polite"
                 >
@@ -194,12 +194,12 @@ export function DestinationCombobox({
                   key={place.id}
                   value={`${place.name}:::${place.id}`}
                   onSelect={handleSelect}
-                  className="rounded-lg group"
+                  className="group rounded-lg"
                 >
-                  <div className="flex items-center justify-between w-full">
+                  <div className="flex w-full items-center justify-between">
                     <div className="flex items-center">
-                      <div className="bg-primary/10 p-2 rounded-lg mr-3 group-data-[selected=true]:bg-primary transition-colors">
-                        <MapPin className="h-4 w-4 text-primary group-data-[selected=true]:text-white transition-colors" />
+                      <div className="mr-3 rounded-lg bg-primary/10 p-2 transition-colors group-data-[selected=true]:bg-primary">
+                        <MapPin className="h-4 w-4 text-primary transition-colors group-data-[selected=true]:text-white" />
                       </div>
                       <div>
                         <div className="font-medium capitalize">
@@ -212,7 +212,7 @@ export function DestinationCombobox({
                     </div>
                     <Badge
                       variant="outline"
-                      className="bg-primary/10 border-none text-primary rounded-full text-xs capitalize"
+                      className="rounded-full border-none bg-primary/10 text-xs text-primary capitalize"
                     >
                       {place.subcategory}
                     </Badge>

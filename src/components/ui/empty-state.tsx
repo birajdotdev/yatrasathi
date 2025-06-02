@@ -44,7 +44,7 @@ export function EmptyState({
     >
       <Icon
         className={cn(
-          "size-12 bg-primary/10 rounded-full p-3 overflow-visible text-primary",
+          "size-12 overflow-visible rounded-full bg-primary/10 p-3 text-primary",
           iconClassName
         )}
       />
@@ -56,7 +56,7 @@ export function EmptyState({
       {description && (
         <p
           className={cn(
-            "mt-2 text-sm text-muted-foreground mb-6",
+            "mt-2 mb-6 text-sm text-muted-foreground",
             descriptionClassName
           )}
         >

@@ -67,7 +67,7 @@ export default function NavBar() {
                 </span>
                 <ThemeToggle />
               </div>
-              <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-x-4 sm:space-y-0">
+              <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:space-x-4">
                 <SheetClose asChild>
                   <Button variant="outline" className="w-full sm:w-auto">
                     <SignInButton mode="modal">Sign in</SignInButton>

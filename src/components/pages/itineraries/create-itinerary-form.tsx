@@ -120,7 +120,7 @@ export default function CreateItineraryForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-3xl">
-        <Card className="rounded-2xl w-full border p-6 mb-8">
+        <Card className="mb-8 w-full rounded-2xl border p-6">
           {/* Destination Field */}
           <FormField
             control={form.control}
@@ -170,11 +170,11 @@ export default function CreateItineraryForm() {
         </Card>
 
         {/* Form Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Button
             type="submit"
             size="lg"
-            className="rounded-full group w-full sm:w-auto"
+            className="group w-full rounded-full sm:w-auto"
             disabled={isButtonDisabled}
           >
             Start planning
@@ -185,7 +185,7 @@ export default function CreateItineraryForm() {
             type="button"
             size="lg"
             variant="outline"
-            className="rounded-full w-full sm:w-auto"
+            className="w-full rounded-full sm:w-auto"
             disabled={isButtonDisabled}
             onClick={() => {
               // Get form data

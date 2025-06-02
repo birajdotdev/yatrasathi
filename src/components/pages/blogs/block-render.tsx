@@ -12,7 +12,7 @@ export default function BlockRender({ content }: BlockRenderProps) {
   const html = async () => await editor.blocksToHTMLLossy(content);
   return (
     <article
-      className="prose prose-lg max-w-none mb-8 dark:prose-invert"
+      className="prose prose-lg mb-8 max-w-none dark:prose-invert"
       dangerouslySetInnerHTML={{ __html: html() }}
     />
   );

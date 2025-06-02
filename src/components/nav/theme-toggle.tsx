@@ -41,7 +41,7 @@ export default function ThemeToggle({
       <DropdownMenuTrigger asChild>
         <Button
           size="icon"
-          className="rounded-lg data-[state=open]:bg-muted transition-colors"
+          className="rounded-lg transition-colors data-[state=open]:bg-muted"
           variant="outline"
           aria-label="Select theme"
           {...props}
@@ -65,7 +65,7 @@ export default function ThemeToggle({
           <DropdownMenuItem
             key={theme.value}
             onClick={() => setTheme(theme.value)}
-            className="rounded-md cursor-pointer"
+            className="cursor-pointer rounded-md"
           >
             <theme.icon size={16} strokeWidth={2} aria-hidden="true" />
             <span>{theme.name}</span>

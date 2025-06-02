@@ -13,7 +13,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
       <div className="relative">
         <div className="relative aspect-video w-full overflow-hidden">
           {/* Action button */}
-          <div className="absolute right-4 top-4 z-10 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100 [&:has([data-state=open])]:opacity-100">
+          <div className="absolute top-4 right-4 z-10 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100 [&:has([data-state=open])]:opacity-100">
             <ActionButton itineraryId={itinerary.id} />
           </div>
           <Link href={`/itineraries/${itinerary.id}`} className="block">
@@ -30,7 +30,7 @@ export default function ItineraryCard({ itinerary }: { itinerary: Itinerary }) {
             <div className="absolute inset-0 bg-linear-to-t from-background/95 via-background/60 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-60 dark:from-background/95 dark:via-background/75 dark:opacity-80" />
 
             {/* Overlay content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div className="absolute right-0 bottom-0 left-0 p-6">
               <h3 className="mb-4 text-xl font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-foreground">
                 {itinerary.title}
               </h3>

@@ -38,7 +38,7 @@ function NotificationSkeletonList() {
   return (
     <div>
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-md px-3 py-2 flex items-center gap-3">
+        <div key={i} className="flex items-center gap-3 rounded-md px-3 py-2">
           <Skeleton className="size-9 rounded-md" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-32" />
@@ -89,7 +89,7 @@ export default function NotificationButton() {
         <Button
           size="icon"
           variant="outline"
-          className="relative data-[state=open]:bg-accent rounded-lg"
+          className="relative rounded-lg data-[state=open]:bg-accent"
           aria-label="Open notifications"
         >
           <Bell size={16} strokeWidth={2} aria-hidden="true" />
@@ -100,7 +100,7 @@ export default function NotificationButton() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-1 rounded-lg" align="end">
+      <PopoverContent className="w-80 rounded-lg p-1" align="end">
         <div className="flex items-baseline justify-between gap-4 px-3 py-2">
           <div className="text-sm font-semibold">
             Your <span className="text-primary">Notifications</span>
@@ -122,7 +122,7 @@ export default function NotificationButton() {
         />
         <ErrorBoundary
           fallback={
-            <div className="px-3 py-4 text-center text-destructive text-sm">
+            <div className="px-3 py-4 text-center text-sm text-destructive">
               Failed to load notifications.
               <br />
               <span className="text-xs text-muted-foreground">
@@ -133,14 +133,14 @@ export default function NotificationButton() {
         >
           <Suspense fallback={<NotificationSkeletonList />}>
             {notifications.length === 0 ? (
-              <div className="px-3 py-4 text-center text-muted-foreground text-sm">
+              <div className="px-3 py-4 text-center text-sm text-muted-foreground">
                 No notifications
               </div>
             ) : (
               notifications.map((notification) => (
                 <button
                   key={notification.id}
-                  className="w-full text-left rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
+                  className="w-full rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
                   onClick={() =>
                     handleNotificationClick(
                       notification.id,
@@ -151,7 +151,7 @@ export default function NotificationButton() {
                 >
                   <div className="relative flex items-start gap-3 pe-3">
                     <Image
-                      className="size-9 rounded-md object-cover bg-muted"
+                      className="size-9 rounded-md bg-muted object-cover"
                       src={notification.fromUser?.image ?? ""}
                       width={36}
                       height={36}

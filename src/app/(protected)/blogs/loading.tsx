@@ -3,13 +3,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogsPageSkeletonLoading() {
   return (
-    <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+    <main className="container mx-auto space-y-6 p-6 lg:space-y-8 lg:p-8">
       {/* Banner Skeleton */}
-      <div className="rounded-3xl bg-linear-to-r from-primary/5 via-background/50 to-background dark:from-primary/10 dark:via-background/90 dark:to-background p-6 sm:p-8 lg:p-12">
-        <div className="flex items-center gap-4 mb-4">
+      <div className="rounded-3xl bg-linear-to-r from-primary/5 via-background/50 to-background p-6 sm:p-8 lg:p-12 dark:from-primary/10 dark:via-background/90 dark:to-background">
+        <div className="mb-4 flex items-center gap-4">
           <Skeleton className="h-6 w-48" /> {/* Badge */}
         </div>
-        <Skeleton className="h-8 w-64 mb-4" /> {/* Title */}
+        <Skeleton className="mb-4 h-8 w-64" /> {/* Title */}
         <Skeleton className="h-6 w-3/4" /> {/* Description */}
       </div>
 

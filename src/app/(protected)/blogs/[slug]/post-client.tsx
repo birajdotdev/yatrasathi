@@ -39,14 +39,14 @@ export default function PostClient({ blog }: PostClientProps) {
   const [user] = api.user.getCurrentUser.useSuspenseQuery();
   const isAuthor = author?.id === user?.id;
   return (
-    <main className="container mx-auto px-4 py-8 max-w-4xl">
+    <main className="container mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-6">
+        <div className="mb-6 flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             asChild
-            className="rounded-full group"
+            className="group rounded-full"
           >
             <Link href="/blogs">
               <ArrowLeft className="mr-1 h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" />
@@ -55,11 +55,11 @@ export default function PostClient({ blog }: PostClientProps) {
           </Button>
         </div>
 
-        <h1 className="text-4xl font-bold mt-6 mb-6 leading-tight">
+        <h1 className="mt-6 mb-6 text-4xl leading-tight font-bold">
           {title} <span className="text-primary">{subtitle}</span>
         </h1>
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarImage src={author?.image ?? ""} alt={author?.name} />
@@ -86,11 +86,11 @@ export default function PostClient({ blog }: PostClientProps) {
           </div>
         </div>
 
-        <div className="aspect-[2/1] w-full bg-muted rounded-xl overflow-hidden mb-10">
+        <div className="mb-10 aspect-[2/1] w-full overflow-hidden rounded-xl bg-muted">
           <Image
             src={post.featuredImage ?? ""}
             alt={post.title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             width={1000}
             height={1000}
             priority
@@ -98,13 +98,13 @@ export default function PostClient({ blog }: PostClientProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
         <ReactionButtons
           postId={post.id}
           onCommentClick={handleCommentClick}
           postUrl={`${env.NEXT_PUBLIC_BASE_URL}/blogs/${post.slug}`}
         />
-        <div className="md:col-span-11 order-1 md:order-2">
+        <div className="order-1 md:order-2 md:col-span-11">
           <Editor
             initialContent={post.content as PartialBlock[]}
             editable={false}

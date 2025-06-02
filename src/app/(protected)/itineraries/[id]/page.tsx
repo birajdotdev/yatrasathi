@@ -58,7 +58,7 @@ export default async function ItineraryViewPage({
       <ItineraryHeader itinerary={itinerary} />
       <main className="container mx-auto max-w-4xl">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">
               Your <span className="text-primary">Itinerary</span>
             </h2>

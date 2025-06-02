@@ -25,7 +25,7 @@ export default async function BlogsPage() {
 
   return (
     <HydrateClient>
-      <main className="container mx-auto p-6 lg:p-8 space-y-6 lg:space-y-8">
+      <main className="container mx-auto space-y-6 p-6 lg:space-y-8 lg:p-8">
         <Banner
           badgeText="Travel Blogs"
           title="Your Blogs"

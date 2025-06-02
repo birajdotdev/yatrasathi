@@ -92,11 +92,11 @@ export default function ActivityCard({
   };
 
   return (
-    <Card className="group p-0 overflow-hidden md:h-[180px]">
-      <div className="flex flex-col md:flex-row h-full">
+    <Card className="group overflow-hidden p-0 md:h-[180px]">
+      <div className="flex h-full flex-col md:flex-row">
         {/* Image section with consistent aspect ratio across all screens */}
         {activity.image ? (
-          <div className="relative w-full md:w-1/3 aspect-video overflow-hidden flex-shrink-0">
+          <div className="relative aspect-video w-full flex-shrink-0 overflow-hidden md:w-1/3">
             <Image
               src={activity.image}
               alt={activity.title}
@@ -109,10 +109,10 @@ export default function ActivityCard({
         ) : null}
 
         {/* Content section with padding */}
-        <div className="p-4 flex-grow flex flex-col overflow-hidden md:overflow-auto">
+        <div className="flex flex-grow flex-col overflow-hidden p-4 md:overflow-auto">
           {/* Title and edit button */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-medium text-base line-clamp-1">
+            <h3 className="line-clamp-1 text-base font-medium">
               {activity.title}
             </h3>
             <div className="flex">
@@ -186,7 +186,7 @@ export default function ActivityCard({
           </div>
 
           {/* Time and location */}
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <TimeIndicator
               startTime={activity.startTime}
               endTime={activity.endTime}
@@ -200,7 +200,7 @@ export default function ActivityCard({
 
           {/* Description (if any) */}
           {activity.description && (
-            <p className="mt-3 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+            <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {activity.description}
             </p>
           )}

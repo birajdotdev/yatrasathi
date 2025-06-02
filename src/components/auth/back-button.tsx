@@ -14,7 +14,7 @@ export default function BackButton() {
       variant="ghost"
       size="icon"
       onClick={() => router.push("/")}
-      className="absolute left-4 top-4 z-50"
+      className="absolute top-4 left-4 z-50"
     >
       <ChevronLeft className="h-5 w-5" />
       <span className="sr-only">Back</span>

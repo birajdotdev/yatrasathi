@@ -30,8 +30,8 @@ export default function BlogCard({
         <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         {/* Category badge */}
-        <div className="absolute left-4 top-4">
-          <div className="inline-flex rounded-full bg-background/80 px-3 py-1 text-xs font-medium backdrop-blur-xs transition-colors capitalize">
+        <div className="absolute top-4 left-4">
+          <div className="inline-flex rounded-full bg-background/80 px-3 py-1 text-xs font-medium capitalize backdrop-blur-xs transition-colors">
             {post.category?.split("_").join(" ")}
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function BlogCard({
           <h3 className="mb-2 text-lg font-semibold tracking-tight text-foreground group-hover:text-primary">
             {post.title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="line-clamp-2 text-sm text-muted-foreground">
             {post.excerpt}
           </p>
         </div>

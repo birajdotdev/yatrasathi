@@ -29,11 +29,11 @@ export default function CommentsSection({
 
   return (
     <div className="mt-10">
-      <h3 className="text-xl font-bold mb-6">Comments ({comments.length})</h3>
+      <h3 className="mb-6 text-xl font-bold">Comments ({comments.length})</h3>
 
       <Suspense
         fallback={
-          <div className="space-y-4 mb-8">
+          <div className="mb-8 space-y-4">
             <CommentSkeleton />
             <CommentSkeleton />
             <CommentSkeleton />
@@ -41,9 +41,9 @@ export default function CommentsSection({
         }
       >
         <ErrorBoundaryWrapper fallbackMessage="Error loading comments">
-          <div className="space-y-4 mb-8">
+          <div className="mb-8 space-y-4">
             {comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-5">
+              <p className="py-5 text-center text-sm text-muted-foreground">
                 No comments yet
               </p>
             ) : (
@@ -62,8 +62,8 @@ export default function CommentsSection({
 
       <Separator className="my-6" />
 
-      <div className="bg-muted/30 p-6 rounded-lg" id="comments-section">
-        <h4 className="font-medium mb-4">Add a comment</h4>
+      <div className="rounded-lg bg-muted/30 p-6" id="comments-section">
+        <h4 className="mb-4 font-medium">Add a comment</h4>
         <div className="flex gap-4">
           <Avatar>
             <AvatarImage
