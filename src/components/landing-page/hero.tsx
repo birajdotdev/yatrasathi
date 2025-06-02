@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { SignUpButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
@@ -101,8 +102,8 @@ export default function Hero() {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </SignUpButton>
-              <Button size="lg" variant="outline">
-                Learn More
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/terms-of-service">Learn More</Link>
               </Button>
             </div>
           </motion.div>
