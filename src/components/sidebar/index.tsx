@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 
 import { RedirectToSignIn } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 import SidebarMain from "@/components/sidebar/sidebar-main";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
@@ -16,7 +16,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { auth } from "@/server/auth";
 
 export default async function AppSidebar({
   ...props

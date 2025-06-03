@@ -1,7 +1,11 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { createSelectSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 import { z } from "zod";
 
 import {
@@ -13,106 +17,79 @@ import { reminderPreferences, users } from "@/server/db/schema";
 import { comments, likes, posts } from "@/server/db/schema/blog";
 import { itineraries } from "@/server/db/schema/itinerary";
 
-const userSchema = createSelectSchema(users);
-const userCreateSchema = userSchema.omit({
-  id: true,
-  role: true,
-  updatedAt: true,
-  createdAt: true,
-});
-const userUpdateSchema = userCreateSchema
-  .partial()
-  .required({ clerkUserId: true });
-
 export const userRouter = createTRPCRouter({
   create: publicProcedure
-    .input(userCreateSchema)
+    .input(createInsertSchema(users))
     .mutation(async ({ ctx, input }) => {
       try {
-        const [newUser] = await ctx.db
+        await ctx.db
           .insert(users)
           .values(input)
-          .returning()
           .onConflictDoUpdate({
             target: [users.clerkUserId],
             set: input,
           });
-
-        if (!newUser) {
-          throw new Error(
-            "User creation failed - no user returned from database"
-          );
-        }
-
-        return newUser;
       } catch (error) {
-        throw new Error(
-          `Failed to create user: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create user",
+          cause: error,
+        });
       }
     }),
 
   update: publicProcedure
-    .input(userUpdateSchema)
+    .input(createUpdateSchema(users).required({ clerkUserId: true }))
     .mutation(async ({ ctx, input }) => {
-      if (Object.keys(input).length === 0) {
-        throw new Error("At least one field must be provided for update");
-      }
-
       try {
-        const [updatedUser] = await ctx.db
+        await ctx.db
           .update(users)
           .set(input)
-          .where(eq(users.clerkUserId, input.clerkUserId))
-          .returning();
-
-        if (!updatedUser) {
-          throw new Error("User not found or update failed");
-        }
-
-        return updatedUser;
+          .where(eq(users.clerkUserId, input.clerkUserId));
       } catch (error) {
-        throw new Error(
-          `Failed to update user: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update user",
+          cause: error,
+        });
       }
     }),
 
   delete: publicProcedure
-    .input(userSchema.pick({ clerkUserId: true }))
+    .input(createSelectSchema(users).pick({ clerkUserId: true }))
     .mutation(async ({ ctx, input }) => {
       // Find the user by clerkUserId to get the internal user id
-      const user = await ctx.db.query.users.findFirst({
-        where: eq(users.clerkUserId, input.clerkUserId),
-      });
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const userId = user.id;
-      // Use a transaction to ensure all deletions succeed or fail together
-      const deletedUser = await ctx.db.transaction(async (trx) => {
-        // Delete likes
-        await trx.delete(likes).where(eq(likes.userId, userId));
-        // Delete comments
-        await trx.delete(comments).where(eq(comments.authorId, userId));
-        // Delete posts
-        await trx.delete(posts).where(eq(posts.authorId, userId));
-        // Delete itineraries
-        await trx
-          .delete(itineraries)
-          .where(eq(itineraries.createdById, userId));
-        // reminderPreferences and reminderLogs are handled by DB cascade
-        // Finally, delete the user
-        const [deleted] = await trx
-          .delete(users)
-          .where(eq(users.id, userId))
-          .returning();
-        if (!deleted) {
-          throw new Error("User not found or already deleted");
+      try {
+        const user = await ctx.db.query.users.findFirst({
+          where: eq(users.clerkUserId, input.clerkUserId),
+        });
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
         }
-        return deleted;
-      });
-      return deletedUser;
+        const userId = user.id;
+        // Use a transaction to ensure all deletions succeed or fail together
+        await ctx.db.transaction(async (trx) => {
+          // Delete likes
+          await trx.delete(likes).where(eq(likes.userId, userId));
+          // Delete comments
+          await trx.delete(comments).where(eq(comments.authorId, userId));
+          // Delete posts
+          await trx.delete(posts).where(eq(posts.authorId, userId));
+          // Delete itineraries
+          await trx
+            .delete(itineraries)
+            .where(eq(itineraries.createdById, userId));
+          // reminderPreferences and reminderLogs are handled by DB cascade
+          // Finally, delete the user
+          await trx.delete(users).where(eq(users.id, userId));
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete user",
+          cause: error,
+        });
+      }
     }),
 
   getReminderPreferences: protectedProcedure.query(async ({ ctx }) => {
@@ -178,7 +155,7 @@ export const userRouter = createTRPCRouter({
 
   // Get user by id
   getUserById: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(createSelectSchema(users).pick({ id: true }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await ctx.db.query.users.findFirst({

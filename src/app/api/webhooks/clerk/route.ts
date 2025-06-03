@@ -4,7 +4,6 @@ import { type WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 
 import { env } from "@/env";
-import { syncClerkUserMetadata } from "@/server/auth";
 import { api } from "@/trpc/server";
 
 export const dynamic = "force-dynamic";
@@ -58,14 +57,14 @@ export async function POST(req: Request) {
         return new Response("Error: No name found", { status: 400 });
 
       if (evt.type === "user.created") {
-        const user = await api.user.create({
+        await api.user.create({
           clerkUserId: evt.data.id,
           email,
           name,
           image: evt.data.image_url,
         });
 
-        await syncClerkUserMetadata(user);
+        // await syncClerkUserMetadata(user);
       } else {
         // Update user in database
         await api.user.update({
