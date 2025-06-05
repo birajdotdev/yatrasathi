@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { SignUpButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -96,12 +95,12 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <SignUpButton mode="modal">
+              <Link href="/sign-up">
                 <Button size="lg" className="group cursor-pointer">
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
-              </SignUpButton>
+              </Link>
               <Button size="lg" variant="outline" asChild>
                 <Link href="/terms-of-service">Learn More</Link>
               </Button>

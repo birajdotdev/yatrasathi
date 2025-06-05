@@ -23,7 +23,7 @@ export const itineraries = pgTable(
     endDate: timestamp("end_date"),
 
     // Relations
-    createdById: uuid("created_by_id")
+    createdById: text("created_by_id")
       .notNull()
       .references(() => users.id),
 

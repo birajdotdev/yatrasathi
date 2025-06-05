@@ -1,5 +1,10 @@
-import { SignOutButton } from "@clerk/nextjs";
+"use client";
+
+import { useRouter } from "next/navigation";
+
+import { useMutation } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -13,12 +18,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
 
-export default function LogoutButton({
-  setIsOpen,
-}: {
-  setIsOpen: (isOpen: boolean) => void;
-}) {
+export default function LogoutButton() {
+  const router = useRouter();
+
+  const logoutMutation = useMutation({
+    mutationFn: () => authClient.signOut(),
+    onSuccess: () => {
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error("Failed to log out");
+      console.error(error.message);
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -40,15 +55,12 @@ export default function LogoutButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <SignOutButton>
-            <AlertDialogAction
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Log out
-            </AlertDialogAction>
-          </SignOutButton>
+          <AlertDialogAction
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
+          >
+            Log out
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

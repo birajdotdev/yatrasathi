@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
-import { Bell, ChevronsUpDown, CreditCard, Sparkles } from "lucide-react";
+import { Bell, ChevronsUpDown, CreditCard, Sparkles, User } from "lucide-react";
 
 import ReminderPreferencesDialog from "@/components/notifications/reminder-preferences-dialog";
-import AccountButton from "@/components/sidebar/account-button";
-import LogoutButton from "@/components/sidebar/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,6 +23,8 @@ import {
 } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 
+import LogoutButton from "./logout-button";
+
 interface SidebarUserProps {
   name: string;
   imageUrl: string;
@@ -34,12 +33,11 @@ interface SidebarUserProps {
 
 export function SidebarUser({ name, imageUrl, isProUser }: SidebarUserProps) {
   const { isMobile } = useSidebar();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -97,7 +95,12 @@ export function SidebarUser({ name, imageUrl, isProUser }: SidebarUserProps) {
               </>
             )}
             <DropdownMenuGroup>
-              <AccountButton />
+              <DropdownMenuItem asChild>
+                <Link href="/account">
+                  <User />
+                  Account
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/subscription">
                   <CreditCard />
@@ -116,7 +119,7 @@ export function SidebarUser({ name, imageUrl, isProUser }: SidebarUserProps) {
               </ReminderPreferencesDialog>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <LogoutButton setIsOpen={setIsOpen} />
+            <LogoutButton />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

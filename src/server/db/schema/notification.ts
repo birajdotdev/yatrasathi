@@ -10,7 +10,7 @@ export const notifications = pgTable(
   "notification",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").notNull(), // e.g., "like", "comment"
@@ -18,7 +18,7 @@ export const notifications = pgTable(
     commentId: uuid("comment_id").references(() => comments.id, {
       onDelete: "cascade",
     }),
-    fromUserId: uuid("from_user_id")
+    fromUserId: text("from_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     read: boolean("read").notNull().default(false),

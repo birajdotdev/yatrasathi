@@ -47,7 +47,7 @@ export const posts = pgTable(
     ),
     status: postStatusEnum("status").notNull().default("draft"),
     category: categoryEnum("category").default("other"),
-    authorId: uuid("author_id")
+    authorId: text("author_id")
       .notNull()
       .references(() => users.id),
     createdAt,
@@ -70,7 +70,7 @@ export const comments = pgTable(
     postId: uuid("post_id")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    authorId: uuid("author_id")
+    authorId: text("author_id")
       .notNull()
       .references(() => users.id),
     createdAt,
@@ -90,7 +90,7 @@ export const likes = pgTable(
     postId: uuid("post_id")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id),
     createdAt,

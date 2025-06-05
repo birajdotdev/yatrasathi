@@ -1,4 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import {
@@ -22,13 +21,7 @@ export const userRouter = createTRPCRouter({
     .input(createInsertSchema(users))
     .mutation(async ({ ctx, input }) => {
       try {
-        await ctx.db
-          .insert(users)
-          .values(input)
-          .onConflictDoUpdate({
-            target: [users.clerkUserId],
-            set: input,
-          });
+        await ctx.db.insert(users).values(input);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -38,14 +31,11 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  update: publicProcedure
-    .input(createUpdateSchema(users).required({ clerkUserId: true }))
+  update: protectedProcedure
+    .input(createUpdateSchema(users))
     .mutation(async ({ ctx, input }) => {
       try {
-        await ctx.db
-          .update(users)
-          .set(input)
-          .where(eq(users.clerkUserId, input.clerkUserId));
+        await ctx.db.update(users).set(input).where(eq(users.id, ctx.user.id));
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -55,13 +45,13 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  delete: publicProcedure
-    .input(createSelectSchema(users).pick({ clerkUserId: true }))
+  delete: protectedProcedure
+    .input(createSelectSchema(users).pick({ id: true }))
     .mutation(async ({ ctx, input }) => {
       // Find the user by clerkUserId to get the internal user id
       try {
         const user = await ctx.db.query.users.findFirst({
-          where: eq(users.clerkUserId, input.clerkUserId),
+          where: eq(users.id, input.id),
         });
         if (!user) {
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
@@ -177,7 +167,6 @@ export const userRouter = createTRPCRouter({
 
   getUserStats: protectedProcedure.query(async ({ ctx }) => {
     const user = ctx.user;
-    const clerkUser = await currentUser();
 
     // Get first name only
     const firstName = user.name.split(" ")[0];
@@ -209,14 +198,7 @@ export const userRouter = createTRPCRouter({
     const blogPostsCount = blogPosts.length;
 
     // Clerk first login logic
-    const isFirstLogIn =
-      !!clerkUser?.createdAt &&
-      !!clerkUser?.lastSignInAt &&
-      Math.abs(
-        new Date(clerkUser.createdAt).getTime() -
-          new Date(clerkUser.lastSignInAt).getTime()
-      ) <
-        60 * 1000;
+    const isFirstLogIn = false;
     return {
       firstName,
       isFirstLogIn,

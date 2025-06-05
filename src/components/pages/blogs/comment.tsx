@@ -1,5 +1,3 @@
-import { useAuth } from "@clerk/nextjs";
-import type { UserResource } from "@clerk/types";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,16 +15,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 import { type RouterOutputs, api } from "@/trpc/react";
 
 interface CommentProps {
   comment: RouterOutputs["blog"]["getPostComments"]["comments"][number];
-  user: UserResource | null | undefined;
   postId: string;
 }
 
-export default function Comment({ comment, user, postId }: CommentProps) {
-  const { sessionClaims } = useAuth();
+export default function Comment({ comment, postId }: CommentProps) {
+  const { data: session } = authClient.useSession();
   const utils = api.useUtils();
   const deleteCommentMutation = api.blog.deleteComment.useMutation({
     onSuccess: () => {
@@ -37,7 +35,7 @@ export default function Comment({ comment, user, postId }: CommentProps) {
       console.error(error.message);
     },
   });
-  const isAuthor = user && comment.author?.id === sessionClaims?.dbId;
+  const isAuthor = comment.author?.id === session?.user.id;
   return (
     <div className="group relative flex gap-4 rounded-lg bg-muted/50 p-4">
       <Avatar>
@@ -84,7 +82,7 @@ export default function Comment({ comment, user, postId }: CommentProps) {
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
                 onClick={() =>
                   deleteCommentMutation.mutate({ id: comment.comment.id })
                 }

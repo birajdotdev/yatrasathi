@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -10,8 +11,10 @@ export default async function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { userId } = await auth();
-  if (userId) return redirect("/dashboard");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (session) return redirect("/dashboard");
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { useClerk } from "@clerk/nextjs";
 import {
   CalendarDays,
   CreditCard,
@@ -114,7 +113,6 @@ export default function SearchDialog() {
   const [search, setSearch] = React.useState("");
   const [debouncedSearch] = useDebounce(search, 300);
   const router = useRouter();
-  const { openUserProfile } = useClerk();
 
   // Search itineraries only when dialog is open and search is not empty
   const {
@@ -297,11 +295,7 @@ export default function SearchDialog() {
                     label={action.label}
                     onSelect={() => {
                       setOpen(false);
-                      if (action.label === "Account") {
-                        openUserProfile();
-                      } else {
-                        router.push(action.href);
-                      }
+                      router.push(action.href);
                     }}
                   />
                 )),

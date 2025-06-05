@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import React from "react";
 
 import DashboardNav from "@/components/nav/dashboard-nav";
@@ -16,8 +18,10 @@ export default async function ProtectedLayout({
     void api.user.getReminderPreferences.prefetch(),
     void api.notification.getNotifications.prefetch(),
   ]);
-  const { userId, redirectToSignIn } = await auth();
-  if (!userId) return redirectToSignIn();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) redirect("/sign-in");
 
   return (
     <HydrateClient>

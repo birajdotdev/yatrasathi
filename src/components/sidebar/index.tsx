@@ -1,8 +1,7 @@
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
-
-import { RedirectToSignIn } from "@clerk/nextjs";
-import { auth, currentUser } from "@clerk/nextjs/server";
 
 import SidebarMain from "@/components/sidebar/sidebar-main";
 import { SidebarUser } from "@/components/sidebar/sidebar-user";
@@ -16,16 +15,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { auth } from "@/server/auth";
 
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  const { has } = await auth();
-  const isProUser = has({ plan: "pro" });
-
-  if (user === null) return <RedirectToSignIn />;
+  if (!session) redirect("/sign-in");
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -46,9 +45,9 @@ export default async function AppSidebar({
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser
-          name={user.fullName ?? ""}
-          imageUrl={user.imageUrl}
-          isProUser={isProUser}
+          name={session.user.name}
+          imageUrl={session.user.image ?? ""}
+          isProUser={false}
         />
       </SidebarFooter>
     </Sidebar>

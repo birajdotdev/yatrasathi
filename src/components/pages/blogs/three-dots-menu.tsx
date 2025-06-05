@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useAuth } from "@clerk/nextjs";
 import { Edit, MoreHorizontal, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,12 +25,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
 import { api } from "@/trpc/react";
 
 export default function ThreeDotsMenu() {
   const utils = api.useUtils();
   const params: { slug: string } = useParams();
-  const { sessionClaims } = useAuth();
+  const { data: session } = authClient.useSession();
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 
@@ -81,7 +81,7 @@ export default function ThreeDotsMenu() {
   });
 
   const isDraft = blogPost!.post.status === "draft";
-  const isAuthor = blogPost!.post.authorId === sessionClaims?.dbId;
+  const isAuthor = blogPost!.post.authorId === session?.user.id;
 
   return (
     <>
@@ -140,7 +140,7 @@ export default function ThreeDotsMenu() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
               onClick={() => deletePost({ id: blogPost!.post.id })}
             >
               Delete

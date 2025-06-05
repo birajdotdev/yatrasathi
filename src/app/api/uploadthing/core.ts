@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/only-throw-error */
-import { getAuth } from "@clerk/nextjs/server";
 import { type FileRouter, createUploadthing } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+
+import { auth } from "@/server/auth";
 
 const f = createUploadthing();
 
@@ -12,25 +13,20 @@ export const ourFileRouter = {
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
-      const { userId, sessionClaims } = getAuth(req);
+      const session = await auth.api.getSession({
+        headers: req.headers,
+      });
 
       // If you throw, the user will not be able to upload
-      if (!userId) {
+      if (!session) {
         throw new UploadThingError({
           code: "FORBIDDEN",
           message: "You must be logged in to upload",
         });
       }
 
-      if (!sessionClaims?.dbId || !sessionClaims?.role) {
-        throw new UploadThingError({
-          code: "FORBIDDEN",
-          message: "Your session is missing required claims (dbId and role)",
-        });
-      }
-
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId, dbId: sessionClaims.dbId, role: sessionClaims.role };
+      return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
@@ -39,7 +35,7 @@ export const ourFileRouter = {
       console.log("file url", file.ufsUrl);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.dbId, fileUrl: file.ufsUrl };
+      return { uploadedBy: metadata.userId, fileUrl: file.ufsUrl };
     }),
 } satisfies FileRouter;
 

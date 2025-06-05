@@ -19,7 +19,7 @@ export const reminderPreferences = pgTable(
   "reminder_preference",
   {
     id,
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .unique()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -38,7 +38,7 @@ export const reminderLogs = pgTable(
   "reminder_log",
   {
     id,
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     itineraryId: uuid("itinerary_id")

@@ -2,11 +2,11 @@
 
 import React, { Suspense } from "react";
 
-import { useUser } from "@clerk/nextjs";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Separator } from "@/components/ui/separator";
+import { authClient } from "@/lib/auth-client";
+import { getInitials } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
 import Comment, { CommentSkeleton } from "./comment";
@@ -24,8 +24,7 @@ export default function CommentsSection({
   const [{ comments }] = api.blog.getPostComments.useSuspenseQuery({
     postId,
   });
-
-  const { user } = useUser();
+  const { data: session } = authClient.useSession();
 
   return (
     <div className="mt-10">
@@ -51,7 +50,6 @@ export default function CommentsSection({
                 <Comment
                   key={comment.comment.id}
                   comment={comment}
-                  user={user}
                   postId={postId}
                 />
               ))
@@ -67,10 +65,12 @@ export default function CommentsSection({
         <div className="flex gap-4">
           <Avatar>
             <AvatarImage
-              src={user?.imageUrl ?? ""}
-              alt={user?.fullName ?? ""}
+              src={session?.user.image ?? ""}
+              alt={session?.user.name ?? ""}
             />
-            <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
+            <AvatarFallback>
+              {getInitials(session?.user.name ?? "")}
+            </AvatarFallback>
           </Avatar>
           <CommentForm ref={commentInputRef} postId={postId} />
         </div>

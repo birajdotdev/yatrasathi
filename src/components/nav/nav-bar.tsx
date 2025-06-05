@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
 
 import NavItems from "@/components/nav/nav-items";
@@ -32,10 +31,10 @@ export default function NavBar() {
           <div className="flex items-center space-x-4">
             <ThemeToggle variant="ghost" />
             <Button variant="ghost" asChild>
-              <SignInButton mode="modal">Sign in</SignInButton>
+              <Link href="/sign-in">Sign in</Link>
             </Button>
             <Button asChild>
-              <SignUpButton mode="modal">Sign up</SignUpButton>
+              <Link href="/sign-up">Sign up</Link>
             </Button>
           </div>
         </div>
@@ -70,12 +69,12 @@ export default function NavBar() {
               <SheetFooter className="mt-8 flex-col items-stretch space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:space-x-4">
                 <SheetClose asChild>
                   <Button variant="outline" className="w-full sm:w-auto">
-                    <SignInButton mode="modal">Sign in</SignInButton>
+                    <Link href="/sign-in">Sign in</Link>
                   </Button>
                 </SheetClose>
                 <SheetClose asChild>
                   <Button className="w-full sm:w-auto">
-                    <SignUpButton mode="modal">Sign up</SignUpButton>
+                    <Link href="/sign-up">Sign up</Link>
                   </Button>
                 </SheetClose>
               </SheetFooter>
