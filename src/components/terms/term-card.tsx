@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 
-import { type Term } from "@/data/terms";
+import { type Term } from "@/const/terms";
 
 interface TermCardProps {
   term: Term;

@@ -130,18 +130,6 @@
   }
 }
 
-.bg-light-pattern {
-  background-image: url(/bg-light.svg);
-  background-size: 800px;
-  background-position: center;
-}
-
-.bg-dark-pattern {
-  background-image: url(/bg-dark.svg);
-  background-size: 800px;
-  background-position: center;
-}
-
 .bn-editor {
   background: transparent !important;
 }

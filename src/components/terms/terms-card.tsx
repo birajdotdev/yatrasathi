@@ -5,7 +5,7 @@ import { Compass } from "lucide-react";
 
 import TermCard from "@/components/terms/term-card";
 import { Card, CardContent } from "@/components/ui/card";
-import terms from "@/data/terms";
+import terms from "@/const/terms";
 
 export default function TermsCard() {
   return (

@@ -23,6 +23,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     FACEBOOK_CLIENT_ID: z.string(),
     FACEBOOK_CLIENT_SECRET: z.string(),
+    POLAR_ACCESS_TOKEN: z.string(),
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.string().url(),

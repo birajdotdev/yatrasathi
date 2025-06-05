@@ -11,7 +11,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
-import { navItems } from "@/data/nav-items";
+import { navItems } from "@/const/nav-items";
 
 type SocialItem = {
   icon: LucideIcon;

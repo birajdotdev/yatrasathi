@@ -5,8 +5,6 @@ import { and, eq, gt, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { fetchImageFromUnsplash } from "@/lib/unsplash";
-import { aiGeneratedItinerarySchema } from "@/lib/zod/ai-itinerary";
-import { itineraryFormSchema } from "@/lib/zod/itinerary";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -19,6 +17,8 @@ import {
   destinations,
   itineraries,
 } from "@/server/db/schema/itinerary";
+import { aiGeneratedItinerarySchema } from "@/zod/ai-itinerary";
+import { itineraryFormSchema } from "@/zod/itinerary";
 
 // Activity schema for validation
 const activityInputSchema = z.object({

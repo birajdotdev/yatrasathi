@@ -19,12 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  type ItineraryFormSchema,
-  itineraryFormSchema,
-} from "@/lib/zod/itinerary";
 import type { Place } from "@/server/api/routers/places";
 import { api } from "@/trpc/react";
+import { type ItineraryFormSchema, itineraryFormSchema } from "@/zod/itinerary";
 
 // The form submission data type with properly typed destination
 type ItineraryFormData = {

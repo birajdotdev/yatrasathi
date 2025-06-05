@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import { generateExcerpt } from "@/lib/utils";
-import { postInsertSchema, postUpdateSchema } from "@/lib/zod/post";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -18,6 +17,7 @@ import {
   posts,
   users,
 } from "@/server/db/schema";
+import { postInsertSchema, postUpdateSchema } from "@/zod/post";
 
 // Helper function to generate a slug from a title
 const generateSlug = (title: string) => {
