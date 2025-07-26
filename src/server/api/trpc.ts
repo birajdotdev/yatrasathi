@@ -104,6 +104,16 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+// Cached user query function that persists across middleware calls
+const getCachedUser = cache(async (clerkUserId: string) => {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkUserId, clerkUserId))
+    .limit(1);
+  return user;
+});
+
 // Check if the user is signed in
 // Otherwise, throw an UNAUTHORIZED code
 const isAuthed = t.middleware(async ({ next, ctx }) => {
@@ -115,13 +125,7 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   }
 
   const clerkUserId = ctx.auth.userId;
-  const [user] = await cache(async () =>
-    ctx.db
-      .select()
-      .from(users)
-      .where(eq(users.clerkUserId, clerkUserId))
-      .limit(1)
-  )();
+  const user = await getCachedUser(clerkUserId);
 
   if (!user) {
     throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });

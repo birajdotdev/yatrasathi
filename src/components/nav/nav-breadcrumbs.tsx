@@ -3,6 +3,8 @@
 import { useParams, usePathname } from "next/navigation";
 import React from "react";
 
+import { skipToken } from "@tanstack/react-query";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,10 +19,10 @@ export default function NavBreadcrumbs() {
   const pathname = usePathname();
   const params = useParams();
 
-  const { id } = params as { id: string };
+  const id = params.id as string | undefined;
 
   // Move the query to the component level
-  const { data: itinerary } = api.itinerary.getById.useQuery(id, {
+  const { data: itinerary } = api.itinerary.getById.useQuery(id ?? skipToken, {
     enabled: !!id && pathname.includes("itineraries"), // Disable query if there's no ID or we're not in itineraries path
   });
 
@@ -49,10 +51,13 @@ export default function NavBreadcrumbs() {
       if (segment === "edit") {
         return "Edit";
       }
-      return segment
-        .replace(/-/g, " ")
-        .split(" ")
-        .slice(0, -1) // Remove the last word
+      const words = segment.replace(/-/g, " ").split(" ");
+      // Only remove the last word if it's a numeric ID (consists only of digits)
+      const lastWord = words[words.length - 1];
+      const wordsToUse =
+        lastWord && /^\d+$/.test(lastWord) ? words.slice(0, -1) : words;
+
+      return wordsToUse
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
     } else {
