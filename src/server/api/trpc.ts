@@ -6,13 +6,15 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { auth } from "@clerk/nextjs/server";
+import { cache } from "react";
+
 import { TRPCError, initTRPC } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { ratelimit } from "@/lib/ratelimit";
+import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 
 import { users } from "../db/schema";
@@ -30,13 +32,9 @@ import { users } from "../db/schema";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const { userId, has } = await auth();
-  const isProUser = has({ plan: "pro" });
-
   return {
     db,
-    clerkUserId: userId,
-    isProUser,
+    auth: await auth(),
     ...opts,
   };
 };
@@ -106,6 +104,42 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+// Cached user query function that persists across middleware calls
+const getCachedUser = cache(async (clerkUserId: string) => {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkUserId, clerkUserId))
+    .limit(1);
+  return user;
+});
+
+// Check if the user is signed in
+// Otherwise, throw an UNAUTHORIZED code
+const isAuthed = t.middleware(async ({ next, ctx }) => {
+  if (!ctx.auth.userId || typeof ctx.auth.userId !== "string") {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be signed in to access this resource",
+    });
+  }
+
+  const clerkUserId = ctx.auth.userId;
+  const user = await getCachedUser(clerkUserId);
+
+  if (!user) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      auth: ctx.auth,
+      user,
+    },
+  });
+});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -126,29 +160,9 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
+  .use(isAuthed)
   .use(async ({ ctx, next }) => {
-    if (!ctx.clerkUserId) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "You must be logged in to access this resource",
-      });
-    }
-
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.clerkUserId, ctx.clerkUserId))
-      .limit(1);
-
-    if (!user) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "You must be logged in to access this resource",
-      });
-    }
-
-    const { success } = await ratelimit.limit(user.id);
-
+    const { success } = await ratelimit.limit(ctx.user.id);
     if (!success) {
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
@@ -156,10 +170,5 @@ export const protectedProcedure = t.procedure
       });
     }
 
-    return next({
-      ctx: {
-        ...ctx,
-        user,
-      },
-    });
+    return next();
   });

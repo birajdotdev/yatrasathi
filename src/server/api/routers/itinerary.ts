@@ -623,8 +623,9 @@ export const itineraryRouter = createTRPCRouter({
     .input(itineraryFormSchema)
     .mutation(async ({ ctx, input }) => {
       // --- AI USAGE LIMIT LOGIC ---
+      const isProUser = ctx.auth.has({ plan: "pro" });
       // Only limit free users
-      if (!ctx.isProUser) {
+      if (!isProUser) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const todayStr = today.toISOString().slice(0, 10); // YYYY-MM-DD
