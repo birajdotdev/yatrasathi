@@ -13,16 +13,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { auth, currentUser } from "@/server/auth";
+import { currentUser } from "@/server/auth";
 import { HydrateClient, api } from "@/trpc/server";
 
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const user = await currentUser();
-  const { userId, has, redirectToSignIn } = await auth();
-  if (user === null || userId === null) return redirectToSignIn();
-  const isProUser = has({ plan: "pro" });
+  if (!user) return null;
 
   void api.user.getReminderPreferences.prefetch();
 
@@ -47,8 +45,8 @@ export default async function AppSidebar({
         <SidebarFooter>
           <SidebarUser
             name={user.fullName ?? ""}
+            username={user?.username ?? ""}
             imageUrl={user.imageUrl}
-            isProUser={isProUser}
           />
         </SidebarFooter>
       </Sidebar>
