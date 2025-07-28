@@ -13,35 +13,30 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { HydrateClient, api } from "@/trpc/server";
 
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  void api.user.getReminderPreferences.prefetch();
-
   return (
-    <HydrateClient>
-      <Sidebar variant="inset" {...props}>
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/dashboard">
-                <SidebarMenuButton size="lg" asChild>
-                  <Logo className="h-12 w-auto" />
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMain />
-          {/* <SidebarSecondary className="mt-auto" /> */}
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarUser />
-        </SidebarFooter>
-      </Sidebar>
-    </HydrateClient>
+    <Sidebar variant="inset" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Link href="/dashboard">
+              <SidebarMenuButton size="lg" asChild>
+                <Logo className="h-12 w-auto" />
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarMain />
+        {/* <SidebarSecondary className="mt-auto" /> */}
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarUser />
+      </SidebarFooter>
+    </Sidebar>
   );
 }
