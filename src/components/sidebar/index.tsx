@@ -13,15 +13,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { currentUser } from "@/server/auth";
 import { HydrateClient, api } from "@/trpc/server";
 
 export default async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const user = await currentUser();
-  if (!user) return null;
-
   void api.user.getReminderPreferences.prefetch();
 
   return (
@@ -43,11 +39,7 @@ export default async function AppSidebar({
           {/* <SidebarSecondary className="mt-auto" /> */}
         </SidebarContent>
         <SidebarFooter>
-          <SidebarUser
-            name={user.fullName ?? ""}
-            username={user?.username ?? ""}
-            imageUrl={user.imageUrl}
-          />
+          <SidebarUser />
         </SidebarFooter>
       </Sidebar>
     </HydrateClient>

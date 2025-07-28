@@ -1,9 +1,14 @@
 import { headers } from "next/headers";
 
 import { type WebhookEvent } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 import { Webhook } from "svix";
 
 import { env } from "@/env";
+import { clerk } from "@/lib/clerk";
+import { generateUniqueUsername } from "@/lib/username";
+import { db } from "@/server/db";
+import { users } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 
 export const dynamic = "force-dynamic";
@@ -57,22 +62,36 @@ export async function POST(req: Request) {
         return new Response("Error: No name found", { status: 400 });
 
       if (evt.type === "user.created") {
-        await api.user.create({
-          clerkUserId: evt.data.id,
-          email,
-          name,
-          image: evt.data.image_url,
+        // Generate unique username for new user
+        const username = await generateUniqueUsername(name);
+
+        // Update username in clerk user data
+        await clerk.users.updateUser(evt.data.id, {
+          username,
         });
 
-        // await syncClerkUserMetadata(user);
-      } else {
-        // Update user in database
-        await api.user.update({
+        // Insert new user into database
+        await db.insert(users).values({
           clerkUserId: evt.data.id,
           email,
           name,
+          username,
           image: evt.data.image_url,
         });
+      } else {
+        if (!evt.data.username)
+          return new Response("Error: No username found", { status: 400 });
+
+        // Update existing user with new details
+        await db
+          .update(users)
+          .set({
+            email,
+            name,
+            username: evt.data.username,
+            image: evt.data.image_url,
+          })
+          .where(eq(users.clerkUserId, evt.data.id));
       }
       break;
     }
