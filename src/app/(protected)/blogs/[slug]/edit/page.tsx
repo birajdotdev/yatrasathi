@@ -14,10 +14,7 @@ interface UpdateBlogPageProps {
 
 export default async function UpdateBlogPage({ params }: UpdateBlogPageProps) {
   const { slug } = await params;
-  await Promise.all([
-    void api.blog.getCategories.prefetch(),
-    void api.blog.getPostBySlug.prefetch({ slug }),
-  ]);
+  void api.blog.getPostBySlug.prefetch({ slug });
 
   return (
     <section className="container mx-auto p-6 lg:p-8">

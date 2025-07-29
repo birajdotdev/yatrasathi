@@ -1,4 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
@@ -9,6 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { currentUser } from "@/server/auth";
 import { reminderPreferences, users } from "@/server/db/schema";
 
 export const userRouter = createTRPCRouter({

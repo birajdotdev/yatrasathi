@@ -140,6 +140,18 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   });
 });
 
+const ratelimitMiddleware = t.middleware(async ({ next, ctx }) => {
+  const { success } = await ratelimit.limit(ctx.auth.userId!);
+  if (!success) {
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "You have exceeded the rate limit",
+    });
+  }
+
+  return next();
+});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -161,14 +173,4 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(isAuthed)
-  .use(async ({ ctx, next }) => {
-    const { success } = await ratelimit.limit(ctx.user.id);
-    if (!success) {
-      throw new TRPCError({
-        code: "TOO_MANY_REQUESTS",
-        message: "You have exceeded the rate limit",
-      });
-    }
-
-    return next();
-  });
+  .use(ratelimitMiddleware);

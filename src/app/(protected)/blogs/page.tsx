@@ -9,13 +9,15 @@ import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blogs",
   description: "Share your adventures and read about others' experiences",
 };
 
-export default async function BlogsPage() {
-  await api.blog.getUserPosts.prefetch({});
+export default function BlogsPage() {
+  void api.blog.getUserPosts.prefetch({});
 
   const tabOptions = [
     { value: "all", label: "All" },
