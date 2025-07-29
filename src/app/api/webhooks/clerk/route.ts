@@ -1,15 +1,13 @@
 import { headers } from "next/headers";
 
-import { type WebhookEvent } from "@clerk/nextjs/server";
+import { type WebhookEvent, clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { Webhook } from "svix";
 
 import { env } from "@/env";
-import { clerk } from "@/lib/clerk";
 import { generateUniqueUsername } from "@/lib/username";
 import { db } from "@/server/db";
-import { users } from "@/server/db/schema";
-import { api } from "@/trpc/server";
+import { comments, itineraries, likes, posts, users } from "@/server/db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -62,43 +60,107 @@ export async function POST(req: Request) {
         return new Response("Error: No name found", { status: 400 });
 
       if (evt.type === "user.created") {
-        // Generate unique username for new user
-        const username = await generateUniqueUsername(name);
+        try {
+          // Use database transaction to ensure atomicity
+          await db.transaction(async (tx) => {
+            // Generate unique username for new user
+            const username = await generateUniqueUsername(name);
 
-        // Update username in clerk user data
-        await clerk.users.updateUser(evt.data.id, {
-          username,
-        });
+            // Update username in clerk user data
+            const clerk = await clerkClient();
+            await clerk.users.updateUser(evt.data.id, {
+              username,
+            });
 
-        // Insert new user into database
-        await db.insert(users).values({
-          clerkUserId: evt.data.id,
-          email,
-          name,
-          username,
-          image: evt.data.image_url,
-        });
+            // Insert new user into database
+            await tx.insert(users).values({
+              clerkUserId: evt.data.id,
+              email,
+              name,
+              username,
+              image: evt.data.image_url,
+            });
+          });
+        } catch (error) {
+          console.error("Error creating user:", error);
+          return new Response("Error: Failed to create user", {
+            status: 500,
+          });
+        }
       } else {
         if (!evt.data.username)
           return new Response("Error: No username found", { status: 400 });
 
-        // Update existing user with new details
-        await db
-          .update(users)
-          .set({
-            email,
-            name,
-            username: evt.data.username,
-            image: evt.data.image_url,
-          })
-          .where(eq(users.clerkUserId, evt.data.id));
+        try {
+          // Check if user exists before updating
+          const existingUser = await db
+            .select()
+            .from(users)
+            .where(eq(users.clerkUserId, evt.data.id))
+            .limit(1);
+
+          if (existingUser.length === 0) {
+            return new Response("Error: User not found", {
+              status: 404,
+            });
+          }
+
+          // Update existing user with new details
+          await db
+            .update(users)
+            .set({
+              email,
+              name,
+              username: evt.data.username,
+              image: evt.data.image_url,
+            })
+            .where(eq(users.clerkUserId, evt.data.id));
+        } catch (error) {
+          console.error("Error updating user:", error);
+          return new Response("Error: Failed to update user", {
+            status: 500,
+          });
+        }
       }
       break;
     }
     case "user.deleted": {
-      if (evt.data.id !== null) {
+      if (!evt.data.id) {
+        return new Response("Error: Invalid user ID", { status: 400 });
+      }
+
+      try {
         // Delete user from database
-        await api.user.delete({ clerkUserId: evt.data.id! });
+        const user = await db.query.users.findFirst({
+          where: eq(users.clerkUserId, evt.data.id),
+        });
+        if (!user) {
+          return new Response("User not found", {
+            status: 404,
+          });
+        }
+        const userId = user.id;
+        // Use a transaction to ensure all deletions succeed or fail together
+        await db.transaction(async (trx) => {
+          // Delete likes
+          await trx.delete(likes).where(eq(likes.userId, userId));
+          // Delete comments
+          await trx.delete(comments).where(eq(comments.authorId, userId));
+          // Delete posts
+          await trx.delete(posts).where(eq(posts.authorId, userId));
+          // Delete itineraries
+          await trx
+            .delete(itineraries)
+            .where(eq(itineraries.createdById, userId));
+          // reminderPreferences and reminderLogs are handled by DB cascade
+          // Finally, delete the user
+          await trx.delete(users).where(eq(users.id, userId));
+        });
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        return new Response("Error: Failed to delete user", {
+          status: 500,
+        });
       }
       break;
     }

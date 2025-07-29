@@ -42,26 +42,42 @@ export async function generateUniqueUsername(name: string): Promise<string> {
  */
 function createBaseUsername(name: string): string {
   if (!name || name.trim() === "") {
-    return `user${Date.now()}`;
+    const fallback = `user${Date.now().toString().slice(-8)}`;
+    return fallback.substring(0, 15);
   }
 
   // Take the first name and clean it
   const firstName = name.trim().split(" ")[0] ?? "";
 
   // Remove special characters and convert to lowercase
-  let username = firstName
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "")
-    .substring(0, 15); // Limit length
+  let username = firstName.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   // If username is empty after cleaning, use fallback
   if (!username) {
-    username = `user${Date.now()}`;
+    const fallback = `user${Date.now().toString().slice(-8)}`;
+    return fallback.substring(0, 15);
   }
 
-  // Ensure minimum length
+  // Ensure minimum length by adding random numbers
   if (username.length < 3) {
-    username = username + Math.floor(Math.random() * 1000);
+    // Calculate how many characters we need to add
+    const charsNeeded = 3 - username.length;
+    // Generate enough random digits to meet minimum length
+    const randomSuffix = Math.floor(
+      Math.random() * Math.pow(10, Math.max(charsNeeded, 3))
+    ).toString();
+    username = username + randomSuffix;
+  }
+
+  // Limit total length to 15 characters
+  username = username.substring(0, 15);
+
+  // Validate the generated username
+  const validation = validateUsername(username);
+  if (!validation.isValid) {
+    // If validation fails, use a guaranteed valid fallback
+    const fallback = `user${Date.now().toString().slice(-8)}`;
+    return fallback.substring(0, 15);
   }
 
   return username;
@@ -109,19 +125,19 @@ export function validateUsername(username: string): {
     };
   }
 
-  if (cleanUsername.length > 30) {
+  if (cleanUsername.length > 15) {
     return {
       isValid: false,
-      error: "Username must be no more than 30 characters long",
+      error: "Username must be no more than 15 characters long",
     };
   }
 
-  // Check format - only letters, numbers, and underscores
-  const usernameRegex = /^[a-zA-Z0-9_]+$/;
+  // Check format - only letters and numbers
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
   if (!usernameRegex.test(cleanUsername)) {
     return {
       isValid: false,
-      error: "Username can only contain letters, numbers, and underscores",
+      error: "Username can only contain letters and numbers",
     };
   }
 

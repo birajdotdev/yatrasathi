@@ -13,6 +13,7 @@ import { eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+import { ratelimit } from "@/lib/ratelimit";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 
@@ -159,15 +160,15 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(isAuthed);
-// .use(async ({ ctx, next }) => {
-//   const { success } = await ratelimit.limit(ctx.user.id);
-//   if (!success) {
-//     throw new TRPCError({
-//       code: "TOO_MANY_REQUESTS",
-//       message: "You have exceeded the rate limit",
-//     });
-//   }
+  .use(isAuthed)
+  .use(async ({ ctx, next }) => {
+    const { success } = await ratelimit.limit(ctx.user.id);
+    if (!success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "You have exceeded the rate limit",
+      });
+    }
 
-//   return next();
-// });
+    return next();
+  });

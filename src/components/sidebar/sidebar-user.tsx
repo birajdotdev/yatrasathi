@@ -28,12 +28,51 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { getInitials } from "@/lib/utils";
 
+interface UserInfoProps {
+  user: {
+    imageUrl: string;
+    fullName: string | null;
+    username: string | null;
+    emailAddresses: { emailAddress: string }[];
+  };
+  isProUser: boolean;
+}
+
+function UserInfo({ user, isProUser }: UserInfoProps) {
+  return (
+    <>
+      <Avatar className="h-8 w-8 rounded-lg">
+        <AvatarImage src={user.imageUrl} alt={user.fullName ?? "User avatar"} />
+        <AvatarFallback className="rounded-lg">
+          {getInitials(user.fullName ?? "")}
+        </AvatarFallback>
+      </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+        <p className="space-x-2 truncate font-semibold">
+          <span>{user.fullName}</span>
+          <Badge
+            className="h-4 rounded-full px-1.5 py-0 text-[10px] leading-none"
+            variant={isProUser ? "default" : "secondary"}
+          >
+            {isProUser ? "Pro" : "Free"}
+          </Badge>
+        </p>
+        <span className="truncate text-xs">
+          {user.username
+            ? `@${user.username}`
+            : (user.emailAddresses[0]?.emailAddress ?? null)}
+        </span>
+      </div>
+    </>
+  );
+}
+
 export function SidebarUser() {
   const { isMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const { has } = useAuth();
-  const isProUser = has?.({ plan: "pro" });
+  const isProUser = has?.({ plan: "pro" }) ?? false;
 
   const { openUserProfile, user } = useClerk();
 
@@ -50,27 +89,7 @@ export function SidebarUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={user.imageUrl}
-                  alt={user.fullName ?? "User avatar"}
-                />
-                <AvatarFallback className="rounded-lg">
-                  {getInitials(user.fullName ?? "")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <p className="space-x-2 truncate font-semibold">
-                  <span>{user.fullName}</span>
-                  <Badge
-                    className="h-4 rounded-full px-1.5 py-0 text-[10px] leading-none"
-                    variant={isProUser ? "default" : "secondary"}
-                  >
-                    {isProUser ? "Pro" : "Free"}
-                  </Badge>
-                </p>
-                <span className="truncate text-xs">{`@${user.username}`}</span>
-              </div>
+              <UserInfo user={user} isProUser={isProUser} />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -82,27 +101,7 @@ export function SidebarUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage
-                    src={user.imageUrl}
-                    alt={user.fullName ?? "User avatar"}
-                  />
-                  <AvatarFallback className="rounded-lg">
-                    {getInitials(user.fullName ?? "")}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <p className="space-x-2 truncate font-semibold">
-                    <span>{user.fullName}</span>
-                    <Badge
-                      className="h-4 rounded-full px-1.5 py-0 text-[10px] leading-none"
-                      variant={isProUser ? "default" : "secondary"}
-                    >
-                      {isProUser ? "Pro" : "Free"}
-                    </Badge>
-                  </p>
-                  <span className="truncate text-xs">{`@${user.username}`}</span>
-                </div>
+                <UserInfo user={user} isProUser={isProUser} />
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

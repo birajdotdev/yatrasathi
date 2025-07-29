@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export default async function AppSidebar({
+export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
