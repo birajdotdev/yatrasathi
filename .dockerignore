@@ -1,0 +1,10 @@
+.vercel
+.vscode
+node_modules
+.env*
+.git
+.gitignore
+README.md
+Dockerfile*
+docker-compose.yml
+.dockerignore
