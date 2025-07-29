@@ -1,4 +1,7 @@
 import { type Metadata } from "next";
+import { Suspense } from "react";
+
+import { ErrorBoundary } from "react-error-boundary";
 
 import { BlogSection } from "@/components/pages/dashboard/blog-section";
 import { ItinerariesSection } from "@/components/pages/dashboard/itineraries-section";
@@ -23,7 +26,11 @@ export default function DashboardPage() {
   return (
     <HydrateClient>
       <main className="container mx-auto space-y-6 p-6 lg:space-y-8 lg:p-8">
-        <BannerClient />
+        <ErrorBoundary fallback={<div>Error loading dashboard banner</div>}>
+          <Suspense fallback={<div>loading...</div>}>
+            <BannerClient />
+          </Suspense>
+        </ErrorBoundary>
         <ItinerariesSection />
         <BlogSection />
       </main>

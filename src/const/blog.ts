@@ -8,20 +8,14 @@ export const BLOG_CATEGORIES = [
   { value: "budget_travel", name: "Budget Travel" },
   { value: "photography", name: "Photography" },
   { value: "other", name: "Other" },
-] as const;
+] as const satisfies ReadonlyArray<{
+  readonly value: string;
+  readonly name: string;
+}>;
 
-// Extract just the values for the schema - with proper typing for pgEnum
-export const categoryValues = [
-  "travel_tips",
-  "adventure",
-  "food",
-  "culture",
-  "nature",
-  "city_guide",
-  "budget_travel",
-  "photography",
-  "other",
-] as const;
+export const categoryValues = BLOG_CATEGORIES.map(
+  (c) => c.value
+) as readonly (typeof BLOG_CATEGORIES)[number]["value"][];
 
 // Type for TypeScript
 export type CategoryType = (typeof categoryValues)[number];

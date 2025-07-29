@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Create a new blog post to share with the community",
 };
 
-export default async function CreateBlogPage() {
+export default function CreateBlogPage() {
   return (
     <section className="container mx-auto p-6 lg:p-8">
       <BlogForm />
