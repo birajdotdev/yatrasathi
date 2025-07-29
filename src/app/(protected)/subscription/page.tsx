@@ -13,18 +13,7 @@ export default function SubscriptionPage() {
         description="View your current plan details or upgrade to access more features. Choose the plan that best fits your needs."
         icon={CreditCard}
       />
-      <PricingTable
-        fallback={<PricingTableSkeleton />}
-        checkoutProps={{
-          appearance: {
-            elements: {
-              drawerRoot: {
-                zIndex: 10000,
-              },
-            },
-          },
-        }}
-      />
+      <PricingTable fallback={<PricingTableSkeleton />} />
     </main>
   );
 }

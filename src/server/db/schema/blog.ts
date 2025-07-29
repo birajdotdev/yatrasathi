@@ -9,6 +9,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { categoryValues } from "@/const/blog";
 import { createdAt, id, updatedAt } from "@/server/db/schema-helpers";
 
 import { users } from "./user";
@@ -18,20 +19,11 @@ export const postStatusValues = ["draft", "published"] as const;
 export type PostStatus = (typeof postStatusValues)[number];
 export const postStatusEnum = pgEnum("post_status", postStatusValues);
 
-// Category enum - fixed categories
-export const categoryValues = [
-  "travel_tips",
-  "adventure",
-  "food",
-  "culture",
-  "nature",
-  "city_guide",
-  "budget_travel",
-  "photography",
-  "other",
-] as const;
-export type CategoryType = (typeof categoryValues)[number];
+// Category enum - using imported values
 export const categoryEnum = pgEnum("category_type", categoryValues);
+
+// Re-export type for convenience
+export type { CategoryType } from "@/const/blog";
 
 // Posts table
 export const posts = pgTable(

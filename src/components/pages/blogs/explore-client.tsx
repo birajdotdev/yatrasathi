@@ -4,7 +4,7 @@ import { CirclePlus, OctagonXIcon } from "lucide-react";
 
 import { BlogCard } from "@/components/pages/blogs";
 import { EmptyState } from "@/components/ui/empty-state";
-import { type CategoryType } from "@/server/db/schema";
+import { type CategoryType } from "@/const/blog";
 import { api } from "@/trpc/react";
 
 interface ExploreClientProps {

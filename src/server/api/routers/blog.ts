@@ -3,6 +3,7 @@ import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
+import { categoryValues } from "@/const/blog";
 import { generateExcerpt } from "@/lib/utils";
 import { postInsertSchema, postUpdateSchema } from "@/lib/zod/post";
 import {
@@ -11,7 +12,6 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import {
-  categoryValues,
   comments,
   likes,
   notifications,
@@ -28,28 +28,6 @@ const generateSlug = (title: string) => {
 };
 
 export const blogRouter = createTRPCRouter({
-  // Category Routes
-  getCategories: publicProcedure.query(() => {
-    // Return all the predefined categories with readable names
-    const categoryMap: Record<string, string> = {
-      travel_tips: "Travel Tips",
-      adventure: "Adventure",
-      food: "Food & Cuisine",
-      culture: "Culture & History",
-      nature: "Nature & Outdoors",
-      city_guide: "City Guide",
-      budget_travel: "Budget Travel",
-      photography: "Photography",
-      other: "Other",
-    };
-
-    return categoryValues.map((category) => ({
-      id: category,
-      name: categoryMap[category] ?? category,
-      value: category,
-    }));
-  }),
-
   // Post Routes
   createPost: protectedProcedure
     .input(

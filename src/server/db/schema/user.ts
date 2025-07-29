@@ -15,13 +15,17 @@ export const users = pgTable(
     id,
     clerkUserId: text().notNull().unique(),
     name: text().notNull(),
+    username: text().notNull().unique(),
     email: text().notNull(),
     role: userRoleEnum().notNull().default("user"),
     image: text().notNull(),
     createdAt,
     updatedAt,
   },
-  (t) => [uniqueIndex("clerk_user_id_idx").on(t.clerkUserId)]
+  (t) => [
+    uniqueIndex("clerk_user_id_idx").on(t.clerkUserId),
+    uniqueIndex("username_idx").on(t.username),
+  ]
 );
 
 export const userRelations = relations(users, ({ one, many }) => ({
