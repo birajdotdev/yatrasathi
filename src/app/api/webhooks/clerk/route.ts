@@ -66,12 +66,6 @@ export async function POST(req: Request) {
             // Generate unique username for new user
             const username = await generateUniqueUsername(name);
 
-            // Update username in clerk user data
-            const clerk = await clerkClient();
-            await clerk.users.updateUser(evt.data.id, {
-              username,
-            });
-
             // Insert new user into database
             await tx.insert(users).values({
               clerkUserId: evt.data.id,
@@ -79,6 +73,12 @@ export async function POST(req: Request) {
               name,
               username,
               image: evt.data.image_url,
+            });
+
+            // Update username in clerk user data
+            const clerk = await clerkClient();
+            await clerk.users.updateUser(evt.data.id, {
+              username,
             });
           });
         } catch (error) {
