@@ -26,6 +26,14 @@ export function ClerkProviderWithTheme({
           socialButtonsPlacement: "bottom",
           unsafe_disableDevelopmentModeWarnings: true,
         },
+        elements: {
+          formFieldRow__username: {
+            display: "none",
+          },
+          drawerRoot: {
+            zIndex: 10000,
+          },
+        },
       }}
       {...props}
     >

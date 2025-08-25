@@ -12,13 +12,15 @@ import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HydrateClient, api } from "@/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Itineraries",
   description: "Manage and organize all your upcoming adventures in one place.",
 };
 
-export default async function ItinerariesPage() {
-  await api.itinerary.getAll.prefetchInfinite({
+export default function ItinerariesPage() {
+  void api.itinerary.getAll.prefetchInfinite({
     type: "all",
     limit: 9,
   });

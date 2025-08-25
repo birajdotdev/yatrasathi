@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { BLOG_CATEGORIES } from "@/const/blog";
 import { postInsertSchema } from "@/lib/zod/post";
 import { api } from "@/trpc/react";
 
@@ -98,8 +99,8 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
   const router = useRouter();
   const isEdit = mode === "edit"; // Check if editing an existing post
 
-  // Fetch categories
-  const [categories] = api.blog.getCategories.useSuspenseQuery();
+  // Use categories from constants
+  const categories = BLOG_CATEGORIES;
 
   // Create post mutation
   const createPost = api.blog.createPost.useMutation({
@@ -307,7 +308,10 @@ export default function BlogForm({ slug, mode = "create" }: BlogFormProps) {
                           </SelectTrigger>
                           <SelectContent>
                             {categories.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
+                              <SelectItem
+                                key={category.value}
+                                value={category.value}
+                              >
                                 {category.name}
                               </SelectItem>
                             ))}

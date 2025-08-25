@@ -7,23 +7,22 @@ import { BlogsSkeleton, ExploreClient } from "@/components/pages/blogs";
 import { Banner } from "@/components/ui/banner";
 import { ErrorBoundaryWrapper } from "@/components/ui/error-boundary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type CategoryType } from "@/server/db/schema";
+import { BLOG_CATEGORIES, type CategoryType } from "@/const/blog";
 import { HydrateClient, api } from "@/trpc/server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Explore",
   description: "Discover new places and plan your next adventure",
 };
 
-export default async function ExplorePage() {
-  const [categories] = await Promise.all([
-    api.blog.getCategories(),
-    api.blog.listPosts.prefetch({}),
-  ]);
+export default function ExplorePage() {
+  void api.blog.listPosts.prefetch({});
 
   const tabOptions = [
     { value: "all", label: "All" },
-    ...categories.map((category) => ({
+    ...BLOG_CATEGORIES.map((category) => ({
       value: category.value,
       label: category.name,
     })),
