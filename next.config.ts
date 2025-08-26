@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 import "@/env";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: true,

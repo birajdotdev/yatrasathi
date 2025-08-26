@@ -32,7 +32,7 @@ To run the application:
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/Sthabiraj/yatrasathi
+git clone https://github.com/birajdotdev/yatrasathi
 ```
 
 2. Navigate to the project directory:
@@ -44,19 +44,18 @@ cd yatrasathi
 3. Copy the example environment file and update it:
 
 ```sh
-cp .env.example .env.development
+cp .env.example .env
 ```
 
 4. Set up Clerk Authentication:
-
    - Create an account at [Clerk.dev](https://clerk.dev)
    - Create a new application
-   - Copy your Publishable Key and Secret Key to `.env.development`
+   - Copy your Publishable Key and Secret Key to `.env`
 
 5. Start the database:
 
 ```sh
-docker compose up -d
+bun db:start
 ```
 
 6. Install dependencies:

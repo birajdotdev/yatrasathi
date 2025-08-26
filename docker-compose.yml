@@ -1,5 +1,24 @@
 services:
-  postgres:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    image: yatrasathi-app
+    environment:
+      DATABASE_URL: postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      UPSTASH_REDIS_REST_URL: http://serverless-redis-http
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - ngrok
+      - serverless-redis-http
+
+  db:
     image: postgres:17
     command: "-d 1"
     volumes:
@@ -7,9 +26,25 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=yatrasathi
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  serverless-redis-http:
+    ports:
+      - "8079:80"
+    image: hiett/serverless-redis-http:latest
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: ${UPSTASH_REDIS_REST_TOKEN}
+      SRH_CONNECTION_STRING: "redis://redis:6379"
+    depends_on:
+      - redis
 
   ngrok:
     image: ngrok/ngrok:latest
@@ -21,8 +56,6 @@ services:
     network_mode: "bridge"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    depends_on:
-      - postgres
 
 volumes:
   db_data:
