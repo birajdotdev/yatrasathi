@@ -1,12 +1,24 @@
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro,Z
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - app-network
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
     working_dir: /app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     image: yatrasathi-app
     environment:
       DATABASE_URL: postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
@@ -17,6 +29,8 @@ services:
       - db
       - ngrok
       - serverless-redis-http
+    networks:
+      - app-network
 
   db:
     image: postgres:17
@@ -29,11 +43,15 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+    networks:
+      - app-network
 
   redis:
     image: redis
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
   serverless-redis-http:
     ports:
@@ -45,6 +63,8 @@ services:
       SRH_CONNECTION_STRING: "redis://redis:6379"
     depends_on:
       - redis
+    networks:
+      - app-network
 
   ngrok:
     image: ngrok/ngrok:latest
@@ -59,3 +79,7 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  app-network:
+    driver: bridge

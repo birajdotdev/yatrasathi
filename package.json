@@ -10,7 +10,7 @@
     "db:studio": "drizzle-kit studio",
     "db:start": "docker compose up -d db",
     "db:stop": "docker compose down db",
-    "dev": "docker compose up db ngrok -d && next dev --turbopack",
+    "dev": "docker compose up db ngrok serverless-redis-http -d && next dev --turbopack",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint": "next lint",
@@ -21,7 +21,9 @@
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "docker:preview": "docker compose up --build -d"
+    "docker:preview": "docker compose up --build -d",
+    "docker:logs": "docker compose logs -f",
+    "docker:restart": "docker compose restart"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
