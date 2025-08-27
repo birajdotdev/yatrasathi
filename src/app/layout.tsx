@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   },
   description:
     "Plan your perfect trip with AI-powered itineraries, personalized recommendations, and a vibrant travel community.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
