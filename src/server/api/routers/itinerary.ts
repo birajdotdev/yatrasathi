@@ -4,6 +4,7 @@ import { generateObject } from "ai";
 import { and, eq, gt, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
+import { env } from "@/env";
 import { fetchImageFromUnsplash } from "@/lib/unsplash";
 import { aiGeneratedItinerarySchema } from "@/lib/zod/ai-itinerary";
 import { itineraryFormSchema } from "@/lib/zod/itinerary";
@@ -687,9 +688,8 @@ export const itineraryRouter = createTRPCRouter({
         
         Your task is to create a realistic and enjoyable itinerary with multiple activities each day, including must-see attractions, food recommendations, and practical travel information.`;
 
-        // Initialize the Gemini model
-        // API key is automatically picked up from GOOGLE_GENERATIVE_AI_API_KEY environment variable
-        const model = google("models/gemini-1.5-flash");
+        // API key is automatically picked up from GOOGLE_GENERATIVE_AI_API_KEY.
+        const model = google(env.GOOGLE_GENERATIVE_AI_MODEL);
 
         // Generate structured data using the AI SDK and our Zod schema
         const { object: generatedItinerary } = await generateObject({

@@ -21,8 +21,8 @@ services:
       - "3000"
     image: yatrasathi-app
     environment:
-      DATABASE_URL: postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
-      UPSTASH_REDIS_REST_URL: http://serverless-redis-http
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DATABASE}
+      KV_URL: http://serverless-redis-http
     env_file:
       - .env
     depends_on:
@@ -40,9 +40,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
     networks:
       - app-network
 
@@ -59,7 +59,7 @@ services:
     image: hiett/serverless-redis-http:latest
     environment:
       SRH_MODE: env
-      SRH_TOKEN: ${UPSTASH_REDIS_REST_TOKEN}
+      SRH_TOKEN: ${KV_REST_API_TOKEN}
       SRH_CONNECTION_STRING: "redis://redis:6379"
     depends_on:
       - redis
