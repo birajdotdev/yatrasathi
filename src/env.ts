@@ -18,7 +18,7 @@ export const env = createEnv({
     GOOGLE_GENERATIVE_AI_MODEL: z.string().default("gemini-2.5-flash"),
     RESEND_API_KEY: z.string(),
     CRON_SECRET: z.string().optional(),
-    KV_URL: z.string(),
+    KV_REST_API_URL: z.string(),
     KV_REST_API_TOKEN: z.string(),
   },
   client: {
@@ -52,7 +52,7 @@ export const env = createEnv({
     GOOGLE_GENERATIVE_AI_MODEL: process.env.GOOGLE_GENERATIVE_AI_MODEL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     CRON_SECRET: process.env.CRON_SECRET,
-    KV_URL: process.env.KV_URL,
+    KV_REST_API_URL: process.env.KV_REST_API_URL,
     KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
