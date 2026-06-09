@@ -37,7 +37,7 @@ export async function sendReminderEmail({
 
   // Pass the React component directly to Resend instead of pre-rendering to HTML
   const { data, error } = await resend.emails.send({
-    from: "YatraSathi <trips@yatrasathi.tech>",
+    from: env.EMAIL_FROM,
     to: [userEmail],
     subject: `Reminder: Your trip to ${destination} is coming soon!`,
     react: ItineraryReminderEmail({
